@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { User, Settings, Sparkles, MessageCircle, Heart } from 'lucide-react';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
@@ -97,11 +98,23 @@ export default function Home() {
     }
   }, [user?.email]);
 
-  const handlePopToggle = async (isPopping, message) => {
+  const [popupMessage, setPopupMessage] = useState('');
+
+  useEffect(() => {
+    if (myProfile?.popup_message) {
+      setPopupMessage(myProfile.popup_message);
+    }
+  }, [myProfile?.popup_message]);
+
+  const handlePopToggle = async (isPopping) => {
+    if (isPopping && !popupMessage.trim()) {
+      return; // Don't allow popping up without a message
+    }
+    
     setIsUpdating(true);
     await updateProfileMutation.mutateAsync({
       is_popped_up: isPopping,
-      popup_message: isPopping ? message : ''
+      popup_message: isPopping ? popupMessage : ''
     });
     setIsUpdating(false);
   };
@@ -192,27 +205,73 @@ export default function Home() {
             />
           </motion.div>
 
-          {/* Pop Toggle - Fixed at bottom */}
+          {/* Pop Up Control - Fixed at bottom */}
           <motion.div 
-            className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40"
+            className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-2xl px-4"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
             {!myProfile?.display_name ? (
-              <Link to={createPageUrl('Profile')}>
-                <Button className="px-8 py-6 text-lg rounded-full bg-gradient-to-r from-violet-600 to-purple-600 shadow-xl hover:shadow-2xl">
-                  <User className="w-5 h-5 mr-2" />
-                  Complete Your Profile First
-                </Button>
-              </Link>
+              <div className="flex justify-center">
+                <Link to={createPageUrl('Profile')}>
+                  <Button className="px-8 py-6 text-lg rounded-full bg-gradient-to-r from-violet-600 to-purple-600 shadow-xl hover:shadow-2xl">
+                    <User className="w-5 h-5 mr-2" />
+                    Complete Your Profile First
+                  </Button>
+                </Link>
+              </div>
             ) : (
-              <PopToggle
-                isPopped={myProfile?.is_popped_up || false}
-                message={myProfile?.popup_message || ''}
-                onToggle={handlePopToggle}
-                isLoading={isUpdating}
-              />
+              <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-violet-100">
+                {!myProfile?.is_popped_up ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Sparkles className="w-5 h-5 text-violet-500" />
+                      <label className="text-sm font-semibold text-slate-700">
+                        What are you looking for?
+                      </label>
+                    </div>
+                    <Textarea
+                      value={popupMessage}
+                      onChange={(e) => setPopupMessage(e.target.value)}
+                      placeholder="E.g., Looking for someone to grab coffee with tonight..."
+                      className="resize-none border-violet-200 focus:border-violet-400 rounded-xl text-base"
+                      rows={2}
+                      disabled={isUpdating}
+                    />
+                    <div className="flex justify-center">
+                      <PopToggle
+                        isPopped={false}
+                        onToggle={handlePopToggle}
+                        isLoading={isUpdating}
+                        disabled={!popupMessage.trim()}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
+                        <span className="text-sm font-semibold text-green-700">You're Live</span>
+                      </div>
+                      <span className="text-xs text-slate-500">
+                        {activeUsers.length - 1} others nearby
+                      </span>
+                    </div>
+                    <div className="p-4 bg-gradient-to-r from-violet-50 to-rose-50 rounded-xl border border-violet-100">
+                      <p className="text-sm text-slate-700 italic">"{myProfile.popup_message}"</p>
+                    </div>
+                    <div className="flex justify-center">
+                      <PopToggle
+                        isPopped={true}
+                        onToggle={handlePopToggle}
+                        isLoading={isUpdating}
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             )}
           </motion.div>
         </div>
