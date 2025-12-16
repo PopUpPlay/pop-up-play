@@ -7,7 +7,8 @@ import PopToggle from '@/components/popup/PopToggle';
 import LocationService from '@/components/location/LocationService';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User, Settings, Sparkles } from 'lucide-react';
+import { User, Settings, Sparkles, MessageCircle, Heart } from 'lucide-react';
+import NotificationBadge from '@/components/notifications/NotificationBadge';
 import { Button } from '@/components/ui/button';
 
 export default function Home() {
@@ -49,6 +50,20 @@ export default function Home() {
       return profiles;
     },
     refetchInterval: 30000 // Refresh every 30 seconds
+  });
+
+  const { data: unreadCount = 0 } = useQuery({
+    queryKey: ['unreadMessages', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return 0;
+      const allMessages = await base44.entities.Message.filter({ 
+        receiver_email: user.email,
+        read: false 
+      });
+      return allMessages.length;
+    },
+    enabled: !!user?.email,
+    refetchInterval: 5000
   });
 
   const updateProfileMutation = useMutation({
@@ -120,7 +135,18 @@ export default function Home() {
             </span>
           </motion.div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <Link to={createPageUrl('Discover')}>
+              <Button variant="ghost" size="icon" className="rounded-full relative">
+                <Heart className="w-5 h-5 text-slate-600" />
+              </Button>
+            </Link>
+            <Link to={createPageUrl('Chat')}>
+              <Button variant="ghost" size="icon" className="rounded-full relative">
+                <MessageCircle className="w-5 h-5 text-slate-600" />
+                <NotificationBadge count={unreadCount} />
+              </Button>
+            </Link>
             <Link to={createPageUrl('Dashboard')}>
               <Button variant="ghost" size="icon" className="rounded-full">
                 <Settings className="w-5 h-5 text-slate-600" />
