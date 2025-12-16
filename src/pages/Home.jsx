@@ -179,7 +179,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-20 pb-32 px-4">
+      <main className="pt-20 pb-56 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Location Status */}
           <motion.div 
