@@ -1,0 +1,196 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
+import CityMap from '@/components/map/CityMap';
+import PopToggle from '@/components/popup/PopToggle';
+import LocationService from '@/components/location/LocationService';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { User, Settings, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+export default function Home() {
+  const [user, setUser] = useState(null);
+  const [userLocation, setUserLocation] = useState(null);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      } catch (err) {
+        base44.auth.redirectToLogin();
+      }
+    };
+    loadUser();
+  }, []);
+
+  const { data: myProfile } = useQuery({
+    queryKey: ['myProfile', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      const profiles = await base44.entities.UserProfile.filter({ user_email: user.email });
+      return profiles[0] || null;
+    },
+    enabled: !!user?.email
+  });
+
+  const { data: activeUsers = [] } = useQuery({
+    queryKey: ['activeUsers', userLocation?.city],
+    queryFn: async () => {
+      const profiles = await base44.entities.UserProfile.filter({ is_popped_up: true });
+      // Filter by same city if we have location
+      if (userLocation?.city) {
+        return profiles.filter(p => p.current_city === userLocation.city);
+      }
+      return profiles;
+    },
+    refetchInterval: 30000 // Refresh every 30 seconds
+  });
+
+  const updateProfileMutation = useMutation({
+    mutationFn: async (data) => {
+      if (myProfile) {
+        return base44.entities.UserProfile.update(myProfile.id, data);
+      } else {
+        return base44.entities.UserProfile.create({
+          user_email: user.email,
+          display_name: user.full_name,
+          ...data
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['myProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['activeUsers'] });
+    }
+  });
+
+  const handleLocationUpdate = useCallback((locationInfo) => {
+    setUserLocation(locationInfo);
+    if (user?.email) {
+      updateProfileMutation.mutate({
+        latitude: locationInfo.latitude,
+        longitude: locationInfo.longitude,
+        current_city: locationInfo.city,
+        current_zip: locationInfo.zip,
+        last_location_update: locationInfo.timestamp
+      });
+    }
+  }, [user?.email]);
+
+  const handlePopToggle = async (isPopping, message) => {
+    setIsUpdating(true);
+    await updateProfileMutation.mutateAsync({
+      is_popped_up: isPopping,
+      popup_message: isPopping ? message : ''
+    });
+    setIsUpdating(false);
+  };
+
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="w-16 h-16 rounded-full bg-violet-200 mb-4"></div>
+          <div className="h-4 w-32 bg-violet-100 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-rose-50">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <motion.div 
+            className="flex items-center gap-2"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+          >
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-600 to-rose-500 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
+            <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-rose-500 bg-clip-text text-transparent">
+              PopUp
+            </span>
+          </motion.div>
+          
+          <div className="flex items-center gap-3">
+            <Link to={createPageUrl('Dashboard')}>
+              <Button variant="ghost" size="icon" className="rounded-full">
+                <Settings className="w-5 h-5 text-slate-600" />
+              </Button>
+            </Link>
+            <Link to={createPageUrl('Profile')}>
+              <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-violet-200">
+                <img 
+                  src={myProfile?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'} 
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </Link>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="pt-20 pb-32 px-4">
+        <div className="max-w-7xl mx-auto">
+          {/* Location Status */}
+          <motion.div 
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <LocationService onLocationUpdate={handleLocationUpdate} />
+          </motion.div>
+
+          {/* Map */}
+          <motion.div 
+            className="h-[60vh] rounded-2xl overflow-hidden shadow-2xl mb-8"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2 }}
+          >
+            <CityMap 
+              activeUsers={activeUsers} 
+              currentUserProfile={myProfile}
+              userLocation={userLocation}
+            />
+          </motion.div>
+
+          {/* Pop Toggle - Fixed at bottom */}
+          <motion.div 
+            className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            {!myProfile?.display_name ? (
+              <Link to={createPageUrl('Profile')}>
+                <Button className="px-8 py-6 text-lg rounded-full bg-gradient-to-r from-violet-600 to-purple-600 shadow-xl hover:shadow-2xl">
+                  <User className="w-5 h-5 mr-2" />
+                  Complete Your Profile First
+                </Button>
+              </Link>
+            ) : (
+              <PopToggle
+                isPopped={myProfile?.is_popped_up || false}
+                message={myProfile?.popup_message || ''}
+                onToggle={handlePopToggle}
+                isLoading={isUpdating}
+              />
+            )}
+          </motion.div>
+        </div>
+      </main>
+    </div>
+  );
+}
