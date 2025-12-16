@@ -1,0 +1,133 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { MapPin, Loader2, AlertCircle, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+
+export default function LocationService({ onLocationUpdate, autoUpdate = true }) {
+  const [status, setStatus] = useState('idle'); // idle, loading, success, error
+  const [locationData, setLocationData] = useState(null);
+  const [error, setError] = useState(null);
+
+  const reverseGeocode = async (lat, lng) => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`
+      );
+      const data = await response.json();
+      return {
+        city: data.address?.city || data.address?.town || data.address?.village || 'Unknown',
+        zip: data.address?.postcode || 'Unknown',
+        country: data.address?.country || 'Unknown'
+      };
+    } catch (err) {
+      console.error('Reverse geocoding failed:', err);
+      return { city: 'Unknown', zip: 'Unknown', country: 'Unknown' };
+    }
+  };
+
+  const getLocation = useCallback(async () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported by your browser');
+      setStatus('error');
+      return;
+    }
+
+    setStatus('loading');
+    setError(null);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        const geoData = await reverseGeocode(latitude, longitude);
+        
+        const locationInfo = {
+          latitude,
+          longitude,
+          city: geoData.city,
+          zip: geoData.zip,
+          country: geoData.country,
+          timestamp: new Date().toISOString()
+        };
+        
+        setLocationData(locationInfo);
+        setStatus('success');
+        onLocationUpdate?.(locationInfo);
+      },
+      (err) => {
+        setError(err.message || 'Failed to get location');
+        setStatus('error');
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
+  }, [onLocationUpdate]);
+
+  useEffect(() => {
+    if (autoUpdate) {
+      getLocation();
+      
+      // Update location every 5 minutes
+      const interval = setInterval(getLocation, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+  }, [autoUpdate, getLocation]);
+
+  return (
+    <motion.div 
+      className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-slate-100"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+    >
+      {status === 'loading' && (
+        <>
+          <Loader2 className="w-5 h-5 text-violet-500 animate-spin" />
+          <span className="text-sm text-slate-600">Finding your location...</span>
+        </>
+      )}
+      
+      {status === 'success' && locationData && (
+        <>
+          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center">
+            <MapPin className="w-4 h-4 text-white" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-medium text-slate-800">{locationData.city}</p>
+            <p className="text-xs text-slate-500">ZIP: {locationData.zip}</p>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={getLocation}
+            className="h-8 w-8"
+          >
+            <RefreshCw className="w-4 h-4 text-slate-400" />
+          </Button>
+        </>
+      )}
+      
+      {status === 'error' && (
+        <>
+          <AlertCircle className="w-5 h-5 text-rose-500" />
+          <span className="text-sm text-rose-600 flex-1">{error}</span>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={getLocation}
+            className="text-xs"
+          >
+            Retry
+          </Button>
+        </>
+      )}
+      
+      {status === 'idle' && (
+        <Button
+          onClick={getLocation}
+          className="w-full bg-gradient-to-r from-violet-600 to-purple-600"
+        >
+          <MapPin className="w-4 h-4 mr-2" />
+          Enable Location
+        </Button>
+      )}
+    </motion.div>
+  );
+}
