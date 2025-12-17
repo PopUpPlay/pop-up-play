@@ -25,9 +25,13 @@ export default function UserMarker({ profile, isCurrentUser }) {
 
   if (!profile.latitude || !profile.longitude) return null;
 
+  // Use offset coordinates for display, or fall back to actual coordinates
+  const displayLat = profile.displayLatitude || profile.latitude;
+  const displayLon = profile.displayLongitude || profile.longitude;
+
   return (
     <Marker
-      position={[profile.latitude, profile.longitude]}
+      position={[displayLat, displayLon]}
       icon={createCustomIcon()}
       eventHandlers={{
         mouseover: () => setIsHovered(true),

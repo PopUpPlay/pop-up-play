@@ -25,6 +25,23 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation 
     }
   }, [userLocation]);
 
+  // Group users by city and add randomized offset for privacy
+  const getUsersWithCityOffset = () => {
+    return activeUsers.map(profile => {
+      if (!profile.latitude || !profile.longitude) return profile;
+      
+      // Add random offset within ~1 mile radius to obscure exact location
+      const latOffset = (Math.random() - 0.5) * 0.02;
+      const lonOffset = (Math.random() - 0.5) * 0.02;
+      
+      return {
+        ...profile,
+        displayLatitude: profile.latitude + latOffset,
+        displayLongitude: profile.longitude + lonOffset
+      };
+    });
+  };
+
   return (
     <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl">
       <MapContainer
@@ -39,7 +56,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation 
         />
         <MapController center={mapCenter} />
         
-        {activeUsers.map(profile => (
+        {getUsersWithCityOffset().map(profile => (
           <UserMarker 
             key={profile.id} 
             profile={profile}
