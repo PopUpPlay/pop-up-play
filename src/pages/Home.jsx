@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import CityMap from '@/components/map/CityMap';
 import PopToggle from '@/components/popup/PopToggle';
 import LocationService from '@/components/location/LocationService';
+import MapSoundNotifications from '@/components/map/MapSoundNotifications';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { User, Settings, Sparkles, MessageCircle, Heart } from 'lucide-react';
@@ -177,6 +178,13 @@ export default function Home() {
           </div>
         </div>
       </header>
+
+      {/* Sound Notifications */}
+      <MapSoundNotifications 
+        activeUsers={activeUsers}
+        userLocation={userLocation}
+        currentUserEmail={user?.email}
+      />
 
       {/* Main Content */}
       <main className="pt-20 pb-12 px-4">
