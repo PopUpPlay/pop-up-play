@@ -39,7 +39,7 @@ export default function LocationService({ onLocationUpdate, autoUpdate = true })
       async (position) => {
         const { latitude, longitude } = position.coords;
         const geoData = await reverseGeocode(latitude, longitude);
-        
+
         const locationInfo = {
           latitude,
           longitude,
@@ -48,7 +48,7 @@ export default function LocationService({ onLocationUpdate, autoUpdate = true })
           country: geoData.country,
           timestamp: new Date().toISOString()
         };
-        
+
         setLocationData(locationInfo);
         setStatus('success');
         onLocationUpdate?.(locationInfo);
@@ -64,7 +64,7 @@ export default function LocationService({ onLocationUpdate, autoUpdate = true })
   useEffect(() => {
     if (autoUpdate) {
       getLocation();
-      
+
       // Update location every 5 minutes
       const interval = setInterval(getLocation, 5 * 60 * 1000);
       return () => clearInterval(interval);
@@ -72,62 +72,62 @@ export default function LocationService({ onLocationUpdate, autoUpdate = true })
   }, [autoUpdate, getLocation]);
 
   return (
-    <motion.div 
+    <motion.div
       className="flex items-center gap-3 px-4 py-3 bg-white rounded-xl shadow-sm border border-slate-100"
       initial={{ opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-    >
-      {status === 'loading' && (
-        <>
+      animate={{ opacity: 1, y: 0 }}>
+
+      {status === 'loading' &&
+      <>
           <Loader2 className="w-5 h-5 text-violet-500 animate-spin" />
           <span className="text-sm text-slate-600">Finding your location...</span>
         </>
-      )}
+      }
       
-      {status === 'success' && locationData && (
-        <>
-          <div className="w-8 h-8 rounded-full bg-gradient-to-r from-violet-500 to-purple-500 flex items-center justify-center">
-            <MapPin className="w-4 h-4 text-white" />
+      {status === 'success' && locationData &&
+      <>
+          <div className="bg-purple-400 rounded-full w-8 h-8 from-violet-500 to-purple-500 flex items-center justify-center">
+            <MapPin className="text-black lucide lucide-map-pin w-4 h-4" />
           </div>
           <div className="flex-1">
             <p className="text-sm font-medium text-slate-800">{locationData.city}</p>
             <p className="text-xs text-slate-500">ZIP: {locationData.zip}</p>
           </div>
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={getLocation}
-            className="h-8 w-8"
-          >
+          variant="ghost"
+          size="icon"
+          onClick={getLocation}
+          className="h-8 w-8">
+
             <RefreshCw className="w-4 h-4 text-slate-400" />
           </Button>
         </>
-      )}
+      }
       
-      {status === 'error' && (
-        <>
+      {status === 'error' &&
+      <>
           <AlertCircle className="w-5 h-5 text-rose-500" />
           <span className="text-sm text-rose-600 flex-1">{error}</span>
           <Button
-            variant="outline"
-            size="sm"
-            onClick={getLocation}
-            className="text-xs"
-          >
+          variant="outline"
+          size="sm"
+          onClick={getLocation}
+          className="text-xs">
+
             Retry
           </Button>
         </>
-      )}
+      }
       
-      {status === 'idle' && (
-        <Button
-          onClick={getLocation}
-          className="w-full bg-gradient-to-r from-violet-600 to-purple-600"
-        >
+      {status === 'idle' &&
+      <Button
+        onClick={getLocation}
+        className="w-full bg-gradient-to-r from-violet-600 to-purple-600">
+
           <MapPin className="w-4 h-4 mr-2" />
           Enable Location
         </Button>
-      )}
-    </motion.div>
-  );
+      }
+    </motion.div>);
+
 }
