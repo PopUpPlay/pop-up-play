@@ -18,6 +18,7 @@ function MapController({ center }) {
 
 export default function CityMap({ activeUsers, currentUserProfile, userLocation }) {
   const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]); // Default NYC
+  const [cityCenters, setCityCenters] = useState({});
   
   useEffect(() => {
     if (userLocation) {
@@ -25,39 +26,74 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation 
     }
   }, [userLocation]);
 
-  // Group users by city and show them at approximate city center
+  // Fetch city center coordinates
+  useEffect(() => {
+    const fetchCityCenters = async () => {
+      const cities = [...new Set(activeUsers.map(u => u.current_city).filter(Boolean))];
+      const newCenters = {};
+      
+      for (const city of cities) {
+        if (cityCenters[city]) {
+          newCenters[city] = cityCenters[city];
+          continue;
+        }
+        
+        try {
+          const response = await fetch(
+            `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`
+          );
+          const data = await response.json();
+          if (data[0]) {
+            newCenters[city] = {
+              lat: parseFloat(data[0].lat),
+              lon: parseFloat(data[0].lon)
+            };
+          }
+        } catch (err) {
+          console.error('Failed to fetch city center:', err);
+        }
+      }
+      
+      if (Object.keys(newCenters).length > 0) {
+        setCityCenters(prev => ({ ...prev, ...newCenters }));
+      }
+    };
+    
+    if (activeUsers.length > 0) {
+      fetchCityCenters();
+    }
+  }, [activeUsers.map(u => u.current_city).join(',')]);
+
+  // Position users at city center with small clustering offset
   const getUsersWithCityLocation = () => {
     const cityGroups = {};
     
     activeUsers.forEach(profile => {
-      if (!profile.current_city || !profile.latitude || !profile.longitude) return;
+      if (!profile.current_city) return;
       
       if (!cityGroups[profile.current_city]) {
-        cityGroups[profile.current_city] = {
-          baseLat: profile.latitude,
-          baseLon: profile.longitude,
-          users: []
-        };
+        cityGroups[profile.current_city] = [];
       }
-      
-      cityGroups[profile.current_city].users.push(profile);
+      cityGroups[profile.current_city].push(profile);
     });
     
-    // Position users in their city with small clustering offset
     return activeUsers.map(profile => {
-      if (!profile.current_city || !profile.latitude || !profile.longitude) return profile;
+      if (!profile.current_city) return profile;
       
-      const cityData = cityGroups[profile.current_city];
-      const userIndex = cityData.users.findIndex(u => u.id === profile.id);
+      const cityCenter = cityCenters[profile.current_city];
+      if (!cityCenter) return profile;
       
-      // Small offset for visual clustering, not revealing exact location
-      const angle = (userIndex / cityData.users.length) * 2 * Math.PI;
-      const radius = 0.01; // ~0.5 mile radius for clustering
+      const cityUsers = cityGroups[profile.current_city];
+      const userIndex = cityUsers.findIndex(u => u.id === profile.id);
+      
+      // Small offset for visual clustering at city center
+      const angle = (userIndex / cityUsers.length) * 2 * Math.PI;
+      const radius = 0.01;
       
       return {
         ...profile,
-        displayLatitude: cityData.baseLat + (Math.cos(angle) * radius),
-        displayLongitude: cityData.baseLon + (Math.sin(angle) * radius)
+        displayLatitude: cityCenter.lat + (Math.cos(angle) * radius),
+        displayLongitude: cityCenter.lon + (Math.sin(angle) * radius)
       };
     });
   };
