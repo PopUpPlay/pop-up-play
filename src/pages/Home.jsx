@@ -12,14 +12,14 @@ import { User, Settings, Sparkles, MessageCircle, Heart } from 'lucide-react';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
-import ProfileCard from '@/components/profile/ProfileCard';
+import { useNavigate } from 'react-router-dom';
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
-  const [selectedProfile, setSelectedProfile] = useState(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -213,7 +213,7 @@ export default function Home() {
               activeUsers={activeUsers} 
               currentUserProfile={myProfile}
               userLocation={userLocation}
-              onProfileClick={(profile) => setSelectedProfile(profile)}
+              onProfileClick={(profile) => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)}
             />
           </motion.div>
 
@@ -288,15 +288,6 @@ export default function Home() {
           </motion.div>
         </div>
         </main>
-
-        {/* Profile Modal */}
-        {selectedProfile && (
-        <ProfileCard 
-          profile={selectedProfile}
-          onClose={() => setSelectedProfile(null)}
-          onLike={() => {}}
-        />
-        )}
         </div>
         );
         }

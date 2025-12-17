@@ -18,6 +18,7 @@ import { toast } from 'sonner';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
+  const [viewingUserEmail, setViewingUserEmail] = useState(null);
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
@@ -29,6 +30,12 @@ export default function Profile() {
     videos: []
   });
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userParam = params.get('user');
+    setViewingUserEmail(userParam);
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -52,25 +59,38 @@ export default function Profile() {
     enabled: !!user?.email
   });
 
+  const { data: viewingProfile, isLoading: viewingLoading } = useQuery({
+    queryKey: ['viewingProfile', viewingUserEmail],
+    queryFn: async () => {
+      if (!viewingUserEmail) return null;
+      const profiles = await base44.entities.UserProfile.filter({ user_email: viewingUserEmail });
+      return profiles[0] || null;
+    },
+    enabled: !!viewingUserEmail
+  });
+
+  const isOwnProfile = !viewingUserEmail || viewingUserEmail === user?.email;
+  const displayProfile = isOwnProfile ? myProfile : viewingProfile;
+
   useEffect(() => {
-    if (myProfile) {
+    if (displayProfile) {
       setFormData({
-        display_name: myProfile.display_name || user?.full_name || '',
-        bio: myProfile.bio || '',
-        age: myProfile.age || '',
-        gender: myProfile.gender || '',
-        interested_in: myProfile.interested_in || '',
-        avatar_url: myProfile.avatar_url || '',
-        photos: myProfile.photos || [],
-        videos: myProfile.videos || []
+        display_name: displayProfile.display_name || '',
+        bio: displayProfile.bio || '',
+        age: displayProfile.age || '',
+        gender: displayProfile.gender || '',
+        interested_in: displayProfile.interested_in || '',
+        avatar_url: displayProfile.avatar_url || '',
+        photos: displayProfile.photos || [],
+        videos: displayProfile.videos || []
       });
-    } else if (user) {
+    } else if (user && isOwnProfile) {
       setFormData(prev => ({
         ...prev,
         display_name: user.full_name || ''
       }));
     }
-  }, [myProfile, user]);
+  }, [displayProfile, user, isOwnProfile]);
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
@@ -93,7 +113,7 @@ export default function Profile() {
     saveMutation.mutate(formData);
   };
 
-  if (!user || isLoading) {
+  if (!user || isLoading || viewingLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
@@ -111,18 +131,23 @@ export default function Profile() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">Edit Profile</h1>
-          <Button 
-            onClick={handleSave}
-            disabled={saveMutation.isPending}
-            className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-full"
-          >
-            {saveMutation.isPending ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Save className="w-4 h-4" />
-            )}
-          </Button>
+          <h1 className="text-lg font-semibold text-slate-800">
+            {isOwnProfile ? 'Edit Profile' : displayProfile?.display_name || 'Profile'}
+          </h1>
+          {isOwnProfile && (
+            <Button 
+              onClick={handleSave}
+              disabled={saveMutation.isPending}
+              className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-full"
+            >
+              {saveMutation.isPending ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : (
+                <Save className="w-4 h-4" />
+              )}
+            </Button>
+          )}
+          {!isOwnProfile && <div className="w-10"></div>}
         </div>
       </header>
 
@@ -133,10 +158,20 @@ export default function Profile() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
         >
-          <AvatarUpload 
-            currentAvatar={formData.avatar_url}
-            onAvatarChange={(url) => setFormData(prev => ({ ...prev, avatar_url: url }))}
-          />
+          {isOwnProfile ? (
+            <AvatarUpload 
+              currentAvatar={formData.avatar_url}
+              onAvatarChange={(url) => setFormData(prev => ({ ...prev, avatar_url: url }))}
+            />
+          ) : (
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+              <img 
+                src={formData.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'} 
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          )}
         </motion.div>
 
         {/* Profile Form */}
@@ -157,6 +192,7 @@ export default function Profile() {
                 onChange={(e) => setFormData(prev => ({ ...prev, display_name: e.target.value }))}
                 placeholder="Your display name"
                 className="mt-1 rounded-xl border-slate-200"
+                disabled={!isOwnProfile}
               />
             </div>
 
@@ -169,6 +205,7 @@ export default function Profile() {
                 placeholder="Tell others about yourself..."
                 className="mt-1 rounded-xl border-slate-200 resize-none"
                 rows={3}
+                disabled={!isOwnProfile}
               />
             </div>
 
@@ -182,6 +219,7 @@ export default function Profile() {
                   onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) || '' }))}
                   placeholder="Age"
                   className="mt-1 rounded-xl border-slate-200"
+                  disabled={!isOwnProfile}
                 />
               </div>
 
@@ -190,6 +228,7 @@ export default function Profile() {
                 <Select 
                   value={formData.gender} 
                   onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
+                  disabled={!isOwnProfile}
                 >
                   <SelectTrigger className="mt-1 rounded-xl border-slate-200">
                     <SelectValue placeholder="Select" />
@@ -208,6 +247,7 @@ export default function Profile() {
                 <Select 
                   value={formData.interested_in} 
                   onValueChange={(value) => setFormData(prev => ({ ...prev, interested_in: value }))}
+                  disabled={!isOwnProfile}
                 >
                   <SelectTrigger className="mt-1 rounded-xl border-slate-200">
                     <SelectValue placeholder="Select" />
@@ -244,6 +284,7 @@ export default function Profile() {
               <PhotoGallery 
                 photos={formData.photos}
                 onPhotosChange={(photos) => setFormData(prev => ({ ...prev, photos }))}
+                editable={isOwnProfile}
               />
             </TabsContent>
             
@@ -251,6 +292,7 @@ export default function Profile() {
               <VideoGallery 
                 videos={formData.videos}
                 onVideosChange={(videos) => setFormData(prev => ({ ...prev, videos }))}
+                editable={isOwnProfile}
               />
             </TabsContent>
           </Tabs>
