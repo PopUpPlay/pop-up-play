@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function UserMarker({ profile, isCurrentUser }) {
   const [isHovered, setIsHovered] = useState(false);
+  const markerRef = useRef(null);
 
   const createCustomIcon = () => {
     return L.divIcon({
@@ -33,12 +34,19 @@ export default function UserMarker({ profile, isCurrentUser }) {
     <Marker
       position={[displayLat, displayLon]}
       icon={createCustomIcon()}
+      ref={markerRef}
       eventHandlers={{
-        mouseover: () => setIsHovered(true),
-        mouseout: () => setIsHovered(false)
+        mouseover: (e) => {
+          setIsHovered(true);
+          e.target.openPopup();
+        },
+        mouseout: (e) => {
+          setIsHovered(false);
+          e.target.closePopup();
+        }
       }}
     >
-      <Popup className="custom-popup">
+      <Popup className="custom-popup" closeButton={false}>
         <div className="p-3 min-w-[200px]">
           <div className="flex items-center gap-3 mb-2">
             <img 
