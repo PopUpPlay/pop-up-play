@@ -234,7 +234,7 @@ export default function Home() {
                 </Link>
               </div> :
 
-            <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-violet-100">
+            <div className="bg-slate-300 p-6 rounded-3xl backdrop-blur-lg shadow-2xl border border-violet-100">
                 {!myProfile?.is_popped_up ?
               <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-2">
