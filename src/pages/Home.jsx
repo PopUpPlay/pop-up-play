@@ -246,7 +246,7 @@ export default function Home() {
                     <Textarea
                   value={popupMessage}
                   onChange={(e) => setPopupMessage(e.target.value)}
-                  placeholder="E.g., Looking for someone to grab coffee with tonight..." className="bg-transparent text-black px-3 py-2 text-base rounded-xl flex min-h-[60px] w-full border shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none border-violet-200 focus:border-violet-400"
+                  placeholder="E.g., Looking for someone to grab coffee with tonight..." className="bg-slate-50 text-black px-3 py-2 text-base rounded-xl flex min-h-[60px] w-full border shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm resize-none border-violet-200 focus:border-violet-400"
 
                   rows={2}
                   disabled={isUpdating} />
