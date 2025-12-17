@@ -184,6 +184,7 @@ export default function Home() {
         activeUsers={activeUsers}
         userLocation={userLocation}
         currentUserEmail={user?.email}
+        currentUserProfile={myProfile}
       />
 
       {/* Main Content */}

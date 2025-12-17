@@ -64,8 +64,9 @@ const playUnpluggedSound = () => {
   osc.stop(now + 0.3);
 };
 
-export default function MapSoundNotifications({ activeUsers, userLocation, currentUserEmail }) {
+export default function MapSoundNotifications({ activeUsers, userLocation, currentUserEmail, currentUserProfile }) {
   const previousUsersRef = useRef(new Set());
+  const previousPopStatusRef = useRef(null);
   const isFirstRenderRef = useRef(true);
 
   useEffect(() => {
@@ -73,9 +74,25 @@ export default function MapSoundNotifications({ activeUsers, userLocation, curre
     if (isFirstRenderRef.current) {
       const userIds = new Set(activeUsers.map(u => u.user_email).filter(email => email !== currentUserEmail));
       previousUsersRef.current = userIds;
+      previousPopStatusRef.current = currentUserProfile?.is_popped_up || false;
       isFirstRenderRef.current = false;
       return;
     }
+
+    // Check if current user's pop status changed
+    const currentPopStatus = currentUserProfile?.is_popped_up || false;
+    const previousPopStatus = previousPopStatusRef.current;
+    
+    if (previousPopStatus !== null && currentPopStatus !== previousPopStatus) {
+      if (currentPopStatus) {
+        // User just popped up
+        playAmbientTrance();
+      } else {
+        // User just popped down
+        playUnpluggedSound();
+      }
+    }
+    previousPopStatusRef.current = currentPopStatus;
 
     if (!userLocation?.latitude || !userLocation?.longitude) return;
 
