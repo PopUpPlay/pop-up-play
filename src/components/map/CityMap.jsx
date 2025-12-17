@@ -9,7 +9,7 @@ function MapController({ center }) {
   
   useEffect(() => {
     if (center) {
-      map.flyTo(center, 13, { duration: 1.5 });
+      map.flyTo(center, 11, { duration: 1.5 });
     }
   }, [center, map]);
   
@@ -25,19 +25,39 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation 
     }
   }, [userLocation]);
 
-  // Group users by city and add randomized offset for privacy
-  const getUsersWithCityOffset = () => {
-    return activeUsers.map(profile => {
-      if (!profile.latitude || !profile.longitude) return profile;
+  // Group users by city and show them at approximate city center
+  const getUsersWithCityLocation = () => {
+    const cityGroups = {};
+    
+    activeUsers.forEach(profile => {
+      if (!profile.current_city || !profile.latitude || !profile.longitude) return;
       
-      // Add random offset within ~1 mile radius to obscure exact location
-      const latOffset = (Math.random() - 0.5) * 0.02;
-      const lonOffset = (Math.random() - 0.5) * 0.02;
+      if (!cityGroups[profile.current_city]) {
+        cityGroups[profile.current_city] = {
+          baseLat: profile.latitude,
+          baseLon: profile.longitude,
+          users: []
+        };
+      }
+      
+      cityGroups[profile.current_city].users.push(profile);
+    });
+    
+    // Position users in their city with small clustering offset
+    return activeUsers.map(profile => {
+      if (!profile.current_city || !profile.latitude || !profile.longitude) return profile;
+      
+      const cityData = cityGroups[profile.current_city];
+      const userIndex = cityData.users.findIndex(u => u.id === profile.id);
+      
+      // Small offset for visual clustering, not revealing exact location
+      const angle = (userIndex / cityData.users.length) * 2 * Math.PI;
+      const radius = 0.01; // ~0.5 mile radius for clustering
       
       return {
         ...profile,
-        displayLatitude: profile.latitude + latOffset,
-        displayLongitude: profile.longitude + lonOffset
+        displayLatitude: cityData.baseLat + (Math.cos(angle) * radius),
+        displayLongitude: cityData.baseLon + (Math.sin(angle) * radius)
       };
     });
   };
@@ -46,7 +66,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation 
     <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl">
       <MapContainer
         center={mapCenter}
-        zoom={13}
+        zoom={11}
         className="w-full h-full"
         zoomControl={false}
       >
@@ -56,7 +76,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation 
         />
         <MapController center={mapCenter} />
         
-        {getUsersWithCityOffset().map(profile => (
+        {getUsersWithCityLocation().map(profile => (
           <UserMarker 
             key={profile.id} 
             profile={profile}
