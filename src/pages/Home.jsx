@@ -143,7 +143,7 @@ export default function Home() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}>
 
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-600 to-rose-500 flex items-center justify-center">
+            <div className="bg-gradient-to-r my-1 rounded-xl w-10 h-10 from-violet-600 to-rose-500 flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
             <span className="bg-clip-text text-purple-500 text-xl font-bold from-violet-600 to-rose-500">Pop Up Play
