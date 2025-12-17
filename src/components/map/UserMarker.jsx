@@ -45,7 +45,7 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
           e.target.closePopup();
         },
         click: () => {
-          if (onProfileClick && !isCurrentUser) {
+          if (onProfileClick) {
             onProfileClick(profile);
           }
         }
