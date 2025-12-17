@@ -179,7 +179,7 @@ export default function Home() {
       </header>
 
       {/* Main Content */}
-      <main className="pt-20 pb-56 px-4">
+      <main className="pt-20 pb-12 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Location Status */}
           <motion.div 
@@ -205,9 +205,9 @@ export default function Home() {
             />
           </motion.div>
 
-          {/* Pop Up Control - Fixed at bottom */}
+          {/* Pop Up Control - Below the map */}
           <motion.div 
-            className="fixed bottom-8 left-1/2 transform -translate-x-1/2 z-40 w-full max-w-2xl px-4"
+            className="w-full max-w-2xl mx-auto mt-8"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
