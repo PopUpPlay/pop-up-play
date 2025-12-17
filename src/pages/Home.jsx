@@ -49,7 +49,7 @@ export default function Home() {
       const profiles = await base44.entities.UserProfile.filter({ is_popped_up: true });
       // Filter by same city if we have location
       if (userLocation?.city) {
-        return profiles.filter(p => p.current_city === userLocation.city);
+        return profiles.filter((p) => p.current_city === userLocation.city);
       }
       return profiles;
     },
@@ -60,9 +60,9 @@ export default function Home() {
     queryKey: ['unreadMessages', user?.email],
     queryFn: async () => {
       if (!user?.email) return 0;
-      const allMessages = await base44.entities.Message.filter({ 
+      const allMessages = await base44.entities.Message.filter({
         receiver_email: user.email,
-        read: false 
+        read: false
       });
       return allMessages.length;
     },
@@ -113,7 +113,7 @@ export default function Home() {
     if (isPopping && !popupMessage.trim()) {
       return; // Don't allow popping up without a message
     }
-    
+
     setIsUpdating(true);
     await updateProfileMutation.mutateAsync({
       is_popped_up: isPopping,
@@ -129,8 +129,8 @@ export default function Home() {
           <div className="w-16 h-16 rounded-full bg-violet-200 mb-4"></div>
           <div className="h-4 w-32 bg-violet-100 rounded"></div>
         </div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -138,11 +138,11 @@ export default function Home() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <motion.div 
+          <motion.div
             className="flex items-center gap-2"
             initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-          >
+            animate={{ opacity: 1, x: 0 }}>
+
             <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-600 to-rose-500 flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
@@ -153,12 +153,12 @@ export default function Home() {
           
           <div className="flex items-center gap-2">
             <Link to={createPageUrl('Discover')}>
-              <Button variant="ghost" size="icon" className="rounded-full relative">
+              <Button variant="ghost" size="icon" className="bg-fuchsia-100 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
                 <Heart className="w-5 h-5 text-slate-600" />
               </Button>
             </Link>
             <Link to={createPageUrl('Chat')}>
-              <Button variant="ghost" size="icon" className="rounded-full relative">
+              <Button variant="ghost" size="icon" className="bg-transparent text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
                 <MessageCircle className="w-5 h-5 text-slate-600" />
                 <NotificationBadge count={unreadCount} />
               </Button>
@@ -170,11 +170,11 @@ export default function Home() {
             </Link>
             <Link to={createPageUrl('Profile')}>
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-violet-200">
-                <img 
-                  src={myProfile?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'} 
+                <img
+                  src={myProfile?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
                   alt="Profile"
-                  className="w-full h-full object-cover"
-                />
+                  className="w-full h-full object-cover" />
+
               </div>
             </Link>
           </div>
@@ -182,61 +182,61 @@ export default function Home() {
       </header>
 
       {/* Sound Notifications */}
-      <MapSoundNotifications 
+      <MapSoundNotifications
         activeUsers={activeUsers}
         userLocation={userLocation}
         currentUserEmail={user?.email}
-        currentUserProfile={myProfile}
-      />
+        currentUserProfile={myProfile} />
+
 
       {/* Main Content */}
       <main className="pt-20 pb-12 px-4">
         <div className="max-w-7xl mx-auto">
           {/* Location Status */}
-          <motion.div 
+          <motion.div
             className="mb-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
+            transition={{ delay: 0.1 }}>
+
             <LocationService onLocationUpdate={handleLocationUpdate} />
           </motion.div>
 
           {/* Map */}
-          <motion.div 
+          <motion.div
             className="h-[60vh] rounded-2xl overflow-hidden shadow-2xl mb-8"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <CityMap 
-              activeUsers={activeUsers} 
+            transition={{ delay: 0.2 }}>
+
+            <CityMap
+              activeUsers={activeUsers}
               currentUserProfile={myProfile}
               userLocation={userLocation}
-              onProfileClick={(profile) => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)}
-            />
+              onProfileClick={(profile) => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)} />
+
           </motion.div>
 
           {/* Pop Up Control - Below the map */}
-          <motion.div 
+          <motion.div
             className="w-full max-w-2xl mx-auto mt-8"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            {!myProfile?.display_name ? (
-              <div className="flex justify-center">
+            transition={{ delay: 0.3 }}>
+
+            {!myProfile?.display_name ?
+            <div className="flex justify-center">
                 <Link to={createPageUrl('Profile')}>
                   <Button className="px-8 py-6 text-lg rounded-full bg-gradient-to-r from-violet-600 to-purple-600 shadow-xl hover:shadow-2xl">
                     <User className="w-5 h-5 mr-2" />
                     Complete Your Profile First
                   </Button>
                 </Link>
-              </div>
-            ) : (
-              <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-violet-100">
-                {!myProfile?.is_popped_up ? (
-                  <div className="space-y-4">
+              </div> :
+
+            <div className="bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl p-6 border border-violet-100">
+                {!myProfile?.is_popped_up ?
+              <div className="space-y-4">
                     <div className="flex items-center gap-2 mb-2">
                       <Sparkles className="w-5 h-5 text-violet-500" />
                       <label className="text-sm font-semibold text-slate-700">
@@ -244,24 +244,24 @@ export default function Home() {
                       </label>
                     </div>
                     <Textarea
-                      value={popupMessage}
-                      onChange={(e) => setPopupMessage(e.target.value)}
-                      placeholder="E.g., Looking for someone to grab coffee with tonight..."
-                      className="resize-none border-violet-200 focus:border-violet-400 rounded-xl text-base"
-                      rows={2}
-                      disabled={isUpdating}
-                    />
+                  value={popupMessage}
+                  onChange={(e) => setPopupMessage(e.target.value)}
+                  placeholder="E.g., Looking for someone to grab coffee with tonight..."
+                  className="resize-none border-violet-200 focus:border-violet-400 rounded-xl text-base"
+                  rows={2}
+                  disabled={isUpdating} />
+
                     <div className="flex justify-center">
                       <PopToggle
-                        isPopped={false}
-                        onToggle={handlePopToggle}
-                        isLoading={isUpdating}
-                        disabled={!popupMessage.trim()}
-                      />
+                    isPopped={false}
+                    onToggle={handlePopToggle}
+                    isLoading={isUpdating}
+                    disabled={!popupMessage.trim()} />
+
                     </div>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
+                  </div> :
+
+              <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
@@ -276,18 +276,18 @@ export default function Home() {
                     </div>
                     <div className="flex justify-center">
                       <PopToggle
-                        isPopped={true}
-                        onToggle={handlePopToggle}
-                        isLoading={isUpdating}
-                      />
+                    isPopped={true}
+                    onToggle={handlePopToggle}
+                    isLoading={isUpdating} />
+
                     </div>
                   </div>
-                )}
+              }
               </div>
-            )}
+            }
           </motion.div>
         </div>
         </main>
-        </div>
-        );
-        }
+        </div>);
+
+}
