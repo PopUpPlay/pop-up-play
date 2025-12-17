@@ -3,7 +3,7 @@ import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function UserMarker({ profile, isCurrentUser }) {
+export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
   const [isHovered, setIsHovered] = useState(false);
   const markerRef = useRef(null);
 
@@ -43,6 +43,11 @@ export default function UserMarker({ profile, isCurrentUser }) {
         mouseout: (e) => {
           setIsHovered(false);
           e.target.closePopup();
+        },
+        click: () => {
+          if (onProfileClick && !isCurrentUser) {
+            onProfileClick(profile);
+          }
         }
       }}
     >

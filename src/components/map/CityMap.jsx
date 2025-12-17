@@ -16,7 +16,7 @@ function MapController({ center }) {
   return null;
 }
 
-export default function CityMap({ activeUsers, currentUserProfile, userLocation }) {
+export default function CityMap({ activeUsers, currentUserProfile, userLocation, onProfileClick }) {
   const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]); // Default NYC
   const [cityCenters, setCityCenters] = useState({});
   
@@ -117,6 +117,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation 
             key={profile.id} 
             profile={profile}
             isCurrentUser={currentUserProfile?.id === profile.id}
+            onProfileClick={onProfileClick}
           />
         ))}
       </MapContainer>

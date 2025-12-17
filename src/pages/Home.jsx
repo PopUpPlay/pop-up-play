@@ -12,11 +12,13 @@ import { User, Settings, Sparkles, MessageCircle, Heart } from 'lucide-react';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import ProfileCard from '@/components/profile/ProfileCard';
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -211,6 +213,7 @@ export default function Home() {
               activeUsers={activeUsers} 
               currentUserProfile={myProfile}
               userLocation={userLocation}
+              onProfileClick={(profile) => setSelectedProfile(profile)}
             />
           </motion.div>
 
@@ -284,7 +287,16 @@ export default function Home() {
             )}
           </motion.div>
         </div>
-      </main>
-    </div>
-  );
-}
+        </main>
+
+        {/* Profile Modal */}
+        {selectedProfile && (
+        <ProfileCard 
+          profile={selectedProfile}
+          onClose={() => setSelectedProfile(null)}
+          onLike={() => {}}
+        />
+        )}
+        </div>
+        );
+        }
