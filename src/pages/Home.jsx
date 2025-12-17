@@ -146,7 +146,7 @@ export default function Home() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-violet-600 to-rose-500 flex items-center justify-center">
               <Sparkles className="w-6 h-6 text-white" />
             </div>
-            <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-rose-500 bg-clip-text text-transparent">Pop Up Play
+            <span className="bg-clip-text text-purple-500 text-xl font-bold from-violet-600 to-rose-500">Pop Up Play
 
             </span>
           </motion.div>
