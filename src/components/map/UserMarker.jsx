@@ -2,12 +2,21 @@ import React, { useState, useRef } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
+import { MessageCircle } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
   const [isHovered, setIsHovered] = useState(false);
   const [popupHovered, setPopupHovered] = useState(false);
   const markerRef = useRef(null);
   const closeTimeoutRef = useRef(null);
+  const navigate = useNavigate();
+
+  const handleChatClick = (e) => {
+    e.stopPropagation();
+    navigate(createPageUrl('Chat') + '?user=' + profile.user_email);
+  };
 
   const createCustomIcon = () => {
     return L.divIcon({
@@ -94,7 +103,17 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
               <p className="text-sm text-slate-700 italic">"{profile.popup_message}"</p>
             </div>
           )}
-          <p className="text-xs text-slate-400 mt-2">📍 {profile.current_city || 'Unknown location'}</p>
+          <div className="flex items-center justify-between mt-2">
+            <p className="text-xs text-slate-400">📍 {profile.current_city || 'Unknown location'}</p>
+            {!isCurrentUser && (
+              <button
+                onClick={handleChatClick}
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-full p-2 shadow-lg transition-all hover:scale-110"
+              >
+                <MessageCircle className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         </div>
       </Popup>
     </Marker>
