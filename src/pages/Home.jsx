@@ -153,7 +153,7 @@ export default function Home() {
           
           <div className="flex items-center gap-2">
             <Link to={createPageUrl('Discover')}>
-              <Button variant="ghost" size="icon" className="bg-fuchsia-100 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
+              <Button variant="ghost" size="icon" className="bg-fuchsia-300 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
                 <Heart className="w-5 h-5 text-slate-600" />
               </Button>
             </Link>
