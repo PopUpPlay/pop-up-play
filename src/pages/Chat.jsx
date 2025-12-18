@@ -14,6 +14,16 @@ export default function Chat() {
   const [selectedMatch, setSelectedMatch] = useState(null);
   const queryClient = useQueryClient();
 
+  // Check for user parameter in URL
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const userEmail = params.get('user');
+    if (userEmail) {
+      // Store it to select match once matches are loaded
+      sessionStorage.setItem('chatWithUser', userEmail);
+    }
+  }, []);
+
   useEffect(() => {
     const loadUser = async () => {
       try {
@@ -38,6 +48,20 @@ export default function Chat() {
     enabled: !!user?.email,
     refetchInterval: 10000
   });
+
+  // Auto-select match if user parameter provided
+  useEffect(() => {
+    const targetUser = sessionStorage.getItem('chatWithUser');
+    if (targetUser && matches.length > 0 && user?.email) {
+      const match = matches.find(m => 
+        m.user1_email === targetUser || m.user2_email === targetUser
+      );
+      if (match) {
+        setSelectedMatch(match);
+        sessionStorage.removeItem('chatWithUser');
+      }
+    }
+  }, [matches, user?.email]);
 
   const { data: profiles = [] } = useQuery({
     queryKey: ['allProfiles'],
