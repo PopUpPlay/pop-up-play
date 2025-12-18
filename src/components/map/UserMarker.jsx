@@ -12,8 +12,8 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
       className: 'custom-marker',
       html: `
         <div class="relative">
-          <div class="w-12 h-12 rounded-full border-3 ${isCurrentUser ? 'border-violet-500' : 'border-rose-400'} overflow-hidden shadow-lg bg-white p-0.5 transform transition-transform hover:scale-110">
-            <img src="${profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}" class="w-full h-full rounded-full object-cover" />
+          <div class="w-12 h-12 rounded-full border-3 ${isCurrentUser ? 'border-violet-500' : 'border-rose-400'} overflow-hidden shadow-lg bg-white transform transition-transform hover:scale-110 flex items-center justify-center">
+            <img src="${profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}" class="w-full h-full object-cover" style="object-fit: cover; object-position: center;" />
           </div>
           <div class="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-3 h-3 ${isCurrentUser ? 'bg-violet-500' : 'bg-rose-400'} rotate-45"></div>
         </div>
