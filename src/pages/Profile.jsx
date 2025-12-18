@@ -85,7 +85,7 @@ export default function Profile() {
         videos: displayProfile.videos || []
       });
     } else if (user && isOwnProfile) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         display_name: user.full_name || ''
       }));
@@ -117,8 +117,8 @@ export default function Profile() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -134,53 +134,53 @@ export default function Profile() {
           <h1 className="text-lg font-semibold text-slate-800">
             {isOwnProfile ? 'Edit Profile' : displayProfile?.display_name || 'Profile'}
           </h1>
-          {isOwnProfile && (
-            <Button 
-              onClick={handleSave}
-              disabled={saveMutation.isPending}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 rounded-full"
-            >
-              {saveMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Save className="w-4 h-4" />
-              )}
+          {isOwnProfile &&
+          <Button
+            onClick={handleSave}
+            disabled={saveMutation.isPending} className="bg-violet-600 text-neutral-50 px-4 py-2 text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 from-violet-600 to-purple-600">
+
+
+              {saveMutation.isPending ?
+            <Loader2 className="w-4 h-4 animate-spin" /> :
+
+            <Save className="w-4 h-4" />
+            }
             </Button>
-          )}
+          }
           {!isOwnProfile && <div className="w-10"></div>}
         </div>
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
         {/* Avatar Section */}
-        <motion.div 
+        <motion.div
           className="flex justify-center mb-8"
           initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
-          {isOwnProfile ? (
-            <AvatarUpload 
-              currentAvatar={formData.avatar_url}
-              onAvatarChange={(url) => setFormData(prev => ({ ...prev, avatar_url: url }))}
-            />
-          ) : (
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-              <img 
-                src={formData.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'} 
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+          animate={{ opacity: 1, scale: 1 }}>
+
+          {isOwnProfile ?
+          <AvatarUpload
+            currentAvatar={formData.avatar_url}
+            onAvatarChange={(url) => setFormData((prev) => ({ ...prev, avatar_url: url }))} /> :
+
+
+          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+              <img
+              src={formData.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'}
+              alt="Profile"
+              className="w-full h-full object-cover" />
+
             </div>
-          )}
+          }
         </motion.div>
 
         {/* Profile Form */}
-        <motion.div 
+        <motion.div
           className="bg-white rounded-2xl shadow-lg p-6 mb-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
+          transition={{ delay: 0.1 }}>
+
           <h2 className="text-lg font-semibold text-slate-800 mb-4">Basic Info</h2>
           
           <div className="space-y-4">
@@ -189,11 +189,11 @@ export default function Profile() {
               <Input
                 id="display_name"
                 value={formData.display_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, display_name: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, display_name: e.target.value }))}
                 placeholder="Your display name"
                 className="mt-1 rounded-xl border-slate-200"
-                disabled={!isOwnProfile}
-              />
+                disabled={!isOwnProfile} />
+
             </div>
 
             <div>
@@ -201,12 +201,12 @@ export default function Profile() {
               <Textarea
                 id="bio"
                 value={formData.bio}
-                onChange={(e) => setFormData(prev => ({ ...prev, bio: e.target.value }))}
+                onChange={(e) => setFormData((prev) => ({ ...prev, bio: e.target.value }))}
                 placeholder="Tell others about yourself..."
                 className="mt-1 rounded-xl border-slate-200 resize-none"
                 rows={3}
-                disabled={!isOwnProfile}
-              />
+                disabled={!isOwnProfile} />
+
             </div>
 
             <div className="grid grid-cols-3 gap-4">
@@ -216,20 +216,20 @@ export default function Profile() {
                   id="age"
                   type="number"
                   value={formData.age}
-                  onChange={(e) => setFormData(prev => ({ ...prev, age: parseInt(e.target.value) || '' }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, age: parseInt(e.target.value) || '' }))}
                   placeholder="Age"
                   className="mt-1 rounded-xl border-slate-200"
-                  disabled={!isOwnProfile}
-                />
+                  disabled={!isOwnProfile} />
+
               </div>
 
               <div>
                 <Label className="text-slate-600">Gender</Label>
-                <Select 
-                  value={formData.gender} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, gender: value }))}
-                  disabled={!isOwnProfile}
-                >
+                <Select
+                  value={formData.gender}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, gender: value }))}
+                  disabled={!isOwnProfile}>
+
                   <SelectTrigger className="mt-1 rounded-xl border-slate-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
@@ -244,11 +244,11 @@ export default function Profile() {
 
               <div>
                 <Label className="text-slate-600">Interested In</Label>
-                <Select 
-                  value={formData.interested_in} 
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, interested_in: value }))}
-                  disabled={!isOwnProfile}
-                >
+                <Select
+                  value={formData.interested_in}
+                  onValueChange={(value) => setFormData((prev) => ({ ...prev, interested_in: value }))}
+                  disabled={!isOwnProfile}>
+
                   <SelectTrigger className="mt-1 rounded-xl border-slate-200">
                     <SelectValue placeholder="Select" />
                   </SelectTrigger>
@@ -264,12 +264,12 @@ export default function Profile() {
         </motion.div>
 
         {/* Media Galleries */}
-        <motion.div 
+        <motion.div
           className="bg-white rounded-2xl shadow-lg p-6"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+          transition={{ delay: 0.2 }}>
+
           <Tabs defaultValue="photos" className="w-full">
             <TabsList className="w-full mb-4 bg-slate-100 rounded-xl p-1">
               <TabsTrigger value="photos" className="flex-1 rounded-lg data-[state=active]:bg-white">
@@ -281,23 +281,23 @@ export default function Profile() {
             </TabsList>
             
             <TabsContent value="photos">
-              <PhotoGallery 
+              <PhotoGallery
                 photos={formData.photos}
-                onPhotosChange={(photos) => setFormData(prev => ({ ...prev, photos }))}
-                editable={isOwnProfile}
-              />
+                onPhotosChange={(photos) => setFormData((prev) => ({ ...prev, photos }))}
+                editable={isOwnProfile} />
+
             </TabsContent>
             
             <TabsContent value="videos">
-              <VideoGallery 
+              <VideoGallery
                 videos={formData.videos}
-                onVideosChange={(videos) => setFormData(prev => ({ ...prev, videos }))}
-                editable={isOwnProfile}
-              />
+                onVideosChange={(videos) => setFormData((prev) => ({ ...prev, videos }))}
+                editable={isOwnProfile} />
+
             </TabsContent>
           </Tabs>
         </motion.div>
       </main>
-    </div>
-  );
+    </div>);
+
 }
