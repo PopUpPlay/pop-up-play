@@ -137,7 +137,7 @@ export default function Profile() {
           {isOwnProfile &&
           <Button
             onClick={handleSave}
-            disabled={saveMutation.isPending} className="bg-violet-600 text-neutral-50 px-4 py-2 text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 from-violet-600 to-purple-600">
+            disabled={saveMutation.isPending} className="bg-violet-600 text-purple-300 px-4 py-2 text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 from-violet-600 to-purple-600">
 
 
               {saveMutation.isPending ?
