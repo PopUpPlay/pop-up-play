@@ -5,7 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
   const [isHovered, setIsHovered] = useState(false);
+  const [popupHovered, setPopupHovered] = useState(false);
   const markerRef = useRef(null);
+  const closeTimeoutRef = useRef(null);
 
   const createCustomIcon = () => {
     return L.divIcon({
@@ -37,8 +39,19 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
       ref={markerRef}
       eventHandlers={{
         mouseover: (e) => {
+          if (closeTimeoutRef.current) {
+            clearTimeout(closeTimeoutRef.current);
+          }
           setIsHovered(true);
           e.target.openPopup();
+        },
+        mouseout: (e) => {
+          setIsHovered(false);
+          closeTimeoutRef.current = setTimeout(() => {
+            if (!popupHovered && markerRef.current) {
+              markerRef.current.closePopup();
+            }
+          }, 200);
         },
         click: () => {
           if (onProfileClick) {
@@ -48,7 +61,23 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
       }}
     >
       <Popup className="custom-popup" closeButton={false}>
-        <div className="p-3 min-w-[200px]">
+        <div 
+          className="p-3 min-w-[200px]"
+          onMouseEnter={() => {
+            if (closeTimeoutRef.current) {
+              clearTimeout(closeTimeoutRef.current);
+            }
+            setPopupHovered(true);
+          }}
+          onMouseLeave={() => {
+            setPopupHovered(false);
+            closeTimeoutRef.current = setTimeout(() => {
+              if (markerRef.current) {
+                markerRef.current.closePopup();
+              }
+            }, 200);
+          }}
+        >
           <div className="flex items-center gap-3 mb-2">
             <img 
               src={profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'} 
