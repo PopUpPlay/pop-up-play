@@ -105,14 +105,12 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
           )}
           <div className="flex items-center justify-between mt-2">
             <p className="text-xs text-slate-400">📍 {profile.current_city || 'Unknown location'}</p>
-            {!isCurrentUser && (
-              <button
-                onClick={handleChatClick}
-                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-full p-2 shadow-lg transition-all hover:scale-110"
-              >
-                <MessageCircle className="w-4 h-4" />
-              </button>
-            )}
+            <button
+              onClick={handleChatClick}
+              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-full p-2 shadow-lg transition-all hover:scale-110"
+            >
+              <MessageCircle className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </Popup>
