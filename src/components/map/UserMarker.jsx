@@ -40,10 +40,6 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
           setIsHovered(true);
           e.target.openPopup();
         },
-        mouseout: (e) => {
-          setIsHovered(false);
-          e.target.closePopup();
-        },
         click: () => {
           if (onProfileClick) {
             onProfileClick(profile);
