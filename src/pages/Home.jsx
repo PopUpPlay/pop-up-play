@@ -143,11 +143,9 @@ export default function Home() {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}>
 
-            <img 
-              src="https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=100&h=100&fit=crop" 
-              alt="Pop Up Play Logo" 
-              className="w-10 h-10 rounded-xl object-cover"
-            />
+            <div className="bg-gradient-to-r my-1 rounded-xl w-10 h-10 from-violet-600 to-rose-500 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-white" />
+            </div>
             <span className="bg-clip-text text-purple-500 text-xl font-bold from-violet-600 to-rose-500">Pop Up Play
 
             </span>
