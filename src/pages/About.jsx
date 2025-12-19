@@ -27,7 +27,7 @@ export default function About() {
 
   const { data: aboutVideos = [] } = useQuery({
     queryKey: ['aboutVideos'],
-    queryFn: () => base44.entities.AboutVideo.list(),
+    queryFn: () => base44.entities.AboutVideo.list()
   });
 
   const deleteMutation = useMutation({
@@ -35,7 +35,7 @@ export default function About() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['aboutVideos'] });
       toast.success('Video removed successfully');
-    },
+    }
   });
 
   const handleUpload = async (e) => {
@@ -54,7 +54,7 @@ export default function About() {
       // Create new video record
       await base44.entities.AboutVideo.create({
         video_url: file_url,
-        uploaded_by: user.email,
+        uploaded_by: user.email
       });
 
       queryClient.invalidateQueries({ queryKey: ['aboutVideos'] });
@@ -73,8 +73,8 @@ export default function About() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -97,45 +97,45 @@ export default function About() {
         <motion.div
           className="bg-white rounded-2xl shadow-lg overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-        >
-          {currentVideo ? (
-            <div className="relative">
+          animate={{ opacity: 1, y: 0 }}>
+
+          {currentVideo ?
+          <div className="relative">
               <video
-                src={currentVideo.video_url}
-                controls
-                className="w-full aspect-video bg-slate-900"
-              >
+              src={currentVideo.video_url}
+              controls
+              className="w-full aspect-video bg-slate-900">
+
                 Your browser does not support the video tag.
               </video>
-              {isAdmin && (
-                <div className="p-4 border-t border-slate-200">
+              {isAdmin &&
+            <div className="p-4 border-t border-slate-200">
                   <div className="flex items-center justify-between">
                     <p className="text-sm text-slate-500">
                       Uploaded by {currentVideo.uploaded_by}
                     </p>
                     <Button
-                      variant="destructive"
-                      size="sm"
-                      onClick={() => deleteMutation.mutate(currentVideo.id)}
-                      disabled={deleteMutation.isPending}
-                      className="rounded-full"
-                    >
-                      {deleteMutation.isPending ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        <>
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => deleteMutation.mutate(currentVideo.id)}
+                  disabled={deleteMutation.isPending}
+                  className="rounded-full">
+
+                      {deleteMutation.isPending ?
+                  <Loader2 className="w-4 h-4 animate-spin" /> :
+
+                  <>
                           <Trash2 className="w-4 h-4 mr-2" />
                           Remove Video
                         </>
-                      )}
+                  }
                     </Button>
                   </div>
                 </div>
-              )}
-            </div>
-          ) : (
-            <div className="aspect-video bg-gradient-to-br from-violet-100 to-rose-100 flex items-center justify-center">
+            }
+            </div> :
+
+          <div className="aspect-video bg-gradient-to-br from-violet-100 to-rose-100 flex items-center justify-center">
               <div className="text-center p-8">
                 <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-white/80 flex items-center justify-center">
                   <Upload className="w-10 h-10 text-violet-400" />
@@ -144,60 +144,60 @@ export default function About() {
                   {isAdmin ? 'No video uploaded yet' : 'Coming soon'}
                 </h3>
                 <p className="text-sm text-slate-500">
-                  {isAdmin
-                    ? 'Upload a video to introduce Pop Up Play to users'
-                    : 'Check back later for more information'}
+                  {isAdmin ?
+                'Upload a video to introduce Pop Up Play to users' :
+                'Check back later for more information'}
                 </p>
               </div>
             </div>
-          )}
+          }
         </motion.div>
 
         {/* Admin Upload Section */}
-        {isAdmin && (
-          <motion.div
-            className="mt-6"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-          >
+        {isAdmin &&
+        <motion.div
+          className="mt-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}>
+
             <div className="bg-white rounded-2xl shadow-lg p-6">
               <h2 className="text-lg font-semibold text-slate-800 mb-4">
                 Admin Controls
               </h2>
               <label className="block">
                 <input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleUpload}
-                  disabled={uploading}
-                  className="hidden"
-                  id="video-upload"
-                />
+                type="file"
+                accept="video/*"
+                onChange={handleUpload}
+                disabled={uploading}
+                className="hidden"
+                id="video-upload" />
+
                 <Button
-                  asChild
-                  disabled={uploading}
-                  className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700"
-                >
-                  <label htmlFor="video-upload" className="cursor-pointer">
-                    {uploading ? (
-                      <>
+                asChild
+                disabled={uploading}
+                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700">
+
+                  <label htmlFor="video-upload" className="bg-gradient-to-r text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 w-full from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 cursor-pointer">
+                    {uploading ?
+                  <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                         Uploading...
-                      </>
-                    ) : (
-                      <>
+                      </> :
+
+                  <>
                         <Upload className="w-5 h-5 mr-2" />
                         {currentVideo ? 'Replace Video' : 'Upload Video'}
                       </>
-                    )}
+                  }
                   </label>
                 </Button>
               </label>
             </div>
           </motion.div>
-        )}
+        }
       </main>
-    </div>
-  );
+    </div>);
+
 }
