@@ -105,15 +105,15 @@ export default function VideoCall() {
         // Create peer connection
         const config = {
           iceServers: [
-            { urls: 'stun:stun.l.google.com:19302' },
-            { urls: 'stun:stun1.l.google.com:19302' }
-          ]
+          { urls: 'stun:stun.l.google.com:19302' },
+          { urls: 'stun:stun1.l.google.com:19302' }]
+
         };
         const pc = new RTCPeerConnection(config);
         peerConnectionRef.current = pc;
 
         // Add local stream tracks to peer connection
-        stream.getTracks().forEach(track => {
+        stream.getTracks().forEach((track) => {
           pc.addTrack(track, stream);
         });
 
@@ -158,7 +158,7 @@ export default function VideoCall() {
     return () => {
       // Cleanup
       if (localStreamRef.current) {
-        localStreamRef.current.getTracks().forEach(track => track.stop());
+        localStreamRef.current.getTracks().forEach((track) => track.stop());
       }
       if (peerConnectionRef.current) {
         peerConnectionRef.current.close();
@@ -230,7 +230,7 @@ export default function VideoCall() {
     });
     setCallStatus('ended');
     if (localStreamRef.current) {
-      localStreamRef.current.getTracks().forEach(track => track.stop());
+      localStreamRef.current.getTracks().forEach((track) => track.stop());
     }
     if (peerConnectionRef.current) {
       peerConnectionRef.current.close();
@@ -241,8 +241,8 @@ export default function VideoCall() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -260,8 +260,8 @@ export default function VideoCall() {
               <img
                 src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
                 alt={otherProfile.display_name}
-                className="w-10 h-10 rounded-full border-2 border-violet-400"
-              />
+                className="w-10 h-10 rounded-full border-2 border-violet-400" />
+
               <div>
                 <h2 className="text-white font-semibold">{otherProfile.display_name}</h2>
                 <p className="text-xs text-slate-400">
@@ -283,99 +283,99 @@ export default function VideoCall() {
           ref={remoteVideoRef}
           autoPlay
           playsInline
-          className="w-full h-full object-cover"
-        />
+          className="w-full h-full object-cover" />
+
 
         {/* Connection Status Overlay */}
-        {isConnecting && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80">
+        {isConnecting &&
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/80">
             <div className="text-center">
               <Loader2 className="w-12 h-12 text-violet-400 animate-spin mx-auto mb-4" />
               <p className="text-white text-lg">Connecting...</p>
             </div>
           </div>
-        )}
+        }
 
         {/* Call Ended Overlay */}
-        {callStatus === 'ended' && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-900/90">
+        {callStatus === 'ended' &&
+        <div className="absolute inset-0 flex items-center justify-center bg-slate-900/90">
             <div className="text-center">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-red-500/20 flex items-center justify-center">
                 <PhoneOff className="w-10 h-10 text-red-400" />
               </div>
               <h3 className="text-white text-xl font-semibold mb-2">Call Ended</h3>
               <Link to={createPageUrl('Home')}>
-                <Button className="mt-4 bg-violet-600 hover:bg-violet-700">
+                <Button className="bg-purple-700 text-slate-50 mt-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-9 hover:bg-violet-700">
                   Return to Home
                 </Button>
               </Link>
             </div>
           </div>
-        )}
+        }
 
         {/* Local Video (Picture-in-Picture) */}
         <motion.div
           className="absolute top-4 right-4 w-32 h-48 rounded-xl overflow-hidden shadow-2xl border-2 border-white"
           initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-        >
+          animate={{ opacity: 1, scale: 1 }}>
+
           <video
             ref={localVideoRef}
             autoPlay
             playsInline
             muted
-            className="w-full h-full object-cover"
-          />
-          {!isVideoEnabled && (
-            <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
+            className="w-full h-full object-cover" />
+
+          {!isVideoEnabled &&
+          <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
               <VideoOff className="w-8 h-8 text-white" />
             </div>
-          )}
+          }
         </motion.div>
 
         {/* Controls */}
-        {callStatus !== 'ended' && (
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
+        {callStatus !== 'ended' &&
+        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
             <motion.div
-              className="bg-slate-800/90 backdrop-blur-lg rounded-full p-4 flex items-center gap-4 shadow-2xl"
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-            >
+            className="bg-slate-800/90 backdrop-blur-lg rounded-full p-4 flex items-center gap-4 shadow-2xl"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}>
+
               <Button
-                size="icon"
-                onClick={toggleAudio}
-                className={`rounded-full w-14 h-14 ${
-                  isAudioEnabled
-                    ? 'bg-slate-700 hover:bg-slate-600'
-                    : 'bg-red-500 hover:bg-red-600'
-                }`}
-              >
+              size="icon"
+              onClick={toggleAudio}
+              className={`rounded-full w-14 h-14 ${
+              isAudioEnabled ?
+              'bg-slate-700 hover:bg-slate-600' :
+              'bg-red-500 hover:bg-red-600'}`
+              }>
+
                 {isAudioEnabled ? <Mic className="w-6 h-6" /> : <MicOff className="w-6 h-6" />}
               </Button>
 
               <Button
-                size="icon"
-                onClick={endCall}
-                className="rounded-full w-16 h-16 bg-red-500 hover:bg-red-600"
-              >
+              size="icon"
+              onClick={endCall}
+              className="rounded-full w-16 h-16 bg-red-500 hover:bg-red-600">
+
                 <PhoneOff className="w-6 h-6" />
               </Button>
 
               <Button
-                size="icon"
-                onClick={toggleVideo}
-                className={`rounded-full w-14 h-14 ${
-                  isVideoEnabled
-                    ? 'bg-slate-700 hover:bg-slate-600'
-                    : 'bg-red-500 hover:bg-red-600'
-                }`}
-              >
+              size="icon"
+              onClick={toggleVideo}
+              className={`rounded-full w-14 h-14 ${
+              isVideoEnabled ?
+              'bg-slate-700 hover:bg-slate-600' :
+              'bg-red-500 hover:bg-red-600'}`
+              }>
+
                 {isVideoEnabled ? <Video className="w-6 h-6" /> : <VideoOff className="w-6 h-6" />}
               </Button>
             </motion.div>
           </div>
-        )}
+        }
       </main>
-    </div>
-  );
+    </div>);
+
 }
