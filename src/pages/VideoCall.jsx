@@ -305,7 +305,7 @@ export default function VideoCall() {
               </div>
               <h3 className="text-white text-xl font-semibold mb-2">Call Ended</h3>
               <Link to={createPageUrl('Home')}>
-                <Button className="bg-purple-700 text-slate-50 mt-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-9 hover:bg-violet-700">
+                <Button className="bg-purple-700 text-[#ffffff] mt-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-9 hover:bg-violet-700">
                   Return to Home
                 </Button>
               </Link>
