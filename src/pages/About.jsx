@@ -87,7 +87,7 @@ export default function About() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
-          <h1 className="text-xl font-bold text-slate-800">About Pop Up Play</h1>
+          <h1 className="text-purple-600 text-xl font-bold">About Pop Up Play</h1>
           <div className="w-10"></div>
         </div>
       </header>
