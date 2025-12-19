@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 import Discover from './pages/Discover';
 import VideoCall from './pages/VideoCall';
+import About from './pages/About';
 import __Layout from './Layout.jsx';
 
 
@@ -14,6 +15,7 @@ export const PAGES = {
     "Chat": Chat,
     "Discover": Discover,
     "VideoCall": VideoCall,
+    "About": About,
 }
 
 export const pagesConfig = {
