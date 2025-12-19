@@ -3,9 +3,9 @@ import { Toaster } from 'sonner';
 import { base44 } from '@/api/base44Client';
 
 export default function Layout({ children }) {
-  // Auto pop-down on page unload/close
+  // Auto pop-down on page unload/close or logout
   useEffect(() => {
-    const handleBeforeUnload = async () => {
+    const popDownUser = async () => {
       try {
         const user = await base44.auth.me();
         const profiles = await base44.entities.UserProfile.filter({ 
@@ -19,14 +19,29 @@ export default function Layout({ children }) {
           });
         }
       } catch (error) {
-        // Silently fail
+        // Silently fail - user might already be logged out
       }
     };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+    // Handle page visibility changes (tab close, navigate away)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        popDownUser();
+      }
+    };
+
+    // Intercept logout calls
+    const originalLogout = base44.auth.logout;
+    base44.auth.logout = async function(...args) {
+      await popDownUser();
+      return originalLogout.apply(this, args);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      base44.auth.logout = originalLogout;
     };
   }, []);
   return (
