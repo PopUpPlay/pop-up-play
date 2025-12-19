@@ -3,6 +3,7 @@ import Profile from './pages/Profile';
 import Dashboard from './pages/Dashboard';
 import Chat from './pages/Chat';
 import Discover from './pages/Discover';
+import VideoCall from './pages/VideoCall';
 import __Layout from './Layout.jsx';
 
 
@@ -12,6 +13,7 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Chat": Chat,
     "Discover": Discover,
+    "VideoCall": VideoCall,
 }
 
 export const pagesConfig = {

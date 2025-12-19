@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Video } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -16,6 +16,11 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
   const handleChatClick = (e) => {
     e.stopPropagation();
     navigate(createPageUrl('Chat') + '?user=' + profile.user_email);
+  };
+
+  const handleVideoCall = (e) => {
+    e.stopPropagation();
+    navigate(createPageUrl('VideoCall') + '?user=' + profile.user_email);
   };
 
   const createCustomIcon = () => {
@@ -103,14 +108,23 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
               <p className="text-sm text-slate-700 italic">"{profile.popup_message}"</p>
             </div>
           )}
-          <div className="flex items-center justify-between mt-2">
+          <div className="mt-3 space-y-2">
             <p className="text-xs text-slate-400">📍 {profile.current_city || 'Unknown location'}</p>
-            <button
-              onClick={handleChatClick}
-              className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-full p-2 shadow-lg transition-all hover:scale-110"
-            >
-              <MessageCircle className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleVideoCall}
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg px-3 py-2 shadow-lg transition-all hover:scale-105 flex items-center justify-center gap-2"
+              >
+                <Video className="w-4 h-4" />
+                <span className="text-xs font-semibold">Video Verify</span>
+              </button>
+              <button
+                onClick={handleChatClick}
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-lg p-2 shadow-lg transition-all hover:scale-110"
+              >
+                <MessageCircle className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       </Popup>
