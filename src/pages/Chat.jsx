@@ -42,7 +42,7 @@ export default function Chat() {
       if (!user?.email) return [];
       const allMatches = await base44.entities.Match.filter({ status: 'matched' });
       return allMatches.filter(
-        m => m.user1_email === user.email || m.user2_email === user.email
+        (m) => m.user1_email === user.email || m.user2_email === user.email
       );
     },
     enabled: !!user?.email,
@@ -53,8 +53,8 @@ export default function Chat() {
   useEffect(() => {
     const targetUser = sessionStorage.getItem('chatWithUser');
     if (targetUser && matches.length > 0 && user?.email) {
-      const match = matches.find(m => 
-        m.user1_email === targetUser || m.user2_email === targetUser
+      const match = matches.find((m) =>
+      m.user1_email === targetUser || m.user2_email === targetUser
       );
       if (match) {
         setSelectedMatch(match);
@@ -81,9 +81,9 @@ export default function Chat() {
 
   const sendMessageMutation = useMutation({
     mutationFn: async ({ content, attachment_url }) => {
-      const otherUserEmail = selectedMatch.user1_email === user.email 
-        ? selectedMatch.user2_email 
-        : selectedMatch.user1_email;
+      const otherUserEmail = selectedMatch.user1_email === user.email ?
+      selectedMatch.user2_email :
+      selectedMatch.user1_email;
 
       return base44.entities.Message.create({
         match_id: selectedMatch.id,
@@ -106,12 +106,12 @@ export default function Chat() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
         <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
-      </div>
-    );
+      </div>);
+
   }
 
-  const otherProfile = selectedMatch ? profiles.find(p => 
-    p.user_email === (selectedMatch.user1_email === user.email ? selectedMatch.user2_email : selectedMatch.user1_email)
+  const otherProfile = selectedMatch ? profiles.find((p) =>
+  p.user_email === (selectedMatch.user1_email === user.email ? selectedMatch.user2_email : selectedMatch.user1_email)
   ) : null;
 
   return (
@@ -125,7 +125,7 @@ export default function Chat() {
             </Button>
           </Link>
           <MessageCircle className="w-6 h-6 text-violet-600" />
-          <h1 className="text-xl font-bold text-slate-800">Messages</h1>
+          <h1 className="text-violet-600 text-xl font-bold">Messages</h1>
         </div>
       </header>
 
@@ -145,8 +145,8 @@ export default function Chat() {
                 messages={messages}
                 selectedMatchId={selectedMatch?.id}
                 onSelectMatch={setSelectedMatch}
-                currentUserEmail={user.email}
-              />
+                currentUserEmail={user.email} />
+
             </div>
 
             {/* Conversation - Hidden on mobile when no chat selected */}
@@ -154,20 +154,20 @@ export default function Chat() {
               ${selectedMatch ? 'block' : 'hidden md:flex md:items-center md:justify-center'}
               h-full
             `}>
-              {selectedMatch && otherProfile ? (
-                <ChatConversation
-                  match={selectedMatch}
-                  otherProfile={otherProfile}
-                  messages={messages.sort((a, b) => 
-                    new Date(a.created_date) - new Date(b.created_date)
-                  )}
-                  currentUserEmail={user.email}
-                  onBack={() => setSelectedMatch(null)}
-                  onSendMessage={handleSendMessage}
-                  isSending={sendMessageMutation.isPending}
-                />
-              ) : (
-                <div className="text-center p-8">
+              {selectedMatch && otherProfile ?
+              <ChatConversation
+                match={selectedMatch}
+                otherProfile={otherProfile}
+                messages={messages.sort((a, b) =>
+                new Date(a.created_date) - new Date(b.created_date)
+                )}
+                currentUserEmail={user.email}
+                onBack={() => setSelectedMatch(null)}
+                onSendMessage={handleSendMessage}
+                isSending={sendMessageMutation.isPending} /> :
+
+
+              <div className="text-center p-8">
                   <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-violet-100 flex items-center justify-center">
                     <MessageCircle className="w-10 h-10 text-violet-400" />
                   </div>
@@ -178,11 +178,11 @@ export default function Chat() {
                     Choose a match to start chatting
                   </p>
                 </div>
-              )}
+              }
             </div>
           </div>
         </div>
       </main>
-    </div>
-  );
+    </div>);
+
 }
