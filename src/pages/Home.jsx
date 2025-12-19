@@ -138,19 +138,8 @@ export default function Home() {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
-          <motion.div
-            className="flex items-center gap-2"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}>
+          <div></div>
 
-            <div className="bg-gradient-to-r my-1 rounded-xl w-10 h-10 from-violet-600 to-rose-500 flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-white" />
-            </div>
-            <span className="bg-clip-text text-purple-500 text-xl font-bold from-violet-600 to-rose-500">Pop Up Play
-
-            </span>
-          </motion.div>
-          
           <div className="flex items-center gap-2">
             <Link to={createPageUrl('About')}>
               <Button variant="ghost" size="icon" className="bg-blue-300 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
