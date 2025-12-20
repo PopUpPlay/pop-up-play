@@ -13,6 +13,7 @@ import NotificationBadge from '@/components/notifications/NotificationBadge';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import ScrollControl from '@/components/map/ScrollControl';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -198,7 +199,7 @@ export default function Home() {
 
           {/* Map */}
           <motion.div
-            className="h-[60vh] rounded-2xl overflow-hidden shadow-2xl mb-8"
+            className="h-[60vh] rounded-2xl overflow-hidden shadow-2xl mb-8 relative"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2 }}>
@@ -209,6 +210,7 @@ export default function Home() {
               userLocation={userLocation}
               onProfileClick={(profile) => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)} />
 
+            <ScrollControl />
           </motion.div>
 
           {/* Pop Up Control - Below the map */}
