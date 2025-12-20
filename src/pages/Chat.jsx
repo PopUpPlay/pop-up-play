@@ -36,16 +36,30 @@ export default function Chat() {
     loadUser();
   }, []);
 
+  const { data: blockedUsers = [] } = useQuery({
+    queryKey: ['blockedUsers', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      return base44.entities.BlockedUser.filter({ blocker_email: user.email });
+    },
+    enabled: !!user?.email
+  });
+
   const { data: matches = [] } = useQuery({
     queryKey: ['matches', user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
       const allMatches = await base44.entities.Match.filter({ status: 'matched' });
-      return allMatches.filter(
+      const myMatches = allMatches.filter(
         (m) => m.user1_email === user.email || m.user2_email === user.email
       );
+      // Filter out matches with blocked users
+      return myMatches.filter(match => {
+        const otherUserEmail = match.user1_email === user.email ? match.user2_email : match.user1_email;
+        return !blockedUsers.some(b => b.blocked_email === otherUserEmail);
+      });
     },
-    enabled: !!user?.email,
+    enabled: !!user?.email && blockedUsers !== undefined,
     refetchInterval: 10000
   });
 

@@ -58,6 +58,15 @@ export default function Discover() {
     enabled: !!user?.email
   });
 
+  const { data: blockedUsers = [] } = useQuery({
+    queryKey: ['blockedUsers', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      return base44.entities.BlockedUser.filter({ blocker_email: user.email });
+    },
+    enabled: !!user?.email
+  });
+
   const likeMutation = useMutation({
     mutationFn: async (targetProfile) => {
       // Check if they already liked us
@@ -101,12 +110,14 @@ export default function Discover() {
     likeMutation.mutate(profile);
   };
 
-  // Filter out already matched/liked profiles
+  // Filter out already matched/liked profiles and blocked users
   const availableProfiles = activeProfiles.filter(profile => {
-    return !myMatches.some(match => 
+    const isMatched = myMatches.some(match => 
       (match.user1_email === profile.user_email && match.user2_email === user?.email) ||
       (match.user2_email === profile.user_email && match.user1_email === user?.email)
     );
+    const isBlocked = blockedUsers.some(b => b.blocked_email === profile.user_email);
+    return !isMatched && !isBlocked;
   });
 
   if (!user || isLoading) {
