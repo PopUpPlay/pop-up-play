@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Toaster } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import SessionManager from '@/components/auth/SessionManager';
+import InactivityManager from '@/components/auth/InactivityManager';
 
 export default function Layout({ children }) {
   // Auto pop-down on page unload/close or logout
@@ -48,6 +49,7 @@ export default function Layout({ children }) {
   return (
     <div className="min-h-screen bg-slate-50">
       <SessionManager />
+      <InactivityManager />
       <style>{`
         :root {
           --primary: 139 92 246;
