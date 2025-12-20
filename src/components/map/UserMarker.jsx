@@ -28,15 +28,15 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
       className: 'custom-marker',
       html: `
         <div class="relative">
-          <div class="w-12 h-12 rounded-full border-3 ${isCurrentUser ? 'border-violet-500' : 'border-rose-400'} overflow-hidden shadow-lg bg-white transform transition-transform hover:scale-110">
+          <div class="w-9 h-9 rounded-full border-2 ${isCurrentUser ? 'border-violet-500' : 'border-rose-400'} overflow-hidden shadow-lg bg-white transform transition-transform hover:scale-110">
             <img src="${profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}" class="w-full h-full" style="object-fit: cover; object-position: center; width: 100%; height: 100%;" />
           </div>
-          <div class="absolute left-1/2 transform -translate-x-1/2 w-3 h-3 ${isCurrentUser ? 'bg-violet-500' : 'bg-rose-400'} rotate-45" style="bottom: -6px;"></div>
+          <div class="absolute left-1/2 transform -translate-x-1/2 w-2.5 h-2.5 ${isCurrentUser ? 'bg-violet-500' : 'bg-rose-400'} rotate-45" style="bottom: -5px;"></div>
         </div>
       `,
-      iconSize: [48, 56],
-      iconAnchor: [24, 56],
-      popupAnchor: [0, -56]
+      iconSize: [36, 44],
+      iconAnchor: [18, 44],
+      popupAnchor: [0, -44]
     });
   };
 
