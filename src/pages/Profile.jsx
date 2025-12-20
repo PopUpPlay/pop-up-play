@@ -21,6 +21,7 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [viewingUserEmail, setViewingUserEmail] = useState(null);
   const [showDuplicateError, setShowDuplicateError] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
@@ -123,6 +124,23 @@ export default function Profile() {
     }
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async () => {
+      if (myProfile) {
+        await base44.entities.UserProfile.delete(myProfile.id);
+      }
+    },
+    onSuccess: () => {
+      toast.success('Account deleted successfully');
+      setTimeout(() => {
+        base44.auth.logout();
+      }, 1000);
+    },
+    onError: () => {
+      toast.error('Failed to delete account');
+    }
+  });
+
   const handleSave = () => {
     // Validate required fields
     if (!formData.display_name || !formData.bio || !formData.age || !formData.gender || !formData.interested_in || !formData.avatar_url) {
@@ -130,6 +148,11 @@ export default function Profile() {
       return;
     }
     saveMutation.mutate(formData);
+  };
+
+  const handleDeleteAccount = () => {
+    deleteMutation.mutate();
+    setShowDeleteDialog(false);
   };
 
   if (!user || isLoading || viewingLoading) {
@@ -154,6 +177,26 @@ export default function Profile() {
           <AlertDialogFooter>
             <AlertDialogAction onClick={() => setShowDuplicateError(false)}>
               Close
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Delete Account Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. Your account and all associated data will be permanently deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowDeleteDialog(false)}>
+              No
+            </AlertDialogAction>
+            <AlertDialogAction onClick={handleDeleteAccount} className="bg-red-600 hover:bg-red-700">
+              Yes
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -333,6 +376,34 @@ export default function Profile() {
             </TabsContent>
           </Tabs>
         </motion.div>
+
+        {/* Delete Account Section - Only for own profile */}
+        {isOwnProfile && (
+          <motion.div
+            className="bg-white rounded-2xl shadow-lg p-6 mt-6 border-2 border-red-100"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}>
+            <h2 className="text-lg font-semibold text-red-600 mb-2">Danger Zone</h2>
+            <p className="text-sm text-slate-600 mb-4">
+              Once you delete your account, there is no going back. Please be certain.
+            </p>
+            <Button
+              onClick={() => setShowDeleteDialog(true)}
+              disabled={deleteMutation.isPending}
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700">
+              {deleteMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete Account'
+              )}
+            </Button>
+          </motion.div>
+        )}
       </main>
     </div>);
 
