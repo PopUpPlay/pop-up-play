@@ -10,32 +10,43 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
   const handleUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please upload an image file');
-      return;
+    // Validate file types and sizes
+    const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+    for (const file of files) {
+      if (!file.type.startsWith('image/')) {
+        toast.error(`${file.name} is not an image file`);
+        return;
+      }
+      if (file.size > maxSize) {
+        toast.error(`${file.name} exceeds 50MB limit`);
+        return;
+      }
     }
 
-    // Validate file size (50MB limit)
-    const maxSize = 50 * 1024 * 1024; // 50MB in bytes
-    if (file.size > maxSize) {
-      toast.error('Image size must be less than 50MB');
+    // Check if total photos will exceed limit
+    if (photos.length + files.length > 9) {
+      toast.error(`You can only upload ${9 - photos.length} more photo(s)`);
       return;
     }
 
     setUploading(true);
     try {
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      onPhotosChange([...photos, file_url]);
-      toast.success('Photo uploaded successfully');
+      const uploadPromises = files.map(file => 
+        base44.integrations.Core.UploadFile({ file })
+      );
+      const results = await Promise.all(uploadPromises);
+      const newUrls = results.map(result => result.file_url);
+      onPhotosChange([...photos, ...newUrls]);
+      toast.success(`${files.length} photo(s) uploaded successfully`);
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('Failed to upload photo. Please try again.');
+      toast.error('Failed to upload photos. Please try again.');
     }
     setUploading(false);
+    e.target.value = ''; // Reset input
   };
 
   const handleRemove = (index) => {
@@ -79,6 +90,7 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
             <input
               type="file"
               accept="image/*"
+              multiple
               onChange={handleUpload}
               className="hidden"
               disabled={uploading}
