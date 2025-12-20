@@ -4,6 +4,7 @@ import { Plus, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 
 export default function PhotoGallery({ photos = [], onPhotosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
@@ -54,59 +55,90 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
     onPhotosChange(newPhotos);
   };
 
+  const handleDragEnd = (result) => {
+    if (!result.destination || !editable) return;
+    
+    const items = Array.from(photos);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    
+    onPhotosChange(items);
+  };
+
   return (
     <div>
-      <div className="grid grid-cols-3 gap-3">
-        {photos.map((photo, index) => (
-          <motion.div
-            key={index}
-            layout
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="relative aspect-square rounded-xl overflow-hidden group cursor-pointer"
-            onClick={() => setSelectedPhoto(photo)}
-          >
-            <img 
-              src={photo} 
-              alt={`Gallery ${index + 1}`}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-            />
-            {editable && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRemove(index);
-                }}
-                className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
-            )}
-          </motion.div>
-        ))}
-        
-        {editable && photos.length < 9 && (
-          <label className="aspect-square rounded-xl border-2 border-dashed border-violet-200 hover:border-violet-400 flex flex-col items-center justify-center cursor-pointer transition-colors bg-violet-50/50 hover:bg-violet-50">
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={handleUpload}
-              className="hidden"
-              disabled={uploading}
-            />
-            {uploading ? (
-              <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
-            ) : (
-              <>
-                <Plus className="w-8 h-8 text-violet-400 mb-1" />
-                <span className="text-xs text-violet-500">Add Photo</span>
-                <span className="text-xs text-violet-400 mt-1">Max 50MB</span>
-              </>
-            )}
-          </label>
-        )}
-      </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable droppableId="photos" direction="horizontal">
+          {(provided) => (
+            <div 
+              {...provided.droppableProps}
+              ref={provided.innerRef}
+              className="grid grid-cols-3 gap-3"
+            >
+              {photos.map((photo, index) => (
+                <Draggable key={photo} draggableId={photo} index={index} isDragDisabled={!editable}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <motion.div
+                        layout
+                        initial={{ opacity: 0, scale: 0.8 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        className={`relative aspect-square rounded-xl overflow-hidden group cursor-pointer ${
+                          snapshot.isDragging ? 'ring-2 ring-violet-400 shadow-lg' : ''
+                        }`}
+                        onClick={() => !snapshot.isDragging && setSelectedPhoto(photo)}
+                      >
+                        <img 
+                          src={photo} 
+                          alt={`Gallery ${index + 1}`}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                        {editable && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRemove(index);
+                            }}
+                            className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="w-4 h-4 text-white" />
+                          </button>
+                        )}
+                      </motion.div>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+              {editable && photos.length < 9 && (
+                <label className="aspect-square rounded-xl border-2 border-dashed border-violet-200 hover:border-violet-400 flex flex-col items-center justify-center cursor-pointer transition-colors bg-violet-50/50 hover:bg-violet-50">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleUpload}
+                    className="hidden"
+                    disabled={uploading}
+                  />
+                  {uploading ? (
+                    <Loader2 className="w-8 h-8 text-violet-400 animate-spin" />
+                  ) : (
+                    <>
+                      <Plus className="w-8 h-8 text-violet-400 mb-1" />
+                      <span className="text-xs text-violet-500">Add Photo</span>
+                      <span className="text-xs text-violet-400 mt-1">Max 50MB</span>
+                    </>
+                  )}
+                </label>
+              )}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
 
       <AnimatePresence>
         {selectedPhoto && (
