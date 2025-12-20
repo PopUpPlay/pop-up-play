@@ -12,7 +12,7 @@ export default function ScrollControl() {
   };
 
   return (
-    <div className="absolute bottom-6 left-6 z-[1000] flex flex-col gap-2">
+    <div className="absolute top-6 left-6 z-[1000] flex flex-col gap-2">
       <Button
         onClick={() => scrollPage('up')}
         size="icon"
