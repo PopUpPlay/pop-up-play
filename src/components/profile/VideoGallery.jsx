@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, X, Video, Loader2, Play } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
 export default function VideoGallery({ videos = [], onVideosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
@@ -10,12 +11,27 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
+    if (!file.type.startsWith('video/')) {
+      toast.error('Please upload a video file');
+      return;
+    }
+
+    // Validate file size (200MB limit)
+    const maxSize = 200 * 1024 * 1024; // 200MB in bytes
+    if (file.size > maxSize) {
+      toast.error('Video size must be less than 200MB');
+      return;
+    }
+
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onVideosChange([...videos, file_url]);
+      toast.success('Video uploaded successfully');
     } catch (error) {
       console.error('Upload failed:', error);
+      toast.error('Failed to upload video. Please try again.');
     }
     setUploading(false);
   };
@@ -67,6 +83,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
               <>
                 <Video className="w-8 h-8 text-rose-400 mb-1" />
                 <span className="text-xs text-rose-500">Add Video</span>
+                <span className="text-xs text-rose-400 mt-1">Max 200MB</span>
               </>
             )}
           </label>
