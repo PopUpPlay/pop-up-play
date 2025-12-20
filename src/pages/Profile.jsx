@@ -124,12 +124,6 @@ export default function Profile() {
   });
 
   const handleSave = () => {
-    // Validate required fields
-    if (!formData.display_name?.trim()) {
-      toast.error('Please fill in all required fields: Display Name');
-      return;
-    }
-    
     saveMutation.mutate(formData);
   };
 
@@ -222,9 +216,7 @@ export default function Profile() {
           
           <div className="space-y-4">
             <div>
-              <Label htmlFor="display_name" className="text-slate-600">
-                Display Name <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="display_name" className="text-slate-600">Display Name</Label>
               <Input
                 id="display_name"
                 value={formData.display_name}
