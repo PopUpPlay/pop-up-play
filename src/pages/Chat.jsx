@@ -85,13 +85,29 @@ export default function Chat() {
       selectedMatch.user2_email :
       selectedMatch.user1_email;
 
-      return base44.entities.Message.create({
+      const message = await base44.entities.Message.create({
         match_id: selectedMatch.id,
         sender_email: user.email,
         receiver_email: otherUserEmail,
         content,
         attachment_url
       });
+
+      // Send email notification to receiver
+      try {
+        const senderProfile = profiles.find(p => p.user_email === user.email);
+        const senderName = senderProfile?.display_name || user.full_name || 'Someone';
+        
+        await base44.integrations.Core.SendEmail({
+          to: otherUserEmail,
+          subject: `New message from ${senderName}`,
+          body: `You have received a new message from ${senderName}.\n\nMessage: ${content}\n\nLog in to Pop Up Play to reply.`
+        });
+      } catch (emailError) {
+        console.error('Failed to send email notification:', emailError);
+      }
+
+      return message;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['messages'] });
