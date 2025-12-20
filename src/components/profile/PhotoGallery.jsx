@@ -73,6 +73,7 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
               <>
                 <Plus className="w-8 h-8 text-violet-400 mb-1" />
                 <span className="text-xs text-violet-500">Add Photo</span>
+                <span className="text-xs text-violet-400 mt-1">Max 10MB</span>
               </>
             )}
           </label>
