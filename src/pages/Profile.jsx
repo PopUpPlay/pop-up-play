@@ -124,6 +124,11 @@ export default function Profile() {
   });
 
   const handleSave = () => {
+    // Validate required fields
+    if (!formData.display_name || !formData.bio || !formData.age || !formData.gender || !formData.interested_in || !formData.avatar_url) {
+      toast.error('Please complete all required fields');
+      return;
+    }
     saveMutation.mutate(formData);
   };
 
