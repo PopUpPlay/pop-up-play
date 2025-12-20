@@ -222,7 +222,9 @@ export default function Profile() {
           
           <div className="space-y-4">
             <div>
-              <Label htmlFor="display_name" className="text-slate-600">Display Name</Label>
+              <Label htmlFor="display_name" className="text-slate-600">
+                Display Name <span className="text-red-500">*</span>
+              </Label>
               <Input
                 id="display_name"
                 value={formData.display_name}
