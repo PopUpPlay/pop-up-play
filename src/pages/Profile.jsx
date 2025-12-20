@@ -16,6 +16,7 @@ import VideoGallery from '@/components/profile/VideoGallery';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import BlockButton from '@/components/blocking/BlockButton';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
