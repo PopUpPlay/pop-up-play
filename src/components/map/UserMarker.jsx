@@ -76,7 +76,7 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
     >
       <Popup className="custom-popup" closeButton={false}>
         <div 
-          className="p-3 min-w-[200px]"
+          className="p-2 min-w-[160px]"
           onMouseEnter={() => {
             if (closeTimeoutRef.current) {
               clearTimeout(closeTimeoutRef.current);
@@ -92,37 +92,37 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
             }, 200);
           }}
         >
-          <div className="flex items-center gap-3 mb-2">
+          <div className="flex items-center gap-2 mb-2">
             <img 
               src={profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'} 
-              className="w-12 h-12 rounded-full object-cover border-2 border-violet-200"
+              className="w-10 h-10 rounded-full object-cover border-2 border-violet-200"
               alt={profile.display_name}
             />
             <div>
-              <h3 className="font-semibold text-slate-800">{profile.display_name || 'Anonymous'}</h3>
-              {profile.age && <p className="text-sm text-slate-500">{profile.age} years old</p>}
+              <h3 className="font-semibold text-sm text-slate-800">{profile.display_name || 'Anonymous'}</h3>
+              {profile.age && <p className="text-xs text-slate-500">{profile.age} years old</p>}
             </div>
           </div>
           {profile.popup_message && (
-            <div className="bg-gradient-to-r from-violet-50 to-rose-50 rounded-lg p-3 mt-2">
-              <p className="text-sm text-slate-700 italic">"{profile.popup_message}"</p>
+            <div className="bg-gradient-to-r from-violet-50 to-rose-50 rounded-lg p-2 mt-2">
+              <p className="text-xs text-slate-700 italic">"{profile.popup_message}"</p>
             </div>
           )}
-          <div className="mt-3 space-y-2">
+          <div className="mt-2 space-y-1.5">
             <p className="text-xs text-slate-400">📍 {profile.current_city || 'Unknown location'}</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5">
               <button
                 onClick={handleVideoCall}
-                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg px-3 py-2 shadow-lg transition-all hover:scale-105 flex items-center justify-center gap-2"
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg px-2 py-1.5 shadow-lg transition-all hover:scale-105 flex items-center justify-center gap-1.5"
               >
-                <Video className="w-4 h-4" />
+                <Video className="w-3.5 h-3.5" />
                 <span className="text-xs font-semibold">Video Verify</span>
               </button>
               <button
                 onClick={handleChatClick}
-                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-lg p-2 shadow-lg transition-all hover:scale-110"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-lg p-1.5 shadow-lg transition-all hover:scale-110"
               >
-                <MessageCircle className="w-4 h-4" />
+                <MessageCircle className="w-3.5 h-3.5" />
               </button>
             </div>
           </div>
