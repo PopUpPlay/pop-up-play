@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
 export default function PhotoGallery({ photos = [], onPhotosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
@@ -12,12 +13,27 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
     const file = e.target.files?.[0];
     if (!file) return;
 
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please upload an image file');
+      return;
+    }
+
+    // Validate file size (50MB limit)
+    const maxSize = 50 * 1024 * 1024; // 50MB in bytes
+    if (file.size > maxSize) {
+      toast.error('Image size must be less than 50MB');
+      return;
+    }
+
     setUploading(true);
     try {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       onPhotosChange([...photos, file_url]);
+      toast.success('Photo uploaded successfully');
     } catch (error) {
       console.error('Upload failed:', error);
+      toast.error('Failed to upload photo. Please try again.');
     }
     setUploading(false);
   };
@@ -73,7 +89,7 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
               <>
                 <Plus className="w-8 h-8 text-violet-400 mb-1" />
                 <span className="text-xs text-violet-500">Add Photo</span>
-                <span className="text-xs text-violet-400 mt-1">Max 10MB</span>
+                <span className="text-xs text-violet-400 mt-1">Max 50MB</span>
               </>
             )}
           </label>
