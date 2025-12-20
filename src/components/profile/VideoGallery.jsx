@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 export default function VideoGallery({ videos = [], onVideosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -25,15 +26,34 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
     }
 
     setUploading(true);
+    setUploadProgress(0);
+    
     try {
+      // Simulate progress while uploading
+      const progressInterval = setInterval(() => {
+        setUploadProgress(prev => {
+          if (prev >= 90) return prev;
+          return prev + Math.random() * 10;
+        });
+      }, 500);
+
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      
+      clearInterval(progressInterval);
+      setUploadProgress(100);
+      
       onVideosChange([...videos, file_url]);
       toast.success('Video uploaded successfully');
     } catch (error) {
       console.error('Upload failed:', error);
       toast.error('Failed to upload video. Please try again.');
+      setUploadProgress(0);
     }
-    setUploading(false);
+    
+    setTimeout(() => {
+      setUploading(false);
+      setUploadProgress(0);
+    }, 500);
   };
 
   const handleRemove = (index) => {
@@ -78,7 +98,18 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
               disabled={uploading}
             />
             {uploading ? (
-              <Loader2 className="w-8 h-8 text-rose-400 animate-spin" />
+              <div className="flex flex-col items-center gap-2">
+                <Loader2 className="w-8 h-8 text-rose-400 animate-spin" />
+                <div className="w-32 h-2 bg-rose-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-rose-500 transition-all duration-300"
+                    style={{ width: `${uploadProgress}%` }}
+                  />
+                </div>
+                <span className="text-xs text-rose-600 font-medium">
+                  {Math.round(uploadProgress)}%
+                </span>
+              </div>
             ) : (
               <>
                 <Video className="w-8 h-8 text-rose-400 mb-1" />
