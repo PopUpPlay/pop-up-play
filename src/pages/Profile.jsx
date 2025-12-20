@@ -214,20 +214,24 @@ export default function Profile() {
           <h1 className="text-lg font-semibold text-slate-800">
             {isOwnProfile ? 'Edit Profile' : displayProfile?.display_name || 'Profile'}
           </h1>
-          {isOwnProfile &&
+          {isOwnProfile ? (
           <Button
             onClick={handleSave}
-            disabled={saveMutation.isPending} className="bg-violet-600 text-purple-300 px-4 py-2 text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 from-violet-600 to-purple-600">
-
-
+            disabled={saveMutation.isPending}
+            className="bg-violet-600 hover:bg-violet-700">
               {saveMutation.isPending ?
             <Loader2 className="w-4 h-4 animate-spin" /> :
 
             <Save className="w-4 h-4" />
             }
             </Button>
-          }
-          {!isOwnProfile && <div className="w-10"></div>}
+          ) : (
+            <BlockButton 
+              targetUserEmail={viewingUserEmail}
+              currentUserEmail={user?.email}
+              variant="destructive"
+            />
+          )}
         </div>
       </header>
 
