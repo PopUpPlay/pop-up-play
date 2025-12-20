@@ -124,6 +124,12 @@ export default function Profile() {
   });
 
   const handleSave = () => {
+    // Validate required fields
+    if (!formData.display_name?.trim()) {
+      toast.error('Please fill in all required fields: Display Name');
+      return;
+    }
+    
     saveMutation.mutate(formData);
   };
 
