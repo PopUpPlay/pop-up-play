@@ -5,6 +5,7 @@ import Chat from './pages/Chat';
 import Discover from './pages/Discover';
 import VideoCall from './pages/VideoCall';
 import About from './pages/About';
+import BlockedUsers from './pages/BlockedUsers';
 import __Layout from './Layout.jsx';
 
 
@@ -16,6 +17,7 @@ export const PAGES = {
     "Discover": Discover,
     "VideoCall": VideoCall,
     "About": About,
+    "BlockedUsers": BlockedUsers,
 }
 
 export const pagesConfig = {
