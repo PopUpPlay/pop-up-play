@@ -15,10 +15,12 @@ import PhotoGallery from '@/components/profile/PhotoGallery';
 import VideoGallery from '@/components/profile/VideoGallery';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 export default function Profile() {
   const [user, setUser] = useState(null);
   const [viewingUserEmail, setViewingUserEmail] = useState(null);
+  const [showDuplicateError, setShowDuplicateError] = useState(false);
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
@@ -97,6 +99,11 @@ export default function Profile() {
       if (myProfile) {
         return base44.entities.UserProfile.update(myProfile.id, data);
       } else {
+        // Check for existing profile before creating
+        const existingProfiles = await base44.entities.UserProfile.filter({ user_email: user.email });
+        if (existingProfiles.length > 0) {
+          throw new Error('DUPLICATE_PROFILE');
+        }
         return base44.entities.UserProfile.create({
           user_email: user.email,
           ...data
@@ -106,6 +113,13 @@ export default function Profile() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myProfile'] });
       toast.success('Profile saved successfully!');
+    },
+    onError: (error) => {
+      if (error.message === 'DUPLICATE_PROFILE') {
+        setShowDuplicateError(true);
+      } else {
+        toast.error('Failed to save profile');
+      }
     }
   });
 
@@ -123,6 +137,23 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-rose-50 pb-20">
+      {/* Duplicate Profile Error Dialog */}
+      <AlertDialog open={showDuplicateError} onOpenChange={setShowDuplicateError}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Profile Already Exists</AlertDialogTitle>
+            <AlertDialogDescription>
+              A profile already exists for this email address.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowDuplicateError(false)}>
+              Close
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
