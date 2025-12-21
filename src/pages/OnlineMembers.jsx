@@ -130,7 +130,10 @@ export default function OnlineMembers() {
                 className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow"
               >
                 {/* Profile Image */}
-                <div className="relative h-64 bg-gradient-to-br from-violet-100 to-rose-100">
+                <div 
+                  className="relative h-64 bg-gradient-to-br from-violet-100 to-rose-100 cursor-pointer"
+                  onClick={() => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)}
+                >
                   <img
                     src={profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'}
                     alt={profile.display_name}
