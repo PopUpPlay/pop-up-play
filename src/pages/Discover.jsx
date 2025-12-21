@@ -160,7 +160,7 @@ export default function Discover() {
               Check back later when more people are active in your area!
             </p>
             <Link to={createPageUrl('Home')}>
-              <Button className="bg-gradient-to-r from-violet-600 to-purple-600">
+              <Button className="bg-gradient-to-r from-violet-600 to-purple-600 text-white">
                 Back to Map
               </Button>
             </Link>
