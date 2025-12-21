@@ -8,7 +8,7 @@ import LocationService from '@/components/location/LocationService';
 import MapSoundNotifications from '@/components/map/MapSoundNotifications';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User, Settings, Sparkles, MessageCircle, Heart, Info } from 'lucide-react';
+import { User, Settings, Sparkles, MessageCircle, Heart, Info, Users } from 'lucide-react';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -142,6 +142,11 @@ export default function Home() {
           <div></div>
 
           <div className="flex items-center gap-2">
+            <Link to={createPageUrl('OnlineMembers')}>
+              <Button variant="ghost" size="icon" className="bg-emerald-300 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
+                <Users className="w-5 h-5 text-slate-600" />
+              </Button>
+            </Link>
             <Link to={createPageUrl('About')}>
               <Button variant="ghost" size="icon" className="bg-blue-300 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
                 <Info className="w-5 h-5 text-slate-600" />
