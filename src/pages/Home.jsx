@@ -8,18 +8,20 @@ import LocationService from '@/components/location/LocationService';
 import MapSoundNotifications from '@/components/map/MapSoundNotifications';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User, Settings, Sparkles, MessageCircle, Heart, Info } from 'lucide-react';
+import { User, Settings, Sparkles, MessageCircle, Heart, Info, Users } from 'lucide-react';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import ScrollControl from '@/components/map/ScrollControl';
 import ActiveMembersList from '@/components/members/ActiveMembersList';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function Home() {
   const [user, setUser] = useState(null);
   const [userLocation, setUserLocation] = useState(null);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [showActiveMembers, setShowActiveMembers] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -143,6 +145,14 @@ export default function Home() {
           <div></div>
 
           <div className="flex items-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setShowActiveMembers(true)}
+              className="bg-emerald-300 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative"
+            >
+              <Users className="w-5 h-5 text-slate-600" />
+            </Button>
             <Link to={createPageUrl('About')}>
               <Button variant="ghost" size="icon" className="bg-blue-300 text-black text-sm font-medium rounded-full inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover:bg-accent hover:text-accent-foreground h-9 w-9 relative">
                 <Info className="w-5 h-5 text-slate-600" />
@@ -185,10 +195,27 @@ export default function Home() {
         currentUserProfile={myProfile} />
 
 
+      {/* Active Members Dialog */}
+      <Dialog open={showActiveMembers} onOpenChange={setShowActiveMembers}>
+        <DialogContent className="max-w-md max-h-[80vh] overflow-hidden p-0">
+          <DialogHeader className="px-6 pt-6 pb-0">
+            <DialogTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-violet-600" />
+              Active Members
+            </DialogTitle>
+          </DialogHeader>
+          <div className="px-6 pb-6">
+            <ActiveMembersList 
+              members={activeUsers}
+              currentUserEmail={user?.email}
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Main Content */}
       <main className="pt-20 pb-12 px-4">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-[1fr,380px] gap-6">
-          <div>
+        <div className="max-w-7xl mx-auto">
           {/* Location Status */}
           <motion.div
             className="mb-6"
@@ -283,22 +310,6 @@ export default function Home() {
               }
               </div>
               }
-              </motion.div>
-              </div>
-
-              {/* Active Members List - Desktop sidebar */}
-              <motion.div
-              className="hidden lg:block"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-              >
-              <div className="sticky top-24">
-              <ActiveMembersList 
-                members={activeUsers}
-                currentUserEmail={user?.email}
-              />
-              </div>
               </motion.div>
               </div>
               </main>
