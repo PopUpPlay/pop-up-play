@@ -183,8 +183,7 @@ export default function OnlineMembers() {
                     </Button>
                     <Button
                       onClick={() => handleChat(profile.user_email)}
-                      variant="outline"
-                      className="flex-1 gap-2"
+                      className="flex-1 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white gap-2"
                     >
                       <MessageCircle className="w-4 h-4" />
                       Chat
