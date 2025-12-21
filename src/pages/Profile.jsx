@@ -148,6 +148,11 @@ export default function Profile() {
       toast.error('Please complete all required fields');
       return;
     }
+    // Validate age requirement
+    if (formData.age < 18) {
+      toast.error('You must be at least 18 years old to create a profile');
+      return;
+    }
     saveMutation.mutate(formData);
   };
 
