@@ -151,7 +151,7 @@ export default function OnlineMembers() {
                       </h3>
                       {profile.current_city && (
                         <div className="flex items-center gap-1 text-sm text-slate-500 mt-1">
-                          <MapPin className="w-3 h-3" />
+                          <MapPin className="w-3 h-3 text-violet-600" />
                           {profile.current_city}
                         </div>
                       )}
