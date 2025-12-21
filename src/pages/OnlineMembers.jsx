@@ -61,7 +61,6 @@ export default function OnlineMembers() {
   }
 
   const filteredProfiles = activeProfiles.filter((profile) => {
-    if (profile.user_email === user.email) return false;
     return !blockedUsers.some(b => b.blocked_email === profile.user_email);
   });
 
