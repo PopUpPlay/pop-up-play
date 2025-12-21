@@ -179,7 +179,7 @@ export default function OnlineMembers() {
                       className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white gap-2"
                     >
                       <Video className="w-4 h-4" />
-                      Video Call
+                      Video Verify
                     </Button>
                     <Button
                       onClick={() => handleChat(profile.user_email)}
