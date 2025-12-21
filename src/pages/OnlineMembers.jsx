@@ -176,7 +176,7 @@ export default function OnlineMembers() {
                   <div className="flex gap-2">
                     <Button
                       onClick={() => handleVideoCall(profile.user_email)}
-                      className="flex-1 bg-violet-600 hover:bg-violet-700 gap-2"
+                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 gap-2"
                     >
                       <Video className="w-4 h-4" />
                       Video Call
