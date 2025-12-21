@@ -6,6 +6,7 @@ import Discover from './pages/Discover';
 import VideoCall from './pages/VideoCall';
 import About from './pages/About';
 import BlockedUsers from './pages/BlockedUsers';
+import OnlineMembers from './pages/OnlineMembers';
 import __Layout from './Layout.jsx';
 
 
@@ -18,6 +19,7 @@ export const PAGES = {
     "VideoCall": VideoCall,
     "About": About,
     "BlockedUsers": BlockedUsers,
+    "OnlineMembers": OnlineMembers,
 }
 
 export const pagesConfig = {
