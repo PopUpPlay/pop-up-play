@@ -176,7 +176,7 @@ export default function AllProfiles() {
                           ? 'bg-green-100 text-green-700' 
                           : 'bg-slate-100 text-slate-500'
                       }`}>
-                        {profile.is_popped_up ? '● Live' : 'Offline'}
+                        {profile.is_popped_up ? 'Popped Up' : 'Popped Down'}
                       </span>
                     </div>
 
