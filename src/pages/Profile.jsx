@@ -322,6 +322,7 @@ export default function Profile() {
                 <Input
                   id="age"
                   type="number"
+                  min="18"
                   value={formData.age}
                   onChange={(e) => setFormData((prev) => ({ ...prev, age: parseInt(e.target.value) || '' }))}
                   placeholder="Age"
