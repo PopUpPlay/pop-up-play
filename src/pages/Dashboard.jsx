@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import {
   AlertDialog,
@@ -28,6 +28,7 @@ import { format } from 'date-fns';
 export default function Dashboard() {
   const [user, setUser] = useState(null);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadUser = async () => {

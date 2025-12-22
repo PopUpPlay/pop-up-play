@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import ScrollControl from '@/components/map/ScrollControl';
 import NavigationMenu from '@/components/navigation/NavigationMenu';
+import SubscriptionGate from '@/components/subscription/SubscriptionGate';
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -135,6 +136,7 @@ export default function Home() {
   }
 
   return (
+    <SubscriptionGate>
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-rose-50">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
@@ -269,6 +271,7 @@ export default function Home() {
           </motion.div>
         </div>
         </main>
-        </div>);
+        </div>
+        </SubscriptionGate>);
 
-}
+        }

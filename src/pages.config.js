@@ -10,6 +10,8 @@ import OnlineMembers from './pages/OnlineMembers';
 import Profile from './pages/Profile';
 import VideoCall from './pages/VideoCall';
 import AllProfiles from './pages/AllProfiles';
+import SubscriptionSettings from './pages/SubscriptionSettings';
+import Subscribe from './pages/Subscribe';
 import __Layout from './Layout.jsx';
 
 
@@ -26,6 +28,8 @@ export const PAGES = {
     "Profile": Profile,
     "VideoCall": VideoCall,
     "AllProfiles": AllProfiles,
+    "SubscriptionSettings": SubscriptionSettings,
+    "Subscribe": Subscribe,
 }
 
 export const pagesConfig = {
