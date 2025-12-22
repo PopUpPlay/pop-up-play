@@ -175,7 +175,7 @@ export default function OnlineMembers() {
                         {profile.display_name}{profile.age && `, ${profile.age}`}
                       </h3>
                       {profile.current_city && (
-                        <div className="flex items-center gap-1 text-sm text-slate-500 mt-1">
+                        <div className="flex items-center gap-1 text-sm text-slate-500 mt-1 flex-wrap">
                           <MapPin className="w-3 h-3 text-violet-600" />
                           {profile.current_city}
                           {profile.distance !== null && profile.distance !== undefined && (
@@ -183,6 +183,9 @@ export default function OnlineMembers() {
                               • {profile.distance.toFixed(1)} mi
                             </span>
                           )}
+                          <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700 ml-1">
+                            Popped Up
+                          </span>
                         </div>
                       )}
                     </div>
