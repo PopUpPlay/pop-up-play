@@ -167,7 +167,7 @@ export default function AllProfiles() {
                         </div>
                       )}
                       {profile.distance !== null && profile.distance !== undefined && (
-                        <span className="text-violet-600 font-semibold">
+                        <span className="text-purple-600 font-semibold">
                           • {profile.distance.toFixed(1)} mi
                         </span>
                       )}
