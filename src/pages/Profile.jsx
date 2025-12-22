@@ -156,19 +156,6 @@ export default function Profile() {
       toast.error('Please complete all required fields');
       return;
     }
-    // Validate new required fields
-    if (!formData.interests || formData.interests.length === 0) {
-      toast.error('Please add at least one interest');
-      return;
-    }
-    if (!formData.hobbies || !formData.hobbies.trim()) {
-      toast.error('Please describe your hobbies');
-      return;
-    }
-    if (!formData.looking_for || !formData.looking_for.trim()) {
-      toast.error('Please describe what you are looking for');
-      return;
-    }
     // Validate age requirement
     if (formData.age < 18) {
       toast.error('You must be at least 18 years old to create a profile');
@@ -383,9 +370,7 @@ export default function Profile() {
               </div>
 
               <div>
-                <Label htmlFor="interests" className="text-slate-600">
-                  Interests (Tags) <span className="text-red-500">*</span>
-                </Label>
+                <Label htmlFor="interests" className="text-slate-600">Interests (Tags)</Label>
               <div className="mt-1 space-y-2">
                 {isOwnProfile && (
                   <div className="flex gap-2">
@@ -451,9 +436,7 @@ export default function Profile() {
               </div>
 
               <div>
-              <Label htmlFor="hobbies" className="text-slate-600">
-                Hobbies <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="hobbies" className="text-slate-600">Hobbies</Label>
               <Textarea
                 id="hobbies"
                 value={formData.hobbies}
@@ -465,9 +448,7 @@ export default function Profile() {
               </div>
 
               <div>
-              <Label htmlFor="looking_for" className="text-slate-600">
-                Looking For <span className="text-red-500">*</span>
-              </Label>
+              <Label htmlFor="looking_for" className="text-slate-600">Looking For</Label>
               <Textarea
                 id="looking_for"
                 value={formData.looking_for}
