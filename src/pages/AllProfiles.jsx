@@ -7,14 +7,22 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-// Calculate distance between two ZIP codes (rough estimate)
-const calculateZipDistance = (zip1, zip2) => {
-  if (!zip1 || !zip2) return 999999;
+// Calculate distance between two coordinates in miles using Haversine formula
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return 999999;
   
-  // Simple numeric difference for rough sorting
-  const num1 = parseInt(zip1.replace(/[^0-9]/g, '')) || 0;
-  const num2 = parseInt(zip2.replace(/[^0-9]/g, '')) || 0;
-  return Math.abs(num1 - num2);
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+  
+  return distance;
 };
 
 export default function AllProfiles() {
@@ -65,16 +73,21 @@ export default function AllProfiles() {
   });
 
   const sortedProfiles = React.useMemo(() => {
-    if (!myProfile?.current_zip) return allProfiles;
+    if (!myProfile?.latitude || !myProfile?.longitude) return allProfiles;
     
     return [...allProfiles]
       .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)) // Exclude blocked
-      .sort((a, b) => {
-        const distA = calculateZipDistance(myProfile.current_zip, a.current_zip);
-        const distB = calculateZipDistance(myProfile.current_zip, b.current_zip);
-        return distA - distB;
-      });
-  }, [allProfiles, myProfile, user?.email, blockedUsers]);
+      .map(p => ({
+        ...p,
+        distance: calculateDistance(
+          myProfile.latitude,
+          myProfile.longitude,
+          p.latitude,
+          p.longitude
+        )
+      }))
+      .sort((a, b) => a.distance - b.distance);
+  }, [allProfiles, myProfile, blockedUsers]);
 
   if (!user || isLoading) {
     return (
@@ -148,12 +161,15 @@ export default function AllProfiles() {
                       {profile.age && <span className="text-slate-500">, {profile.age}</span>}
                     </h3>
                     
-                    {profile.current_city && (
-                      <div className="flex items-center gap-1 text-sm text-slate-500 mb-2">
-                        <MapPin className="w-4 h-4" />
-                        <span>{profile.current_city}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-1 text-sm text-slate-500 mb-2">
+                      <MapPin className="w-4 h-4" />
+                      {profile.current_city && <span>{profile.current_city}</span>}
+                      {profile.distance && profile.distance !== 999999 && (
+                        <span className="text-violet-600 font-medium">
+                          {profile.distance === 0 ? 'You' : `${profile.distance.toFixed(1)} mi`}
+                        </span>
+                      )}
+                    </div>
 
                     {profile.bio && (
                       <p className="text-sm text-slate-600 line-clamp-2">{profile.bio}</p>
