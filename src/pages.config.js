@@ -8,6 +8,7 @@ import OnlineMembers from './pages/OnlineMembers';
 import Profile from './pages/Profile';
 import VideoCall from './pages/VideoCall';
 import Menu from './pages/Menu';
+import BroadcastMessage from './pages/BroadcastMessage';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +23,7 @@ export const PAGES = {
     "Profile": Profile,
     "VideoCall": VideoCall,
     "Menu": Menu,
+    "BroadcastMessage": BroadcastMessage,
 }
 
 export const pagesConfig = {
