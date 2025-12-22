@@ -391,7 +391,7 @@ export default function Profile() {
                           setInterestInput('');
                         }
                       }}
-                      className="bg-violet-600 hover:bg-violet-700">
+                      className="bg-violet-600 hover:bg-violet-700 text-white">
                       Add
                     </Button>
                   </div>
