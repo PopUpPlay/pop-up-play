@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Loader2, Video, MessageCircle } from 'lucide-react';
+import { ArrowLeft, MapPin, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -189,32 +189,6 @@ export default function AllProfiles() {
                         <p className="text-xs text-violet-700 italic line-clamp-2">
                           "{profile.popup_message}"
                         </p>
-                      </div>
-                    )}
-
-                    {/* Action Buttons */}
-                    {profile.user_email !== user?.email && (
-                      <div className="mt-4 flex gap-2">
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(createPageUrl('VideoCall') + '?user=' + profile.user_email);
-                          }}
-                          className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white"
-                        >
-                          <Video className="w-4 h-4 mr-2" />
-                          Video Verify
-                        </Button>
-                        <Button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            navigate(createPageUrl('Chat') + '?user=' + profile.user_email);
-                          }}
-                          className="flex-1 bg-gradient-to-r from-violet-500 to-purple-500 hover:from-violet-600 hover:to-purple-600 text-white"
-                        >
-                          <MessageCircle className="w-4 h-4 mr-2" />
-                          Chat
-                        </Button>
                       </div>
                     )}
                   </div>
