@@ -120,7 +120,37 @@ export default function ProfileCard({ profile, onLike, onClose, isLiking }) {
             </div>
           )}
 
-          {/* Interests */}
+          {/* Interests Tags */}
+          {profile.interests && profile.interests.length > 0 && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold text-slate-700 mb-2">Interests</h3>
+              <div className="flex flex-wrap gap-2">
+                {profile.interests.map((interest, index) => (
+                  <span key={index} className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm">
+                    {interest}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Hobbies */}
+          {profile.hobbies && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold text-slate-700 mb-1">Hobbies</h3>
+              <p className="text-sm text-slate-600">{profile.hobbies}</p>
+            </div>
+          )}
+
+          {/* Looking For */}
+          {profile.looking_for && (
+            <div className="mb-4">
+              <h3 className="text-sm font-semibold text-slate-700 mb-1">Looking For</h3>
+              <p className="text-sm text-slate-600">{profile.looking_for}</p>
+            </div>
+          )}
+
+          {/* Basic Info */}
           <div className="flex flex-wrap gap-2 mb-6">
             {profile.gender && (
               <span className="px-3 py-1 bg-slate-100 text-slate-700 rounded-full text-sm">

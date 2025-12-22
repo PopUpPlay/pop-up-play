@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Video, MessageCircle, Loader2, MapPin, Users } from 'lucide-react';
+import { ArrowLeft, Video, MessageCircle, Loader2, MapPin, Users, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -24,6 +25,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 
 export default function OnlineMembers() {
   const [user, setUser] = useState(null);
+  const [interestFilter, setInterestFilter] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -75,16 +77,29 @@ export default function OnlineMembers() {
     );
   }
 
-  const filteredProfiles = activeProfiles
-    .filter((profile) => {
-      return !blockedUsers.some(b => b.blocked_email === profile.user_email);
-    })
-    .map(profile => {
-      const distance = myProfile?.latitude && myProfile?.longitude
-        ? calculateDistance(myProfile.latitude, myProfile.longitude, profile.latitude, profile.longitude)
-        : null;
-      return { ...profile, distance };
-    });
+  const filteredProfiles = React.useMemo(() => {
+    let profiles = activeProfiles
+      .filter((profile) => {
+        return !blockedUsers.some(b => b.blocked_email === profile.user_email);
+      })
+      .map(profile => {
+        const distance = myProfile?.latitude && myProfile?.longitude
+          ? calculateDistance(myProfile.latitude, myProfile.longitude, profile.latitude, profile.longitude)
+          : null;
+        return { ...profile, distance };
+      });
+    
+    // Filter by interests
+    if (interestFilter.trim()) {
+      profiles = profiles.filter(p => 
+        p.interests && p.interests.some(interest => 
+          interest.toLowerCase().includes(interestFilter.toLowerCase())
+        )
+      );
+    }
+    
+    return profiles;
+  }, [activeProfiles, myProfile, blockedUsers, interestFilter]);
 
   const handleVideoCall = (otherUserEmail) => {
     const callId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -114,6 +129,33 @@ export default function OnlineMembers() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 py-8">
+        {/* Filter Bar */}
+        <motion.div
+          className="mb-6"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <div className="flex items-center gap-3">
+              <Filter className="w-5 h-5 text-slate-400" />
+              <Input
+                placeholder="Filter by interests (e.g., hiking, cooking)..."
+                value={interestFilter}
+                onChange={(e) => setInterestFilter(e.target.value)}
+                className="flex-1 rounded-xl border-slate-200" />
+              {interestFilter && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setInterestFilter('')}
+                  className="text-slate-500">
+                  Clear
+                </Button>
+              )}
+            </div>
+          </div>
+        </motion.div>
+
         {/* Stats */}
         <motion.div
           className="bg-white rounded-2xl shadow-sm p-4 mb-6 text-center"
@@ -190,6 +232,21 @@ export default function OnlineMembers() {
                       )}
                     </div>
                   </div>
+
+                  {profile.interests && profile.interests.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {profile.interests.slice(0, 3).map((interest, idx) => (
+                        <span key={idx} className="px-2 py-0.5 bg-violet-100 text-violet-700 rounded-full text-xs">
+                          {interest}
+                        </span>
+                      ))}
+                      {profile.interests.length > 3 && (
+                        <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded-full text-xs">
+                          +{profile.interests.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
 
                   {profile.popup_message && (
                     <div className="bg-violet-50 rounded-lg p-3 mb-4">

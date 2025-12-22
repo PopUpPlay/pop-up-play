@@ -29,10 +29,14 @@ export default function Profile() {
     age: '',
     gender: '',
     interested_in: '',
+    interests: [],
+    hobbies: '',
+    looking_for: '',
     avatar_url: '',
     photos: [],
     videos: []
   });
+  const [interestInput, setInterestInput] = useState('');
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -84,6 +88,9 @@ export default function Profile() {
         age: displayProfile.age || '',
         gender: displayProfile.gender || '',
         interested_in: displayProfile.interested_in || '',
+        interests: displayProfile.interests || [],
+        hobbies: displayProfile.hobbies || '',
+        looking_for: displayProfile.looking_for || '',
         avatar_url: displayProfile.avatar_url || '',
         photos: displayProfile.photos || [],
         videos: displayProfile.videos || []
@@ -348,11 +355,101 @@ export default function Profile() {
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-          </div>
-        </motion.div>
+              </div>
 
-        {/* Media Galleries */}
+              <div>
+              <Label htmlFor="interests" className="text-slate-600">Interests (Tags)</Label>
+              <div className="mt-1 space-y-2">
+                {isOwnProfile && (
+                  <div className="flex gap-2">
+                    <Input
+                      id="interests"
+                      value={interestInput}
+                      onChange={(e) => setInterestInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && interestInput.trim()) {
+                          e.preventDefault();
+                          if (!formData.interests.includes(interestInput.trim())) {
+                            setFormData((prev) => ({
+                              ...prev,
+                              interests: [...prev.interests, interestInput.trim()]
+                            }));
+                          }
+                          setInterestInput('');
+                        }
+                      }}
+                      placeholder="Add interest (press Enter)"
+                      className="rounded-xl border-slate-200" />
+                    <Button
+                      type="button"
+                      onClick={() => {
+                        if (interestInput.trim() && !formData.interests.includes(interestInput.trim())) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            interests: [...prev.interests, interestInput.trim()]
+                          }));
+                          setInterestInput('');
+                        }
+                      }}
+                      className="bg-violet-600 hover:bg-violet-700">
+                      Add
+                    </Button>
+                  </div>
+                )}
+                {formData.interests.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {formData.interests.map((interest, index) => (
+                      <span
+                        key={index}
+                        className="px-3 py-1 bg-violet-100 text-violet-700 rounded-full text-sm flex items-center gap-2">
+                        {interest}
+                        {isOwnProfile && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                interests: prev.interests.filter((_, i) => i !== index)
+                              }));
+                            }}
+                            className="hover:text-violet-900">
+                            ×
+                          </button>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              </div>
+
+              <div>
+              <Label htmlFor="hobbies" className="text-slate-600">Hobbies</Label>
+              <Textarea
+                id="hobbies"
+                value={formData.hobbies}
+                onChange={(e) => setFormData((prev) => ({ ...prev, hobbies: e.target.value }))}
+                placeholder="What do you like to do in your free time?"
+                className="mt-1 rounded-xl border-slate-200 resize-none"
+                rows={2}
+                disabled={!isOwnProfile} />
+              </div>
+
+              <div>
+              <Label htmlFor="looking_for" className="text-slate-600">Looking For</Label>
+              <Textarea
+                id="looking_for"
+                value={formData.looking_for}
+                onChange={(e) => setFormData((prev) => ({ ...prev, looking_for: e.target.value }))}
+                placeholder="What kind of connection are you seeking?"
+                className="mt-1 rounded-xl border-slate-200 resize-none"
+                rows={2}
+                disabled={!isOwnProfile} />
+              </div>
+              </div>
+              </motion.div>
+
+              {/* Media Galleries */}
         <motion.div
           className="bg-white rounded-2xl shadow-lg p-6"
           initial={{ opacity: 0, y: 20 }}
