@@ -9,6 +9,7 @@ import Menu from './pages/Menu';
 import OnlineMembers from './pages/OnlineMembers';
 import Profile from './pages/Profile';
 import VideoCall from './pages/VideoCall';
+import AllProfiles from './pages/AllProfiles';
 import __Layout from './Layout.jsx';
 
 
@@ -24,6 +25,7 @@ export const PAGES = {
     "OnlineMembers": OnlineMembers,
     "Profile": Profile,
     "VideoCall": VideoCall,
+    "AllProfiles": AllProfiles,
 }
 
 export const pagesConfig = {

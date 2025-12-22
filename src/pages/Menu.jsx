@@ -54,6 +54,13 @@ export default function Menu() {
       description: 'Find new connections'
     },
     {
+      label: 'All Profiles',
+      icon: Users,
+      path: 'AllProfiles',
+      color: 'bg-violet-300',
+      description: 'Browse all members nearby'
+    },
+    {
       label: 'Members Online',
       icon: Users,
       path: 'OnlineMembers',
