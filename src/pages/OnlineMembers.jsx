@@ -69,14 +69,6 @@ export default function OnlineMembers() {
     enabled: !!user?.email
   });
 
-  if (!user || isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
-        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
-      </div>
-    );
-  }
-
   const filteredProfiles = React.useMemo(() => {
     let profiles = activeProfiles
       .filter((profile) => {
@@ -100,6 +92,14 @@ export default function OnlineMembers() {
     
     return profiles;
   }, [activeProfiles, myProfile, blockedUsers, interestFilter]);
+
+  if (!user || isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
+        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
+      </div>
+    );
+  }
 
   const handleVideoCall = (otherUserEmail) => {
     const callId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
