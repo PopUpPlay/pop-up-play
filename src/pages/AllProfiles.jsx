@@ -159,7 +159,7 @@ export default function AllProfiles() {
                       {profile.age && <span className="text-slate-500">, {profile.age}</span>}
                     </h3>
                     
-                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
+                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-2 flex-wrap">
                       {profile.current_city && (
                         <div className="flex items-center gap-1">
                           <MapPin className="w-4 h-4 text-purple-600" />
@@ -171,6 +171,13 @@ export default function AllProfiles() {
                           • {profile.distance.toFixed(1)} mi
                         </span>
                       )}
+                      <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                        profile.is_popped_up 
+                          ? 'bg-green-100 text-green-700' 
+                          : 'bg-slate-100 text-slate-500'
+                      }`}>
+                        {profile.is_popped_up ? '● Live' : 'Offline'}
+                      </span>
                     </div>
 
                     {profile.bio && (
