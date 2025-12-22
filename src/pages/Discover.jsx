@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ProfileCard from '@/components/profile/ProfileCard';
+import CompatibilityScore, { calculateCompatibility } from '@/components/matching/CompatibilityScore';
 import { toast } from 'sonner';
 
 export default function Discover() {
@@ -110,15 +111,25 @@ export default function Discover() {
     likeMutation.mutate(profile);
   };
 
-  // Filter out already matched/liked profiles and blocked users
-  const availableProfiles = activeProfiles.filter(profile => {
-    const isMatched = myMatches.some(match => 
-      (match.user1_email === profile.user_email && match.user2_email === user?.email) ||
-      (match.user2_email === profile.user_email && match.user1_email === user?.email)
-    );
-    const isBlocked = blockedUsers.some(b => b.blocked_email === profile.user_email);
-    return !isMatched && !isBlocked;
-  });
+  // Filter out already matched/liked profiles and blocked users, then sort by compatibility
+  const availableProfiles = React.useMemo(() => {
+    const filtered = activeProfiles
+      .filter(profile => {
+        const isMatched = myMatches.some(match => 
+          (match.user1_email === profile.user_email && match.user2_email === user?.email) ||
+          (match.user2_email === profile.user_email && match.user1_email === user?.email)
+        );
+        const isBlocked = blockedUsers.some(b => b.blocked_email === profile.user_email);
+        return !isMatched && !isBlocked;
+      })
+      .map(profile => ({
+        ...profile,
+        compatibilityScore: calculateCompatibility(myProfile, profile)
+      }));
+    
+    // Sort by compatibility score (highest first)
+    return filtered.sort((a, b) => b.compatibilityScore - a.compatibilityScore);
+  }, [activeProfiles, myMatches, blockedUsers, user?.email, myProfile]);
 
   if (!user || isLoading) {
     return (
@@ -185,10 +196,14 @@ export default function Discover() {
                 </div>
                 
                 <div className="p-4">
-                  <h3 className="text-lg font-bold text-slate-800 mb-1">
+                  <h3 className="text-lg font-bold text-slate-800 mb-2">
                     {profile.display_name}
                     {profile.age && <span className="text-slate-500">, {profile.age}</span>}
                   </h3>
+                  
+                  <div className="mb-2">
+                    <CompatibilityScore score={profile.compatibilityScore} />
+                  </div>
                   
                   {profile.popup_message && (
                     <p className="text-sm text-slate-600 line-clamp-2 italic mb-2">
