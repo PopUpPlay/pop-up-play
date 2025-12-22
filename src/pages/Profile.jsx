@@ -13,6 +13,7 @@ import { createPageUrl } from '@/utils';
 import AvatarUpload from '@/components/profile/AvatarUpload';
 import PhotoGallery from '@/components/profile/PhotoGallery';
 import VideoGallery from '@/components/profile/VideoGallery';
+import ProfileProgress from '@/components/profile/ProfileProgress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -155,6 +156,19 @@ export default function Profile() {
       toast.error('Please complete all required fields');
       return;
     }
+    // Validate new required fields
+    if (!formData.interests || formData.interests.length === 0) {
+      toast.error('Please add at least one interest');
+      return;
+    }
+    if (!formData.hobbies || !formData.hobbies.trim()) {
+      toast.error('Please describe your hobbies');
+      return;
+    }
+    if (!formData.looking_for || !formData.looking_for.trim()) {
+      toast.error('Please describe what you are looking for');
+      return;
+    }
     // Validate age requirement
     if (formData.age < 18) {
       toast.error('You must be at least 18 years old to create a profile');
@@ -248,6 +262,16 @@ export default function Profile() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
+        {/* Profile Progress - Only for own profile */}
+        {isOwnProfile && (
+          <motion.div
+            className="mb-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}>
+            <ProfileProgress profile={displayProfile} />
+          </motion.div>
+        )}
+
         {/* Avatar Section */}
         <motion.div
           className="flex justify-center mb-8"
@@ -358,7 +382,9 @@ export default function Profile() {
               </div>
 
               <div>
-              <Label htmlFor="interests" className="text-slate-600">Interests (Tags)</Label>
+                <Label htmlFor="interests" className="text-slate-600">
+                  Interests (Tags) <span className="text-red-500">*</span>
+                </Label>
               <div className="mt-1 space-y-2">
                 {isOwnProfile && (
                   <div className="flex gap-2">
@@ -424,7 +450,9 @@ export default function Profile() {
               </div>
 
               <div>
-              <Label htmlFor="hobbies" className="text-slate-600">Hobbies</Label>
+              <Label htmlFor="hobbies" className="text-slate-600">
+                Hobbies <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 id="hobbies"
                 value={formData.hobbies}
@@ -436,7 +464,9 @@ export default function Profile() {
               </div>
 
               <div>
-              <Label htmlFor="looking_for" className="text-slate-600">Looking For</Label>
+              <Label htmlFor="looking_for" className="text-slate-600">
+                Looking For <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 id="looking_for"
                 value={formData.looking_for}

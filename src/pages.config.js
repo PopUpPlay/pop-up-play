@@ -1,4 +1,5 @@
 import About from './pages/About';
+import AllProfiles from './pages/AllProfiles';
 import BlockedUsers from './pages/BlockedUsers';
 import Broadcast from './pages/Broadcast';
 import Chat from './pages/Chat';
@@ -8,15 +9,15 @@ import Home from './pages/Home';
 import Menu from './pages/Menu';
 import OnlineMembers from './pages/OnlineMembers';
 import Profile from './pages/Profile';
-import VideoCall from './pages/VideoCall';
-import AllProfiles from './pages/AllProfiles';
-import SubscriptionSettings from './pages/SubscriptionSettings';
 import Subscribe from './pages/Subscribe';
+import SubscriptionSettings from './pages/SubscriptionSettings';
+import VideoCall from './pages/VideoCall';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "About": About,
+    "AllProfiles": AllProfiles,
     "BlockedUsers": BlockedUsers,
     "Broadcast": Broadcast,
     "Chat": Chat,
@@ -26,10 +27,9 @@ export const PAGES = {
     "Menu": Menu,
     "OnlineMembers": OnlineMembers,
     "Profile": Profile,
-    "VideoCall": VideoCall,
-    "AllProfiles": AllProfiles,
-    "SubscriptionSettings": SubscriptionSettings,
     "Subscribe": Subscribe,
+    "SubscriptionSettings": SubscriptionSettings,
+    "VideoCall": VideoCall,
 }
 
 export const pagesConfig = {
