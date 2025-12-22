@@ -7,6 +7,21 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
+// Calculate distance between two coordinates in miles
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return null;
+  
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+};
+
 export default function OnlineMembers() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
@@ -60,9 +75,16 @@ export default function OnlineMembers() {
     );
   }
 
-  const filteredProfiles = activeProfiles.filter((profile) => {
-    return !blockedUsers.some(b => b.blocked_email === profile.user_email);
-  });
+  const filteredProfiles = activeProfiles
+    .filter((profile) => {
+      return !blockedUsers.some(b => b.blocked_email === profile.user_email);
+    })
+    .map(profile => {
+      const distance = myProfile?.latitude && myProfile?.longitude
+        ? calculateDistance(myProfile.latitude, myProfile.longitude, profile.latitude, profile.longitude)
+        : null;
+      return { ...profile, distance };
+    });
 
   const handleVideoCall = (otherUserEmail) => {
     const callId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -156,6 +178,11 @@ export default function OnlineMembers() {
                         <div className="flex items-center gap-1 text-sm text-slate-500 mt-1">
                           <MapPin className="w-3 h-3 text-violet-600" />
                           {profile.current_city}
+                          {profile.distance !== null && profile.distance !== undefined && (
+                            <span className="text-purple-600 font-semibold ml-1">
+                              • {profile.distance.toFixed(1)} mi
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>
