@@ -38,7 +38,7 @@ export default function NavigationMenu({ unreadCount = 0 }) {
   ];
 
   return (
-    <>
+    <div className="relative">
       {/* Menu Button */}
       <Button
         variant="ghost"
@@ -49,7 +49,7 @@ export default function NavigationMenu({ unreadCount = 0 }) {
         <Menu className="w-5 h-5 text-slate-700" />
       </Button>
 
-      {/* Slide-out Menu */}
+      {/* Dropdown Menu */}
       <AnimatePresence>
         {isOpen && (
           <>
@@ -59,32 +59,19 @@ export default function NavigationMenu({ unreadCount = 0 }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50"
+              className="fixed inset-0 z-50"
             />
 
-            {/* Menu Panel */}
+            {/* Dropdown Panel */}
             <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-80 bg-white shadow-2xl z-50 flex flex-col"
+              initial={{ opacity: 0, y: -10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.95 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden border border-slate-100"
             >
-              {/* Header */}
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                <h2 className="text-xl font-bold text-slate-800">Menu</h2>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setIsOpen(false)}
-                  className="rounded-full"
-                >
-                  <X className="w-5 h-5" />
-                </Button>
-              </div>
-
               {/* Menu Items */}
-              <div className="flex-1 p-4 space-y-2">
+              <div className="p-3 space-y-1">
                 {menuItems.map((item) => {
                   const Icon = item.icon;
                   return (
@@ -96,15 +83,15 @@ export default function NavigationMenu({ unreadCount = 0 }) {
                       <motion.div
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        className="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer group"
+                        className="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-50 transition-colors cursor-pointer group"
                       >
-                        <div className={`${item.color} w-12 h-12 rounded-full flex items-center justify-center relative`}>
-                          <Icon className="w-6 h-6 text-slate-700" />
+                        <div className={`${item.color} w-11 h-11 rounded-full flex items-center justify-center relative`}>
+                          <Icon className="w-5 h-5 text-slate-700" />
                           {item.badge > 0 && (
                             <NotificationBadge count={item.badge} />
                           )}
                         </div>
-                        <span className="text-lg font-semibold text-slate-800 group-hover:text-violet-600 transition-colors">
+                        <span className="text-base font-semibold text-slate-800 group-hover:text-violet-600 transition-colors">
                           {item.label}
                         </span>
                       </motion.div>
@@ -116,6 +103,6 @@ export default function NavigationMenu({ unreadCount = 0 }) {
           </>
         )}
       </AnimatePresence>
-    </>
+    </div>
   );
 }
