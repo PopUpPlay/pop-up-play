@@ -27,7 +27,7 @@ export default function Profile() {
   const [formData, setFormData] = useState({
     display_name: '',
     bio: '',
-    age: 18,
+    age: '',
     gender: '',
     interested_in: '',
     interests: [],
