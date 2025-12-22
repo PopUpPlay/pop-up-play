@@ -1,10 +1,24 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import SessionManager from '@/components/auth/SessionManager';
 import InactivityManager from '@/components/auth/InactivityManager';
+import BroadcastNotifications from '@/components/broadcasts/BroadcastNotifications';
 
 export default function Layout({ children }) {
+  const [userEmail, setUserEmail] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const user = await base44.auth.me();
+        setUserEmail(user.email);
+      } catch (error) {
+        // User not logged in
+      }
+    };
+    loadUser();
+  }, []);
   // Auto pop-down on page unload/close or logout
   useEffect(() => {
     const popDownUser = async () => {
