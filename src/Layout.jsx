@@ -64,6 +64,7 @@ export default function Layout({ children }) {
     <div className="min-h-screen bg-slate-50">
       <SessionManager />
       <InactivityManager />
+      <BroadcastNotifications userEmail={userEmail} />
       <style>{`
         :root {
           --primary: 139 92 246;
