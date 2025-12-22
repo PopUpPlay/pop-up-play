@@ -162,7 +162,7 @@ export default function AllProfiles() {
                     <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
                       {profile.current_city && (
                         <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
+                          <MapPin className="w-4 h-4 text-purple-600" />
                           <span>{profile.current_city}</span>
                         </div>
                       )}
