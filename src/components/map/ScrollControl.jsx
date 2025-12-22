@@ -16,14 +16,14 @@ export default function ScrollControl() {
       <Button
         onClick={() => scrollPage('up')}
         size="icon"
-        className="bg-white hover:bg-slate-100 text-slate-700 shadow-xl rounded-full w-10 h-10"
+        className="bg-purple-200 hover:bg-purple-300 text-slate-700 shadow-xl rounded-full w-10 h-10"
       >
         <ChevronUp className="w-5 h-5" />
       </Button>
       <Button
         onClick={() => scrollPage('down')}
         size="icon"
-        className="bg-white hover:bg-slate-100 text-slate-700 shadow-xl rounded-full w-10 h-10"
+        className="bg-purple-200 hover:bg-purple-300 text-slate-700 shadow-xl rounded-full w-10 h-10"
       >
         <ChevronDown className="w-5 h-5" />
       </Button>
