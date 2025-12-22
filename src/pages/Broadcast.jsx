@@ -126,16 +126,16 @@ export default function Broadcast() {
             <Button
               onClick={handleSend}
               disabled={sendBroadcastMutation.isPending}
-              className="w-full bg-violet-600 hover:bg-violet-700"
+              className="w-full bg-violet-600 hover:bg-violet-700 text-white"
             >
               {sendBroadcastMutation.isPending ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin text-white" />
                   Sending to all users...
                 </>
               ) : (
                 <>
-                  <Send className="w-4 h-4 mr-2" />
+                  <Send className="w-4 h-4 mr-2 text-white" />
                   Send Broadcast to All Users
                 </>
               )}
