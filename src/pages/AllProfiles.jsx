@@ -7,14 +7,19 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-// Calculate distance between two ZIP codes (rough estimate)
-const calculateZipDistance = (zip1, zip2) => {
-  if (!zip1 || !zip2) return 999999;
+// Calculate distance between two coordinates in miles
+const calculateDistance = (lat1, lon1, lat2, lon2) => {
+  if (!lat1 || !lon1 || !lat2 || !lon2) return null;
   
-  // Simple numeric difference for rough sorting
-  const num1 = parseInt(zip1.replace(/[^0-9]/g, '')) || 0;
-  const num2 = parseInt(zip2.replace(/[^0-9]/g, '')) || 0;
-  return Math.abs(num1 - num2);
+  const R = 3959; // Earth's radius in miles
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+  const a = 
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
 };
 
 export default function AllProfiles() {
@@ -65,16 +70,22 @@ export default function AllProfiles() {
   });
 
   const sortedProfiles = React.useMemo(() => {
-    if (!myProfile?.current_zip) return allProfiles;
-    
-    return [...allProfiles]
+    const profiles = [...allProfiles]
       .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)) // Exclude blocked
+      .map(p => {
+        const distance = myProfile?.latitude && myProfile?.longitude
+          ? calculateDistance(myProfile.latitude, myProfile.longitude, p.latitude, p.longitude)
+          : null;
+        return { ...p, distance };
+      })
       .sort((a, b) => {
-        const distA = calculateZipDistance(myProfile.current_zip, a.current_zip);
-        const distB = calculateZipDistance(myProfile.current_zip, b.current_zip);
-        return distA - distB;
+        if (a.distance === null) return 1;
+        if (b.distance === null) return -1;
+        return a.distance - b.distance;
       });
-  }, [allProfiles, myProfile, user?.email, blockedUsers]);
+    
+    return profiles;
+  }, [allProfiles, myProfile, blockedUsers]);
 
   if (!user || isLoading) {
     return (
@@ -148,12 +159,19 @@ export default function AllProfiles() {
                       {profile.age && <span className="text-slate-500">, {profile.age}</span>}
                     </h3>
                     
-                    {profile.current_city && (
-                      <div className="flex items-center gap-1 text-sm text-slate-500 mb-2">
-                        <MapPin className="w-4 h-4" />
-                        <span>{profile.current_city}</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 text-sm text-slate-500 mb-2">
+                      {profile.current_city && (
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          <span>{profile.current_city}</span>
+                        </div>
+                      )}
+                      {profile.distance !== null && profile.distance !== undefined && (
+                        <span className="text-violet-600 font-semibold">
+                          • {profile.distance.toFixed(1)} mi
+                        </span>
+                      )}
+                    </div>
 
                     {profile.bio && (
                       <p className="text-sm text-slate-600 line-clamp-2">{profile.bio}</p>
