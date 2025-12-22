@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, Loader2, CreditCard, Shield } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, CreditCard, Shield, Ticket } from 'lucide-react';
+import CodeGenerators from '@/components/codes/CodeGenerators';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -222,6 +223,19 @@ export default function SubscriptionSettings() {
               </p>
             </div>
           </div>
+        </motion.div>
+
+        {/* Access Code Generators */}
+        <motion.div
+          className="bg-white rounded-2xl shadow-lg p-6 mt-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}>
+          <div className="flex items-center gap-3 pb-4 border-b border-slate-100 mb-6">
+            <Ticket className="w-6 h-6 text-violet-600" />
+            <h2 className="text-lg font-semibold text-slate-800">Access Code Generators</h2>
+          </div>
+          <CodeGenerators adminEmail={user.email} />
         </motion.div>
       </main>
     </div>
