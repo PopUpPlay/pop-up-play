@@ -1,25 +1,25 @@
-import Home from './pages/Home';
-import Profile from './pages/Profile';
-import Dashboard from './pages/Dashboard';
-import Chat from './pages/Chat';
-import Discover from './pages/Discover';
-import VideoCall from './pages/VideoCall';
 import About from './pages/About';
 import BlockedUsers from './pages/BlockedUsers';
+import Chat from './pages/Chat';
+import Dashboard from './pages/Dashboard';
+import Discover from './pages/Discover';
+import Home from './pages/Home';
 import OnlineMembers from './pages/OnlineMembers';
+import Profile from './pages/Profile';
+import VideoCall from './pages/VideoCall';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Home": Home,
-    "Profile": Profile,
-    "Dashboard": Dashboard,
-    "Chat": Chat,
-    "Discover": Discover,
-    "VideoCall": VideoCall,
     "About": About,
     "BlockedUsers": BlockedUsers,
+    "Chat": Chat,
+    "Dashboard": Dashboard,
+    "Discover": Discover,
+    "Home": Home,
     "OnlineMembers": OnlineMembers,
+    "Profile": Profile,
+    "VideoCall": VideoCall,
 }
 
 export const pagesConfig = {
