@@ -68,7 +68,6 @@ export default function AllProfiles() {
     if (!myProfile?.current_zip) return allProfiles;
     
     return [...allProfiles]
-      .filter(p => p.user_email !== user?.email) // Exclude self
       .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)) // Exclude blocked
       .sort((a, b) => {
         const distA = calculateZipDistance(myProfile.current_zip, a.current_zip);
