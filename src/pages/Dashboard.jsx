@@ -249,6 +249,18 @@ export default function Dashboard() {
             </div>
           </Link>
 
+          {user?.role === 'admin' && (
+            <div onClick={() => navigate(createPageUrl('SubscriptionSettings'))} className="cursor-pointer flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100">
+              <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center">
+                <Settings className="w-5 h-5 text-amber-600" />
+              </div>
+              <div className="flex-1">
+                <p className="font-medium text-slate-800">Subscription Settings</p>
+                <p className="text-sm text-slate-500">Configure membership plans</p>
+              </div>
+            </div>
+          )}
+
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <button className="w-full flex items-center gap-4 p-4 hover:bg-red-50 transition-colors text-left">
