@@ -59,7 +59,7 @@ export default function NavigationMenu({ unreadCount = 0 }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 z-50"
+              className="fixed inset-0 bg-black/30 backdrop-blur-sm z-[100]"
             />
 
             {/* Dropdown Panel */}
@@ -68,7 +68,7 @@ export default function NavigationMenu({ unreadCount = 0 }) {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl z-50 overflow-hidden border border-slate-100"
+              className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-2xl z-[101] overflow-hidden border border-slate-100"
             >
               {/* Menu Items */}
               <div className="p-3 space-y-1">
