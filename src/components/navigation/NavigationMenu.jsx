@@ -59,7 +59,7 @@ export default function NavigationMenu({ unreadCount = 0 }) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsOpen(false)}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-[9998]"
+              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50"
             />
 
             {/* Menu Panel */}
@@ -68,7 +68,7 @@ export default function NavigationMenu({ unreadCount = 0 }) {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-80 bg-white shadow-2xl z-[9999] flex flex-col"
+              className="fixed top-0 right-0 bottom-0 w-80 bg-white shadow-2xl z-50 flex flex-col"
             >
               {/* Header */}
               <div className="p-6 border-b border-slate-100 flex items-center justify-between">
