@@ -150,7 +150,7 @@ export default function AccessCodeManager() {
           ) : (
             <div className="space-y-3">
               {accessCodes.map((accessCode) => {
-                const isExpired = new Date(accessCode.valid_until) < new Date();
+                const isExpired = accessCode.valid_until ? new Date(accessCode.valid_until) < new Date() : false;
                 
                 return (
                   <div
@@ -200,10 +200,12 @@ export default function AccessCodeManager() {
                       }`}>
                         {accessCode.is_used ? 'Used' : isExpired ? 'Expired' : 'Active'}
                       </span>
-                      <span className="text-slate-500 flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        Valid until {format(new Date(accessCode.valid_until), 'MMM d, yyyy')}
-                      </span>
+                      {accessCode.valid_until && (
+                        <span className="text-slate-500 flex items-center gap-1">
+                          <Calendar className="w-3 h-3" />
+                          Valid until {format(new Date(accessCode.valid_until), 'MMM d, yyyy')}
+                        </span>
+                      )}
                     </div>
 
                     {accessCode.is_used && accessCode.used_by && accessCode.used_at && (
