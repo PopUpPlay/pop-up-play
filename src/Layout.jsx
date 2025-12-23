@@ -4,8 +4,9 @@ import { base44 } from '@/api/base44Client';
 import SessionManager from '@/components/auth/SessionManager';
 import InactivityManager from '@/components/auth/InactivityManager';
 import BroadcastNotifications from '@/components/broadcasts/BroadcastNotifications';
+import SubscriptionGate from '@/components/subscription/SubscriptionGate';
 
-export default function Layout({ children }) {
+export default function Layout({ children, currentPageName }) {
   const [userEmail, setUserEmail] = useState(null);
 
   useEffect(() => {
@@ -19,6 +20,10 @@ export default function Layout({ children }) {
     };
     loadUser();
   }, []);
+
+  // Pages that don't require subscription check
+  const publicPages = ['Pricing', 'SubscriptionSuccess', 'SubscriptionSettings'];
+  const shouldCheckSubscription = !publicPages.includes(currentPageName);
   // Auto pop-down on page unload/close or logout
   useEffect(() => {
     const popDownUser = async () => {
@@ -60,7 +65,7 @@ export default function Layout({ children }) {
       base44.auth.logout = originalLogout;
     };
   }, []);
-  return (
+  const content = (
     <div className="min-h-screen bg-slate-50">
       <SessionManager />
       <InactivityManager />

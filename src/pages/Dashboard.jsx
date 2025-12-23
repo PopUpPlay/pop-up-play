@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
 import {
   ArrowLeft, MapPin, Eye, EyeOff, Image, Video,
-  Settings, LogOut, Trash2, Edit2, Loader2, Clock, Ban } from
+  Settings, LogOut, Trash2, Edit2, Loader2, Clock, Ban, CreditCard } from
 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -247,6 +247,20 @@ export default function Dashboard() {
               </div>
             </div>
           </Link>
+
+          {user?.role === 'admin' && (
+            <Link to={createPageUrl('SubscriptionSettings')}>
+              <div className="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100">
+                <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                  <CreditCard className="w-5 h-5 text-green-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-slate-800">Subscription Settings</p>
+                  <p className="text-sm text-slate-500">Configure membership & pricing</p>
+                </div>
+              </div>
+            </Link>
+          )}
 
           <AlertDialog>
             <AlertDialogTrigger asChild>
