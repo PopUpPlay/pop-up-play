@@ -352,6 +352,7 @@ export default function Profile() {
                   <SelectContent>
                     <SelectItem value="men">Men</SelectItem>
                     <SelectItem value="women">Women</SelectItem>
+                    <SelectItem value="transgender">Transgender</SelectItem>
                     <SelectItem value="everyone">Everyone</SelectItem>
                   </SelectContent>
                 </Select>
