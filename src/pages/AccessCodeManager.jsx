@@ -206,7 +206,7 @@ export default function AccessCodeManager() {
                       </span>
                     </div>
 
-                    {accessCode.is_used && accessCode.used_by && (
+                    {accessCode.is_used && accessCode.used_by && accessCode.used_at && (
                       <div className="mt-2 text-xs text-slate-500">
                         Used by {accessCode.used_by} on {format(new Date(accessCode.used_at), 'MMM d, yyyy HH:mm')}
                       </div>
