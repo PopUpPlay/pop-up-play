@@ -12,15 +12,21 @@ import ChatConversation from '@/components/chat/ChatConversation';
 export default function Chat() {
   const [user, setUser] = useState(null);
   const [selectedMatch, setSelectedMatch] = useState(null);
+  const [backUrl, setBackUrl] = useState(createPageUrl('Menu'));
   const queryClient = useQueryClient();
 
-  // Check for user parameter in URL
+  // Check for user parameter in URL and determine back button destination
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const userEmail = params.get('user');
     if (userEmail) {
       // Store it to select match once matches are loaded
       sessionStorage.setItem('chatWithUser', userEmail);
+      // If coming from URL with user param (map popup), set back to Home
+      setBackUrl(createPageUrl('Home'));
+    } else {
+      // Otherwise, back to Menu
+      setBackUrl(createPageUrl('Menu'));
     }
   }, []);
 
