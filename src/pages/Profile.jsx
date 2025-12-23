@@ -13,7 +13,6 @@ import { createPageUrl } from '@/utils';
 import AvatarUpload from '@/components/profile/AvatarUpload';
 import PhotoGallery from '@/components/profile/PhotoGallery';
 import VideoGallery from '@/components/profile/VideoGallery';
-import ProfileProgress from '@/components/profile/ProfileProgress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -249,16 +248,6 @@ export default function Profile() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
-        {/* Profile Progress - Only for own profile */}
-        {isOwnProfile && (
-          <motion.div
-            className="mb-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}>
-            <ProfileProgress profile={displayProfile} />
-          </motion.div>
-        )}
-
         {/* Avatar Section */}
         <motion.div
           className="flex justify-center mb-8"
@@ -322,7 +311,6 @@ export default function Profile() {
                 <Input
                   id="age"
                   type="number"
-                  min="18"
                   value={formData.age}
                   onChange={(e) => setFormData((prev) => ({ ...prev, age: parseInt(e.target.value) || '' }))}
                   placeholder="Age"
@@ -363,7 +351,6 @@ export default function Profile() {
                   <SelectContent>
                     <SelectItem value="men">Men</SelectItem>
                     <SelectItem value="women">Women</SelectItem>
-                    <SelectItem value="transgender">Transgender</SelectItem>
                     <SelectItem value="everyone">Everyone</SelectItem>
                   </SelectContent>
                 </Select>
@@ -371,7 +358,7 @@ export default function Profile() {
               </div>
 
               <div>
-                <Label htmlFor="interests" className="text-slate-600">Interests (Tags)</Label>
+              <Label htmlFor="interests" className="text-slate-600">Interests (Tags)</Label>
               <div className="mt-1 space-y-2">
                 {isOwnProfile && (
                   <div className="flex gap-2">
