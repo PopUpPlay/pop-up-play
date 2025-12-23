@@ -150,9 +150,9 @@ export default function Profile() {
   });
 
   const handleSave = () => {
-    // Validate required fields
-    if (!formData.display_name || !formData.bio || !formData.age || !formData.gender || !formData.interested_in || !formData.avatar_url) {
-      toast.error('Please complete all required fields');
+    // Validate required fields (only Age, Gender, Interested In are mandatory)
+    if (!formData.display_name || !formData.age || !formData.gender || !formData.interested_in || !formData.avatar_url) {
+      toast.error('Please complete all required fields (Display Name, Age, Gender, Interested In, and Profile Picture)');
       return;
     }
     // Validate age requirement
