@@ -230,7 +230,7 @@ export default function Profile() {
           <Button
             onClick={handleSave}
             disabled={saveMutation.isPending}
-            className="bg-violet-600 hover:bg-violet-700">
+            className="bg-violet-600 hover:bg-violet-700 text-white">
               {saveMutation.isPending ?
             <Loader2 className="w-4 h-4 animate-spin" /> :
 
