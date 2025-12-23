@@ -5,7 +5,6 @@ import { MessageCircle, Heart, Users, Info, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
-import RedeemCodeInput from '@/components/codes/RedeemCodeInput';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 
@@ -94,14 +93,6 @@ export default function Menu() {
 
       {/* Menu Items */}
       <main className="max-w-2xl mx-auto px-4 py-8">
-        {/* Redeem Code Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6 flex justify-center">
-          <RedeemCodeInput userEmail={user?.email} />
-        </motion.div>
-
         <div className="space-y-4">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
