@@ -67,6 +67,18 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
 
   return (
     <div>
+      {editable && (
+        <div className="mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <p className="text-xs font-semibold text-slate-700 mb-1">Photo Requirements:</p>
+          <ul className="text-xs text-slate-600 space-y-0.5">
+            <li>• Max size: 50MB per photo</li>
+            <li>• Formats: JPG, PNG, GIF, WebP</li>
+            <li>• Recommended: 1080p or higher quality</li>
+            <li>• Maximum: 9 photos total</li>
+            <li>• Drag to reorder photos</li>
+          </ul>
+        </div>
+      )}
       <DragDropContext onDragEnd={handleDragEnd}>
         <Droppable droppableId="photos" direction="horizontal">
           {(provided) => (
