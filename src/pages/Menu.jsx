@@ -80,6 +80,13 @@ export default function Menu() {
       path: 'EnterAccessCode',
       color: 'bg-amber-300',
       description: 'Redeem your access code'
+    },
+    {
+      label: 'Pricing',
+      icon: CreditCard,
+      path: 'Pricing',
+      color: 'bg-green-300',
+      description: 'View membership plans'
     }
   ];
 
