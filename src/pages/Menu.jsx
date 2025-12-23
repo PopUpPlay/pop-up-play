@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { MessageCircle, Heart, Users, Info, ArrowLeft, Key } from 'lucide-react';
+import { MessageCircle, Heart, Users, Info, ArrowLeft, Key, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
