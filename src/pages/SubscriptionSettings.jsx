@@ -194,6 +194,7 @@ export default function SubscriptionSettings() {
                   onCheckedChange={(checked) =>
                     setFormData((prev) => ({ ...prev, free_trial_enabled: checked }))
                   }
+                  className="data-[state=checked]:bg-violet-400"
                 />
               </div>
 
