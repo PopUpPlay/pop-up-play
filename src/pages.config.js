@@ -8,11 +8,13 @@ import Discover from './pages/Discover';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
 import OnlineMembers from './pages/OnlineMembers';
-import Profile from './pages/Profile';
-import VideoCall from './pages/VideoCall';
-import SubscriptionSettings from './pages/SubscriptionSettings';
 import Pricing from './pages/Pricing';
+import Profile from './pages/Profile';
+import SubscriptionSettings from './pages/SubscriptionSettings';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
+import VideoCall from './pages/VideoCall';
+import AccessCodeManager from './pages/AccessCodeManager';
+import EnterAccessCode from './pages/EnterAccessCode';
 import __Layout from './Layout.jsx';
 
 
@@ -27,11 +29,13 @@ export const PAGES = {
     "Home": Home,
     "Menu": Menu,
     "OnlineMembers": OnlineMembers,
-    "Profile": Profile,
-    "VideoCall": VideoCall,
-    "SubscriptionSettings": SubscriptionSettings,
     "Pricing": Pricing,
+    "Profile": Profile,
+    "SubscriptionSettings": SubscriptionSettings,
     "SubscriptionSuccess": SubscriptionSuccess,
+    "VideoCall": VideoCall,
+    "AccessCodeManager": AccessCodeManager,
+    "EnterAccessCode": EnterAccessCode,
 }
 
 export const pagesConfig = {
