@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { MessageCircle, Heart, Users, Info, ArrowLeft } from 'lucide-react';
+import { MessageCircle, Heart, Users, Info, ArrowLeft, Key } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
@@ -73,6 +73,13 @@ export default function Menu() {
       path: 'About',
       color: 'bg-blue-300',
       description: 'Learn more about us'
+    },
+    {
+      label: 'Access Code',
+      icon: Key,
+      path: 'EnterAccessCode',
+      color: 'bg-amber-300',
+      description: 'Redeem your access code'
     }
   ];
 
