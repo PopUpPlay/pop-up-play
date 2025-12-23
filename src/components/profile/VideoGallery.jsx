@@ -63,6 +63,17 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
 
   return (
     <div>
+      {editable && (
+        <div className="mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <p className="text-xs font-semibold text-slate-700 mb-1">Video Requirements:</p>
+          <ul className="text-xs text-slate-600 space-y-0.5">
+            <li>• Max size: 200MB per video</li>
+            <li>• Formats: MP4, MOV, AVI, WebM</li>
+            <li>• Recommended: 1080p or lower</li>
+            <li>• Maximum: 4 videos total</li>
+          </ul>
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-3">
         {videos.map((video, index) => (
           <motion.div
