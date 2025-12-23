@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ChatList from '@/components/chat/ChatList';
 import ChatConversation from '@/components/chat/ChatConversation';
-import MatchRating from '@/components/matching/MatchRating';
 
 export default function Chat() {
   const [user, setUser] = useState(null);
@@ -185,30 +184,17 @@ export default function Chat() {
               ${selectedMatch ? 'block' : 'hidden md:flex md:items-center md:justify-center'}
               h-full
             `}>
-              {selectedMatch && otherProfile ? (
-                <div className="h-full flex flex-col">
-                  <div className="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-white">
-                    <div className="flex-1" />
-                    <MatchRating
-                      matchId={selectedMatch.id}
-                      ratedUserEmail={otherProfile.user_email}
-                      currentUserEmail={user.email}
-                    />
-                  </div>
-                  <div className="flex-1 overflow-hidden">
-                    <ChatConversation
-                      match={selectedMatch}
-                      otherProfile={otherProfile}
-                      messages={messages.sort((a, b) =>
-                      new Date(a.created_date) - new Date(b.created_date)
-                      )}
-                      currentUserEmail={user.email}
-                      onBack={() => setSelectedMatch(null)}
-                      onSendMessage={handleSendMessage}
-                      isSending={sendMessageMutation.isPending} />
-                  </div>
-                </div>
-              ) :
+              {selectedMatch && otherProfile ?
+              <ChatConversation
+                match={selectedMatch}
+                otherProfile={otherProfile}
+                messages={messages.sort((a, b) =>
+                new Date(a.created_date) - new Date(b.created_date)
+                )}
+                currentUserEmail={user.email}
+                onBack={() => setSelectedMatch(null)}
+                onSendMessage={handleSendMessage}
+                isSending={sendMessageMutation.isPending} /> :
 
 
               <div className="text-center p-8">
