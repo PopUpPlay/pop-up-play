@@ -149,7 +149,7 @@ export default function Chat() {
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-lg border-b border-slate-100 flex-shrink-0">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-3">
-          <Link to={createPageUrl('Menu')}>
+          <Link to={createPageUrl('Home')}>
             <Button variant="ghost" size="icon" className="rounded-full">
               <ArrowLeft className="w-5 h-5" />
             </Button>
