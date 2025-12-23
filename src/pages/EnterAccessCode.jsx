@@ -54,7 +54,7 @@ export default function EnterAccessCode() {
       const accessCode = codes[0];
       
       // Check if expired
-      if (new Date(accessCode.valid_until) < new Date()) {
+      if (accessCode.valid_until && new Date(accessCode.valid_until) < new Date()) {
         throw new Error('This code has expired');
       }
 
