@@ -104,4 +104,10 @@ export default function Layout({ children, currentPageName }) {
       {children}
     </div>
   );
+
+  if (shouldCheckSubscription) {
+    return <SubscriptionGate>{content}</SubscriptionGate>;
+  }
+
+  return content;
 }
