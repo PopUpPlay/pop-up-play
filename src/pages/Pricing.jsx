@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { Check, Loader2, Crown, Clock } from 'lucide-react';
+import { Check, Loader2, Crown, Clock, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function Pricing() {
   const [user, setUser] = useState(null);
@@ -68,8 +70,21 @@ export default function Pricing() {
     : null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-rose-50 py-20 px-4">
-      <div className="max-w-4xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-white to-rose-50">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
+        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
+          <Link to={createPageUrl('Menu')}>
+            <Button variant="ghost" size="icon" className="rounded-full">
+              <ArrowLeft className="w-5 h-5" />
+            </Button>
+          </Link>
+          <h1 className="text-lg font-semibold text-slate-800">Pricing</h1>
+          <div className="w-9"></div>
+        </div>
+      </header>
+
+      <div className="max-w-4xl mx-auto py-12 px-4">
         <motion.div
           className="text-center mb-12"
           initial={{ opacity: 0, y: 20 }}
