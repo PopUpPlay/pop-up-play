@@ -209,7 +209,7 @@ export default function SubscriptionSettings() {
                     Trial Duration (Days)
                   </Label>
                   <div className="relative mt-1">
-                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-red-500" />
                     <Input
                       id="trial_days"
                       type="number"
