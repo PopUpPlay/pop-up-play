@@ -110,22 +110,24 @@ export default function Profile() {
       
       if (existingProfiles.length > 0) {
         // Update existing profile
-        return base44.entities.UserProfile.update(existingProfiles[0].id, data);
+        return await base44.entities.UserProfile.update(existingProfiles[0].id, data);
       } else {
         // Create new profile
-        return base44.entities.UserProfile.create({
+        return await base44.entities.UserProfile.create({
           user_email: user.email,
           ...data
         });
       }
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['myProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['viewingProfile'] });
       queryClient.invalidateQueries({ queryKey: ['activeUsers'] });
+      queryClient.refetchQueries({ queryKey: ['myProfile', user?.email] });
       toast.success('Profile saved successfully!');
     },
     onError: (error) => {
-      toast.error('Failed to save profile');
+      toast.error('Failed to save profile: ' + (error.message || 'Unknown error'));
       console.error('Save error:', error);
     }
   });
