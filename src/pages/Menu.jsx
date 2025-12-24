@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { MessageCircle, Heart, Users, Info, ArrowLeft, Key, CreditCard } from 'lucide-react';
+import { MessageCircle, Heart, Users, Info, ArrowLeft, Key, CreditCard, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
@@ -87,6 +87,13 @@ export default function Menu() {
       path: 'Pricing',
       color: 'bg-green-300',
       description: 'View membership plans'
+    },
+    {
+      label: 'Sign Out',
+      icon: LogOut,
+      action: 'logout',
+      color: 'bg-red-300',
+      description: 'Log out of your account'
     }
   ];
 
@@ -110,33 +117,45 @@ export default function Menu() {
         <div className="space-y-4">
           {menuItems.map((item, index) => {
             const Icon = item.icon;
+            const content = (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer"
+              >
+                <div className="flex items-center gap-4">
+                  <div className={`${item.color} w-16 h-16 rounded-full flex items-center justify-center relative`}>
+                    <Icon className="w-8 h-8 text-slate-700" />
+                    {item.badge > 0 && (
+                      <NotificationBadge count={item.badge} />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-slate-800 mb-1">
+                      {item.label}
+                    </h3>
+                    <p className="text-sm text-slate-500">
+                      {item.description}
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            );
+
+            if (item.action === 'logout') {
+              return (
+                <div key="logout" onClick={() => base44.auth.logout()}>
+                  {content}
+                </div>
+              );
+            }
+
             return (
               <Link key={item.path} to={createPageUrl(item.path)}>
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className="bg-white rounded-2xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer"
-                >
-                  <div className="flex items-center gap-4">
-                    <div className={`${item.color} w-16 h-16 rounded-full flex items-center justify-center relative`}>
-                      <Icon className="w-8 h-8 text-slate-700" />
-                      {item.badge > 0 && (
-                        <NotificationBadge count={item.badge} />
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="text-xl font-semibold text-slate-800 mb-1">
-                        {item.label}
-                      </h3>
-                      <p className="text-sm text-slate-500">
-                        {item.description}
-                      </p>
-                    </div>
-                  </div>
-                </motion.div>
+                {content}
               </Link>
             );
           })}
