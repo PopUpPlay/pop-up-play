@@ -105,14 +105,14 @@ export default function Profile() {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      if (myProfile) {
-        return base44.entities.UserProfile.update(myProfile.id, data);
+      // Always check for existing profile to handle race conditions
+      const existingProfiles = await base44.entities.UserProfile.filter({ user_email: user.email });
+      
+      if (existingProfiles.length > 0) {
+        // Update existing profile
+        return base44.entities.UserProfile.update(existingProfiles[0].id, data);
       } else {
-        // Check for existing profile before creating
-        const existingProfiles = await base44.entities.UserProfile.filter({ user_email: user.email });
-        if (existingProfiles.length > 0) {
-          throw new Error('DUPLICATE_PROFILE');
-        }
+        // Create new profile
         return base44.entities.UserProfile.create({
           user_email: user.email,
           ...data
@@ -121,14 +121,12 @@ export default function Profile() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['myProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['activeUsers'] });
       toast.success('Profile saved successfully!');
     },
     onError: (error) => {
-      if (error.message === 'DUPLICATE_PROFILE') {
-        setShowDuplicateError(true);
-      } else {
-        toast.error('Failed to save profile');
-      }
+      toast.error('Failed to save profile');
+      console.error('Save error:', error);
     }
   });
 
