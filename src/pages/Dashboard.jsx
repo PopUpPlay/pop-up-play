@@ -51,18 +51,7 @@ export default function Dashboard() {
     enabled: !!user?.email
   });
 
-  const toggleVisibilityMutation = useMutation({
-    mutationFn: async (isVisible) => {
-      if (!myProfile) return;
-      return base44.entities.UserProfile.update(myProfile.id, {
-        is_popped_up: isVisible,
-        popup_message: isVisible ? myProfile.popup_message : ''
-      });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myProfile'] });
-    }
-  });
+
 
   const handleLogout = () => {
     base44.auth.logout();
@@ -166,56 +155,7 @@ export default function Dashboard() {
           </div>
         </motion.div>
 
-        {/* Visibility Control */}
-        <motion.div
-          className="bg-white rounded-2xl shadow-lg p-6 mb-6"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}>
 
-          <h3 className="text-lg font-semibold text-slate-800 mb-4">Map Visibility</h3>
-          
-          <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl">
-            <div className="flex items-center gap-3">
-              {myProfile?.is_popped_up ?
-              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
-                  <Eye className="w-5 h-5 text-green-600" />
-                </div> :
-
-              <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center">
-                  <EyeOff className="w-5 h-5 text-slate-500" />
-                </div>
-              }
-              <div>
-                <p className="font-medium text-slate-800">
-                  {myProfile?.is_popped_up ? 'You are visible' : 'You are hidden'}
-                </p>
-                <p className="text-sm text-slate-500">
-                  {myProfile?.is_popped_up ? 'Others can see you on the map' : 'Pop up to appear on the map'}
-                </p>
-              </div>
-            </div>
-            <Switch
-              checked={myProfile?.is_popped_up || false}
-              onCheckedChange={(checked) => toggleVisibilityMutation.mutate(checked)}
-              disabled={toggleVisibilityMutation.isPending || !myProfile?.display_name} />
-
-          </div>
-
-          {myProfile?.popup_message && myProfile?.is_popped_up &&
-          <div className="mt-4 p-4 bg-violet-50 rounded-xl border border-violet-100">
-              <p className="text-sm text-slate-500 mb-1">Your current message:</p>
-              <p className="text-slate-700 italic">"{myProfile.popup_message}"</p>
-            </div>
-          }
-
-          {myProfile?.last_location_update &&
-          <div className="flex items-center gap-2 mt-4 text-sm text-slate-500">
-              <Clock className="w-4 h-4" />
-              Last updated: {format(new Date(myProfile.last_location_update), 'MMM d, h:mm a')}
-            </div>
-          }
-        </motion.div>
 
         {/* Quick Actions */}
         <motion.div
