@@ -105,25 +105,33 @@ export default function Profile() {
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
-      // Always check for existing profile to handle race conditions
-      const existingProfiles = await base44.entities.UserProfile.filter({ user_email: user.email });
-      
-      if (existingProfiles.length > 0) {
-        // Update existing profile
-        return await base44.entities.UserProfile.update(existingProfiles[0].id, data);
-      } else {
-        // Create new profile
-        return await base44.entities.UserProfile.create({
-          user_email: user.email,
-          ...data
-        });
+      try {
+        // Always check for existing profile to handle race conditions
+        const existingProfiles = await base44.entities.UserProfile.filter({ user_email: user.email });
+        
+        if (existingProfiles.length > 0) {
+          // Update existing profile
+          const result = await base44.entities.UserProfile.update(existingProfiles[0].id, data);
+          return result;
+        } else {
+          // Create new profile
+          const result = await base44.entities.UserProfile.create({
+            user_email: user.email,
+            ...data
+          });
+          return result;
+        }
+      } catch (error) {
+        console.error('Profile save error:', error);
+        throw error;
       }
     },
-    onSuccess: (result) => {
-      queryClient.invalidateQueries({ queryKey: ['myProfile'] });
-      queryClient.invalidateQueries({ queryKey: ['viewingProfile'] });
-      queryClient.invalidateQueries({ queryKey: ['activeUsers'] });
-      queryClient.refetchQueries({ queryKey: ['myProfile', user?.email] });
+    onSuccess: async (result) => {
+      // Invalidate and refetch queries
+      await queryClient.invalidateQueries({ queryKey: ['myProfile'] });
+      await queryClient.invalidateQueries({ queryKey: ['viewingProfile'] });
+      await queryClient.invalidateQueries({ queryKey: ['activeUsers'] });
+      await queryClient.refetchQueries({ queryKey: ['myProfile', user?.email] });
       toast.success('Profile saved successfully!');
     },
     onError: (error) => {
