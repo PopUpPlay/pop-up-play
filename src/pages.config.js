@@ -1,4 +1,3 @@
-import About from './pages/About';
 import AccessCodeManager from './pages/AccessCodeManager';
 import AllProfiles from './pages/AllProfiles';
 import BlockedUsers from './pages/BlockedUsers';
@@ -15,11 +14,11 @@ import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import VideoCall from './pages/VideoCall';
 import Profile from './pages/Profile';
 import Home from './pages/Home';
+import About from './pages/About';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "About": About,
     "AccessCodeManager": AccessCodeManager,
     "AllProfiles": AllProfiles,
     "BlockedUsers": BlockedUsers,
@@ -36,6 +35,7 @@ export const PAGES = {
     "VideoCall": VideoCall,
     "Profile": Profile,
     "Home": Home,
+    "About": About,
 }
 
 export const pagesConfig = {

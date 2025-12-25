@@ -2,8 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, Loader2, DollarSign, Clock, CreditCard } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, DollarSign, Clock, CreditCard, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
@@ -83,6 +94,23 @@ export default function SubscriptionSettings() {
     }
     saveMutation.mutate(formData);
   };
+
+  const deleteAllDataMutation = useMutation({
+    mutationFn: async () => {
+      const allProfiles = await base44.asServiceRole.entities.UserProfile.list();
+      await Promise.all(
+        allProfiles.map(profile => base44.asServiceRole.entities.UserProfile.delete(profile.id))
+      );
+    },
+    onSuccess: () => {
+      toast.success('All user profile data has been deleted');
+      queryClient.invalidateQueries({ queryKey: ['myProfile'] });
+      queryClient.invalidateQueries({ queryKey: ['activeUsers'] });
+    },
+    onError: () => {
+      toast.error('Failed to delete user data');
+    }
+  });
 
   if (!user || isLoading) {
     return (
@@ -242,6 +270,59 @@ export default function SubscriptionSettings() {
             <li>Configure trial settings if needed</li>
             <li>Enable subscription when ready</li>
           </ol>
+        </motion.div>
+
+        <motion.div
+          className="bg-white rounded-2xl shadow-lg p-6 mt-6 border-2 border-red-100"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <Trash2 className="w-6 h-6 text-red-600" />
+            <h2 className="text-lg font-semibold text-red-600">User Data Management</h2>
+          </div>
+          <p className="text-sm text-slate-600 mb-4">
+            This will permanently delete all user profile data including photos, videos, and settings. User accounts will remain but profiles will be cleared.
+          </p>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="destructive"
+                className="bg-red-600 hover:bg-red-700"
+                disabled={deleteAllDataMutation.isPending}
+              >
+                {deleteAllDataMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4 mr-2" />
+                    Delete All User Profile Data
+                  </>
+                )}
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="rounded-2xl">
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete All User Profile Data?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This action cannot be undone. This will permanently delete all user profiles, photos, videos, and settings from the database. User accounts will remain but all profile data will be lost.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={() => deleteAllDataMutation.mutate()}
+                  className="bg-red-600 hover:bg-red-700 rounded-xl"
+                >
+                  Yes, Delete All Data
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </motion.div>
       </main>
     </div>
