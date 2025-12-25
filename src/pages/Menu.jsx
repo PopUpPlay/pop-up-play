@@ -47,13 +47,6 @@ export default function Menu() {
       description: 'View your messages'
     },
     {
-      label: 'Discover',
-      icon: Heart,
-      path: 'Discover',
-      color: 'bg-fuchsia-300',
-      description: 'Find new connections'
-    },
-    {
       label: 'All Profiles',
       icon: Users,
       path: 'AllProfiles',

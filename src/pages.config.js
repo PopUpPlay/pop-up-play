@@ -5,7 +5,6 @@ import BlockedUsers from './pages/BlockedUsers';
 import Broadcast from './pages/Broadcast';
 import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
-import Discover from './pages/Discover';
 import EnterAccessCode from './pages/EnterAccessCode';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
@@ -26,7 +25,6 @@ export const PAGES = {
     "Broadcast": Broadcast,
     "Chat": Chat,
     "Dashboard": Dashboard,
-    "Discover": Discover,
     "EnterAccessCode": EnterAccessCode,
     "Home": Home,
     "Menu": Menu,
