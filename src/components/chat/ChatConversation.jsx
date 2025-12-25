@@ -167,22 +167,58 @@ export default function ChatConversation({
                         )}
                         {!isOwn && !showAvatar && <div className="w-8" />}
                         
-                        <div className={cn("max-w-[70%] flex gap-2 items-center", isOwn ? "flex-row-reverse" : "flex-row")}>
-                          <div className={cn("flex flex-col", isOwn && "items-end")}>
+                        <div className={cn("max-w-[70%] flex gap-2 items-start", isOwn ? "flex-row-reverse" : "flex-row")}>
+                          <div className={cn("flex flex-col relative", isOwn && "items-end")}>
                             {message.attachment_url && (
-                              message.attachment_url.match(/\.(mp4|mov|avi|webm)$/i) ? (
-                                <video
-                                  src={message.attachment_url}
-                                  controls
-                                  className="rounded-xl mb-1 max-w-full shadow-sm max-h-64"
-                                />
-                              ) : (
-                                <img
-                                  src={message.attachment_url}
-                                  alt="Attachment"
-                                  className="rounded-xl mb-1 max-w-full shadow-sm"
-                                />
-                              )
+                              <div className="relative group/media">
+                                {message.attachment_url.match(/\.(mp4|mov|avi|webm)$/i) ? (
+                                  <video
+                                    src={message.attachment_url}
+                                    controls
+                                    className="rounded-xl mb-1 max-w-full shadow-sm max-h-64"
+                                  />
+                                ) : (
+                                  <img
+                                    src={message.attachment_url}
+                                    alt="Attachment"
+                                    className="rounded-xl mb-1 max-w-full shadow-sm"
+                                  />
+                                )}
+                                <div className={cn(
+                                  "absolute top-2 opacity-0 group-hover/media:opacity-100 transition-opacity",
+                                  isOwn ? "right-2" : "left-2"
+                                )}>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        variant="secondary"
+                                        size="icon"
+                                        className="h-7 w-7 rounded-full shadow-lg bg-white/90 hover:bg-white"
+                                      >
+                                        <MoreVertical className="h-4 w-4 text-slate-600" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align={isOwn ? "end" : "start"}>
+                                      <DropdownMenuItem 
+                                        onClick={() => onDeleteMessage(message.id, false)}
+                                        className="text-orange-600"
+                                      >
+                                        <Trash2 className="w-4 h-4 mr-2" />
+                                        Delete for me
+                                      </DropdownMenuItem>
+                                      {isOwn && (
+                                        <DropdownMenuItem 
+                                          onClick={() => onDeleteMessage(message.id, true)}
+                                          className="text-red-600"
+                                        >
+                                          <Trash2 className="w-4 h-4 mr-2" />
+                                          Delete for everyone
+                                        </DropdownMenuItem>
+                                      )}
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </div>
                             )}
                             
                             <div
@@ -206,7 +242,7 @@ export default function ChatConversation({
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0 mt-1"
                               >
                                 <MoreVertical className="h-4 w-4 text-slate-400" />
                               </Button>
