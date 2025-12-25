@@ -45,13 +45,9 @@ export default function Home() {
   });
 
   const { data: activeUsers = [] } = useQuery({
-    queryKey: ['activeUsers', userLocation?.city],
+    queryKey: ['activeUsers'],
     queryFn: async () => {
       const profiles = await base44.entities.UserProfile.filter({ is_popped_up: true });
-      // Filter by same city if we have location
-      if (userLocation?.city) {
-        return profiles.filter((p) => p.current_city === userLocation.city);
-      }
       return profiles;
     },
     refetchInterval: 30000 // Refresh every 30 seconds
