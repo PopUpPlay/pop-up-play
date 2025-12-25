@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import SessionManager from '@/components/auth/SessionManager';
 import InactivityManager from '@/components/auth/InactivityManager';
 import BroadcastNotifications from '@/components/broadcasts/BroadcastNotifications';
 import SubscriptionGate from '@/components/subscription/SubscriptionGate';
+import TermsModal from '@/components/legal/TermsModal';
 
 export default function Layout({ children, currentPageName }) {
   const [userEmail, setUserEmail] = useState(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const loadUser = async () => {
@@ -20,6 +23,29 @@ export default function Layout({ children, currentPageName }) {
     };
     loadUser();
   }, []);
+
+  const { data: termsAcceptance } = useQuery({
+    queryKey: ['termsAcceptance', userEmail],
+    queryFn: async () => {
+      if (!userEmail) return null;
+      const acceptances = await base44.entities.TermsAcceptance.filter({ user_email: userEmail });
+      return acceptances.length > 0 ? acceptances[0] : null;
+    },
+    enabled: !!userEmail
+  });
+
+  const acceptTermsMutation = useMutation({
+    mutationFn: async () => {
+      if (!userEmail) return;
+      await base44.entities.TermsAcceptance.create({
+        user_email: userEmail,
+        accepted_at: new Date().toISOString()
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['termsAcceptance'] });
+    }
+  });
 
   // Pages that don't require subscription check
   const publicPages = ['Pricing', 'SubscriptionSuccess', 'SubscriptionSettings'];
@@ -63,8 +89,16 @@ export default function Layout({ children, currentPageName }) {
       base44.auth.logout = originalLogout;
     };
   }, []);
+  const showTermsModal = userEmail && !termsAcceptance;
+
   const content = (
     <div className="min-h-screen bg-slate-50">
+      {showTermsModal && (
+        <TermsModal 
+          onAccept={() => acceptTermsMutation.mutate()} 
+          isLoading={acceptTermsMutation.isPending}
+        />
+      )}
       <SessionManager />
       <InactivityManager />
       <BroadcastNotifications userEmail={userEmail} />
