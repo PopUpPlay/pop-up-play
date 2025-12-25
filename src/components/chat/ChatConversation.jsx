@@ -198,27 +198,24 @@ export default function ChatConversation({
       {/* Input */}
       <div className="p-4 bg-white border-t border-slate-200">
         <div className="flex items-end gap-2">
-          <label className="flex-shrink-0">
+          <label className="flex-shrink-0 cursor-pointer">
             <input
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               onChange={handleImageUpload}
               className="hidden"
               disabled={uploading}
             />
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              disabled={uploading}
-              type="button"
-            >
+            <div className={cn(
+              "w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors",
+              uploading && "opacity-50 cursor-not-allowed"
+            )}>
               {uploading ? (
                 <Loader2 className="w-5 h-5 animate-spin text-violet-600" />
               ) : (
                 <ImageIcon className="w-5 h-5 text-slate-600" />
               )}
-            </Button>
+            </div>
           </label>
           
           <Input
