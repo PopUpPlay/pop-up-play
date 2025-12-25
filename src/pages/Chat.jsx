@@ -109,9 +109,11 @@ export default function Chat() {
     queryKey: ['messages', selectedMatch?.id],
     queryFn: async () => {
       if (!selectedMatch?.id) return [];
-      return base44.entities.Message.filter({ match_id: selectedMatch.id }, '-created_date');
+      const allMessages = await base44.entities.Message.filter({ match_id: selectedMatch.id }, '-created_date');
+      // Filter out messages deleted by current user
+      return allMessages.filter(msg => !msg.deleted_for?.includes(user.email));
     },
-    enabled: !!selectedMatch?.id,
+    enabled: !!selectedMatch?.id && !!user?.email,
     refetchInterval: 2000
   });
 
@@ -152,6 +154,29 @@ export default function Chat() {
 
   const handleSendMessage = async (content, attachment_url = null) => {
     await sendMessageMutation.mutateAsync({ content, attachment_url });
+  };
+
+  const deleteMessageMutation = useMutation({
+    mutationFn: async ({ messageId, deleteForEveryone }) => {
+      if (deleteForEveryone) {
+        // Permanently delete the message
+        await base44.entities.Message.delete(messageId);
+      } else {
+        // Soft delete - add current user to deleted_for array
+        const message = messages.find(m => m.id === messageId);
+        const deletedFor = message.deleted_for || [];
+        await base44.entities.Message.update(messageId, {
+          deleted_for: [...deletedFor, user.email]
+        });
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['messages'] });
+    }
+  });
+
+  const handleDeleteMessage = (messageId, deleteForEveryone) => {
+    deleteMessageMutation.mutate({ messageId, deleteForEveryone });
   };
 
   if (!user) {
@@ -216,6 +241,7 @@ export default function Chat() {
                 currentUserEmail={user.email}
                 onBack={() => setSelectedMatch(null)}
                 onSendMessage={handleSendMessage}
+                onDeleteMessage={handleDeleteMessage}
                 isSending={sendMessageMutation.isPending} /> :
 
 

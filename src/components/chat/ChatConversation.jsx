@@ -1,11 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Image as ImageIcon, Loader2, MapPin } from 'lucide-react';
+import { ArrowLeft, Send, Image as ImageIcon, Loader2, MapPin, MoreVertical, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { base44 } from '@/api/base44Client';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export default function ChatConversation({ 
   match, 
@@ -14,6 +20,7 @@ export default function ChatConversation({
   currentUserEmail,
   onBack,
   onSendMessage,
+  onDeleteMessage,
   isSending 
 }) {
   const [newMessage, setNewMessage] = useState('');
@@ -147,7 +154,7 @@ export default function ChatConversation({
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className={cn(
-                          "flex gap-2 mb-2",
+                          "flex gap-2 mb-2 group",
                           isOwn ? "justify-end" : "justify-start"
                         )}
                       >
@@ -160,29 +167,69 @@ export default function ChatConversation({
                         )}
                         {!isOwn && !showAvatar && <div className="w-8" />}
                         
-                        <div className={cn("max-w-[70%]", isOwn && "flex flex-col items-end")}>
-                          {message.attachment_url && (
-                            <img
-                              src={message.attachment_url}
-                              alt="Attachment"
-                              className="rounded-xl mb-1 max-w-full shadow-sm"
-                            />
-                          )}
-                          
-                          <div
-                            className={cn(
-                              "px-4 py-2 rounded-2xl shadow-sm",
-                              isOwn
-                                ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white"
-                                : "bg-white text-slate-800 border border-slate-200"
+                        <div className={cn("max-w-[70%] flex gap-2 items-center", isOwn ? "flex-row-reverse" : "flex-row")}>
+                          <div className={cn("flex flex-col", isOwn && "items-end")}>
+                            {message.attachment_url && (
+                              message.attachment_url.match(/\.(mp4|mov|avi|webm)$/i) ? (
+                                <video
+                                  src={message.attachment_url}
+                                  controls
+                                  className="rounded-xl mb-1 max-w-full shadow-sm max-h-64"
+                                />
+                              ) : (
+                                <img
+                                  src={message.attachment_url}
+                                  alt="Attachment"
+                                  className="rounded-xl mb-1 max-w-full shadow-sm"
+                                />
+                              )
                             )}
-                          >
-                            <p className="text-sm break-words">{message.content}</p>
+                            
+                            <div
+                              className={cn(
+                                "px-4 py-2 rounded-2xl shadow-sm",
+                                isOwn
+                                  ? "bg-gradient-to-r from-violet-600 to-purple-600 text-white"
+                                  : "bg-white text-slate-800 border border-slate-200"
+                              )}
+                            >
+                              <p className="text-sm break-words">{message.content}</p>
+                            </div>
+                            
+                            <span className="text-xs text-slate-400 mt-1 px-2">
+                              {format(new Date(message.created_date), 'h:mm a')}
+                            </span>
                           </div>
-                          
-                          <span className="text-xs text-slate-400 mt-1 px-2">
-                            {format(new Date(message.created_date), 'h:mm a')}
-                          </span>
+
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <MoreVertical className="h-4 w-4 text-slate-400" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align={isOwn ? "end" : "start"}>
+                              <DropdownMenuItem 
+                                onClick={() => onDeleteMessage(message.id, false)}
+                                className="text-orange-600"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete for me
+                              </DropdownMenuItem>
+                              {isOwn && (
+                                <DropdownMenuItem 
+                                  onClick={() => onDeleteMessage(message.id, true)}
+                                  className="text-red-600"
+                                >
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  Delete for everyone
+                                </DropdownMenuItem>
+                              )}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </motion.div>
                     );
