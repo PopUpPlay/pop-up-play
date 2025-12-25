@@ -82,7 +82,7 @@ export default function TermsModal({ onAccept, isLoading }) {
           <Button
             onClick={onAccept}
             disabled={!agreed || isLoading}
-            className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 h-12 text-base font-semibold rounded-xl"
+            className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 h-12 text-base font-semibold rounded-xl text-white"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
@@ -91,7 +91,7 @@ export default function TermsModal({ onAccept, isLoading }) {
               </span>
             ) : (
               <span className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5" />
+                <CheckCircle2 className="w-5 h-5 text-white" />
                 I Agree - Continue to Popup-play.com
               </span>
             )}
