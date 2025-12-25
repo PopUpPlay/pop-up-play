@@ -142,19 +142,8 @@ export default function Profile() {
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      if (!myProfile?.id) {
-        // No profile to delete, treat as success
-        return;
-      }
-      try {
+      if (myProfile) {
         await base44.entities.UserProfile.delete(myProfile.id);
-      } catch (error) {
-        // If profile doesn't exist, treat as success (already deleted)
-        if (error.message?.includes('not found') || error.message?.includes('Entity UserProfile')) {
-          console.log('Profile already deleted or not found');
-          return;
-        }
-        throw error;
       }
     },
     onSuccess: () => {
@@ -163,9 +152,8 @@ export default function Profile() {
         base44.auth.logout();
       }, 1000);
     },
-    onError: (error) => {
-      console.error('Delete error:', error);
-      toast.error('Failed to delete account: ' + (error.message || 'Unknown error'));
+    onError: () => {
+      toast.error('Failed to delete account');
     }
   });
 
