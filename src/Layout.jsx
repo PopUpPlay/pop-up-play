@@ -70,25 +70,25 @@ export default function Layout({ children, currentPageName }) {
       <BroadcastNotifications userEmail={userEmail} />
       <style>{`
         :root {
-          --primary: 139 92 246;
+          --primary: 59 130 246;
           --primary-foreground: 255 255 255;
         }
-        
+
         .custom-marker {
           background: transparent;
           border: none;
         }
-        
+
         .leaflet-popup-content-wrapper {
           border-radius: 16px;
-          box-shadow: 0 10px 40px rgba(0,0,0,0.15);
-          border: none;
+          box-shadow: 0 10px 40px rgba(100,149,237,0.2);
+          border: 1px solid rgba(59,130,246,0.1);
         }
-        
+
         .leaflet-popup-tip {
           display: none;
         }
-        
+
         .leaflet-container {
           font-family: inherit;
         }
