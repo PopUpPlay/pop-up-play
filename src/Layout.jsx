@@ -24,7 +24,7 @@ export default function Layout({ children, currentPageName }) {
   // Pages that don't require subscription check
   const publicPages = ['Pricing', 'SubscriptionSuccess', 'SubscriptionSettings'];
   const shouldCheckSubscription = !publicPages.includes(currentPageName);
-  // Auto pop-down on page unload/close or logout
+  // Auto pop-down on browser close or logout
   useEffect(() => {
     const popDownUser = async () => {
       try {
@@ -44,11 +44,9 @@ export default function Layout({ children, currentPageName }) {
       }
     };
 
-    // Handle page visibility changes (tab close, navigate away)
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        popDownUser();
-      }
+    // Handle browser close or tab close
+    const handleBeforeUnload = () => {
+      popDownUser();
     };
 
     // Intercept logout calls
@@ -58,10 +56,10 @@ export default function Layout({ children, currentPageName }) {
       return originalLogout.apply(this, args);
     };
 
-    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
       base44.auth.logout = originalLogout;
     };
   }, []);
