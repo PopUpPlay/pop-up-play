@@ -67,10 +67,11 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
             }
           }, 200);
         },
-        click: () => {
-          if (onProfileClick) {
-            onProfileClick(profile);
-          }
+        click: (e) => {
+          e.target.openPopup();
+        },
+        dblclick: () => {
+          navigate(createPageUrl('Profile') + '?user=' + profile.user_email);
         }
       }}
     >
