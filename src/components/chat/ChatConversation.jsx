@@ -318,9 +318,9 @@ export default function ChatConversation({
             size="icon"
           >
             {isSending ? (
-              <Loader2 className="w-5 h-5 animate-spin" />
+              <Loader2 className="w-5 h-5 animate-spin text-white" />
             ) : (
-              <Send className="w-5 h-5" />
+              <Send className="w-5 h-5 text-white" />
             )}
           </Button>
         </div>
