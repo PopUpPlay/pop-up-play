@@ -73,28 +73,24 @@ export default function Layout({ children, currentPageName }) {
           --primary: 139 92 246;
           --primary-foreground: 255 255 255;
         }
-
+        
         .custom-marker {
           background: transparent;
           border: none;
         }
-
+        
         .leaflet-popup-content-wrapper {
           border-radius: 16px;
           box-shadow: 0 10px 40px rgba(0,0,0,0.15);
           border: none;
         }
-
+        
         .leaflet-popup-tip {
           display: none;
         }
-
+        
         .leaflet-container {
           font-family: inherit;
-        }
-
-        .leaflet-tile {
-          filter: sepia(0.1) hue-rotate(180deg) saturate(1.3) brightness(1.1);
         }
       `}</style>
       <Toaster 
