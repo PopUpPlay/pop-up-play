@@ -51,6 +51,32 @@ export default function Dashboard() {
     enabled: !!user?.email
   });
 
+  const { data: subscription } = useQuery({
+    queryKey: ['subscription', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return null;
+      const subs = await base44.entities.UserSubscription.filter({ user_email: user.email });
+      return subs[0] || null;
+    },
+    enabled: !!user?.email
+  });
+
+  const calculateRemainingDays = () => {
+    if (!subscription) return null;
+    
+    const endDate = subscription.status === 'trial' 
+      ? new Date(subscription.trial_end)
+      : new Date(subscription.current_period_end);
+    
+    const now = new Date();
+    const diffTime = endDate - now;
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    return diffDays > 0 ? diffDays : 0;
+  };
+
+  const remainingDays = calculateRemainingDays();
+
 
 
   const handleLogout = () => {
