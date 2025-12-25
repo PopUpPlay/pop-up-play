@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Upload, Trash2, Loader2, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Upload, Trash2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { toast } from 'sonner';
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 
 export default function About() {
   const [user, setUser] = useState(null);
@@ -36,21 +35,6 @@ export default function About() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['aboutVideos'] });
       toast.success('Video removed successfully');
-    }
-  });
-
-  const deleteAllProfilesMutation = useMutation({
-    mutationFn: async () => {
-      const allProfiles = await base44.entities.UserProfile.list();
-      await Promise.all(allProfiles.map(profile => base44.entities.UserProfile.delete(profile.id)));
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['myProfile'] });
-      queryClient.invalidateQueries({ queryKey: ['activeUsers'] });
-      toast.success('All user profile data deleted successfully');
-    },
-    onError: () => {
-      toast.error('Failed to delete user profile data');
     }
   });
 
@@ -181,80 +165,35 @@ export default function About() {
               <h2 className="text-lg font-semibold text-slate-800 mb-4">
                 Admin Controls
               </h2>
-              <div className="space-y-4">
-                <label className="block">
-                  <input
-                  type="file"
-                  accept="video/*"
-                  onChange={handleUpload}
-                  disabled={uploading}
-                  className="hidden"
-                  id="video-upload" />
+              <label className="block">
+                <input
+                type="file"
+                accept="video/*"
+                onChange={handleUpload}
+                disabled={uploading}
+                className="hidden"
+                id="video-upload" />
 
-                  <Button
-                  asChild
-                  disabled={uploading}
-                  className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700">
+                <Button
+                asChild
+                disabled={uploading}
+                className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700">
 
-                    <label htmlFor="video-upload" className="bg-gradient-to-r text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 w-full from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 cursor-pointer">
-                      {uploading ?
-                    <>
-                          <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                          Uploading...
-                        </> :
+                  <label htmlFor="video-upload" className="bg-gradient-to-r text-slate-50 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow hover:bg-primary/90 h-9 w-full from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 cursor-pointer">
+                    {uploading ?
+                  <>
+                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                        Uploading...
+                      </> :
 
-                    <>
-                          <Upload className="w-5 h-5 mr-2" />
-                          {currentVideo ? 'Replace Video' : 'Upload Video'}
-                        </>
-                    }
-                    </label>
-                  </Button>
-                </label>
-
-                <div className="pt-4 border-t border-red-100">
-                  <h3 className="text-sm font-semibold text-red-600 mb-2">Danger Zone</h3>
-                  <p className="text-xs text-slate-500 mb-3">
-                    Delete all user profile data. This action cannot be undone.
-                  </p>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button
-                        variant="destructive"
-                        className="w-full"
-                        disabled={deleteAllProfilesMutation.isPending}>
-                        {deleteAllProfilesMutation.isPending ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Deleting...
-                          </>
-                        ) : (
-                          <>
-                            <AlertTriangle className="w-4 h-4 mr-2" />
-                            Delete All User Profile Data
-                          </>
-                        )}
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will permanently delete all user profile data including photos, videos, and personal information. This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => deleteAllProfilesMutation.mutate()}
-                          className="bg-red-600 hover:bg-red-700">
-                          Yes, Delete Everything
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
-              </div>
+                  <>
+                        <Upload className="w-5 h-5 mr-2" />
+                        {currentVideo ? 'Replace Video' : 'Upload Video'}
+                      </>
+                  }
+                  </label>
+                </Button>
+              </label>
             </div>
           </motion.div>
         }
