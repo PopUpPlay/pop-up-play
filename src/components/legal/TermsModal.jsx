@@ -64,7 +64,7 @@ export default function TermsModal({ onAccept, isLoading }) {
                 id="terms-agree"
                 checked={agreed}
                 onCheckedChange={setAgreed}
-                className="mt-1"
+                className="mt-1 data-[state=checked]:bg-green-600 data-[state=checked]:border-green-600"
               />
               <label
                 htmlFor="terms-agree"
