@@ -1,12 +1,77 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, X, Video, Loader2, Play } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { fetchFile, toBlobURL } from '@ffmpeg/util';
 
 export default function VideoGallery({ videos = [], onVideosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [compressionStatus, setCompressionStatus] = useState('');
+  const ffmpegRef = useRef(null);
+  const loadedRef = useRef(false);
+
+  const loadFFmpeg = async () => {
+    if (loadedRef.current) return;
+    
+    const ffmpeg = new FFmpeg();
+    ffmpegRef.current = ffmpeg;
+    
+    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+    
+    await ffmpeg.load({
+      coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+      wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+    });
+    
+    loadedRef.current = true;
+  };
+
+  const compressVideo = async (file) => {
+    try {
+      setCompressionStatus('Initializing compressor...');
+      await loadFFmpeg();
+      
+      const ffmpeg = ffmpegRef.current;
+      
+      setCompressionStatus('Reading video file...');
+      await ffmpeg.writeFile('input.mp4', await fetchFile(file));
+      
+      setCompressionStatus('Compressing video...');
+      setUploadProgress(10);
+      
+      // Compress with H.264, 1080p max, optimized for web playback
+      await ffmpeg.exec([
+        '-i', 'input.mp4',
+        '-c:v', 'libx264',
+        '-preset', 'medium',
+        '-crf', '28',
+        '-vf', 'scale=min(1920\\,iw):-2',
+        '-c:a', 'aac',
+        '-b:a', '128k',
+        '-movflags', '+faststart',
+        '-f', 'mp4',
+        'output.mp4'
+      ]);
+      
+      setUploadProgress(60);
+      setCompressionStatus('Finalizing...');
+      
+      const data = await ffmpeg.readFile('output.mp4');
+      const compressedBlob = new Blob([data.buffer], { type: 'video/mp4' });
+      
+      // Clean up
+      await ffmpeg.deleteFile('input.mp4');
+      await ffmpeg.deleteFile('output.mp4');
+      
+      return new File([compressedBlob], 'compressed.mp4', { type: 'video/mp4' });
+    } catch (error) {
+      console.error('Compression error:', error);
+      throw new Error('Failed to compress video');
+    }
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -18,41 +83,38 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
       return;
     }
 
-    // Validate file size (200MB limit)
-    const maxSize = 200 * 1024 * 1024; // 200MB in bytes
-    if (file.size > maxSize) {
-      toast.error('Video size must be less than 200MB');
-      return;
-    }
-
     setUploading(true);
     setUploadProgress(0);
+    setCompressionStatus('');
     
     try {
-      // Simulate progress while uploading
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) return prev;
-          return prev + Math.random() * 10;
-        });
-      }, 500);
-
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      let fileToUpload = file;
       
-      clearInterval(progressInterval);
+      // Compress if file is larger than 50MB or not in optimal format
+      if (file.size > 50 * 1024 * 1024 || !file.type.includes('mp4')) {
+        toast.info('Compressing video for optimal playback...');
+        fileToUpload = await compressVideo(file);
+      }
+      
+      setCompressionStatus('Uploading...');
+      setUploadProgress(70);
+      
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: fileToUpload });
+      
       setUploadProgress(100);
       
       onVideosChange([...videos, file_url]);
       toast.success('Video uploaded successfully');
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('Failed to upload video. Please try again.');
+      toast.error(error.message || 'Failed to upload video. Please try again.');
       setUploadProgress(0);
     }
     
     setTimeout(() => {
       setUploading(false);
       setUploadProgress(0);
+      setCompressionStatus('');
     }, 500);
   };
 
@@ -117,6 +179,11 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
                     style={{ width: `${uploadProgress}%` }}
                   />
                 </div>
+                {compressionStatus && (
+                  <span className="text-xs text-rose-600 font-medium">
+                    {compressionStatus}
+                  </span>
+                )}
                 <span className="text-xs text-rose-600 font-medium">
                   {Math.round(uploadProgress)}%
                 </span>
