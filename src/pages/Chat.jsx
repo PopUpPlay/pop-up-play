@@ -55,7 +55,7 @@ export default function Chat() {
     queryKey: ['matches', user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
-      const allMatches = await base44.entities.Match.filter({ status: 'matched' });
+      const allMatches = await base44.entities.Match.list();
       const myMatches = allMatches.filter(
         (m) => m.user1_email === user.email || m.user2_email === user.email
       );
@@ -69,19 +69,35 @@ export default function Chat() {
     refetchInterval: 10000
   });
 
-  // Auto-select match if user parameter provided
+  // Auto-select match if user parameter provided, create if doesn't exist
   useEffect(() => {
     const targetUser = sessionStorage.getItem('chatWithUser');
-    if (targetUser && matches.length > 0 && user?.email) {
-      const match = matches.find((m) =>
-      m.user1_email === targetUser || m.user2_email === targetUser
+    if (targetUser && user?.email && targetUser !== user.email) {
+      const existingMatch = matches.find((m) =>
+        m.user1_email === targetUser || m.user2_email === targetUser
       );
-      if (match) {
-        setSelectedMatch(match);
+      
+      if (existingMatch) {
+        setSelectedMatch(existingMatch);
         sessionStorage.removeItem('chatWithUser');
+      } else if (matches !== undefined) {
+        // Create a new match/conversation
+        base44.entities.Match.create({
+          user1_email: user.email,
+          user2_email: targetUser,
+          initiated_by: user.email,
+          status: 'pending'
+        }).then((newMatch) => {
+          setSelectedMatch(newMatch);
+          sessionStorage.removeItem('chatWithUser');
+          queryClient.invalidateQueries({ queryKey: ['matches'] });
+        }).catch(err => {
+          console.error('Failed to create match:', err);
+          sessionStorage.removeItem('chatWithUser');
+        });
       }
     }
-  }, [matches, user?.email]);
+  }, [matches, user?.email, queryClient]);
 
   const { data: profiles = [] } = useQuery({
     queryKey: ['allProfiles'],
