@@ -18,10 +18,10 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
       return;
     }
 
-    // Validate file size (500MB limit)
-    const maxSize = 500 * 1024 * 1024; // 500MB in bytes
+    // Validate file size (200MB limit)
+    const maxSize = 200 * 1024 * 1024; // 200MB in bytes
     if (file.size > maxSize) {
-      toast.error('Video size must be less than 500MB');
+      toast.error('Video size must be less than 200MB');
       return;
     }
 
@@ -67,9 +67,9 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
         <div className="mb-4 p-3 bg-slate-50 rounded-xl border border-slate-200">
           <p className="text-xs font-semibold text-slate-700 mb-1">Video Requirements:</p>
           <ul className="text-xs text-slate-600 space-y-0.5">
-            <li>• Max size: 500MB per video</li>
+            <li>• Max size: 200MB per video</li>
             <li>• Formats: MP4, MOV, AVI, WebM</li>
-            <li>• Supports: Up to 4K resolution</li>
+            <li>• Recommended: 1080p or lower</li>
             <li>• Maximum: 4 videos total</li>
           </ul>
         </div>
@@ -125,7 +125,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
               <>
                 <Video className="w-8 h-8 text-rose-400 mb-1" />
                 <span className="text-xs text-rose-500">Add Video</span>
-                <span className="text-xs text-rose-400 mt-1">Max 500MB</span>
+                <span className="text-xs text-rose-400 mt-1">Max 200MB</span>
               </>
             )}
           </label>
