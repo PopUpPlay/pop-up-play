@@ -66,15 +66,15 @@ export default function SessionManager() {
           user_email: user.email
         });
 
-        // Filter out stale sessions (inactive for more than 5 minutes)
-        const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
+        // Filter out stale sessions (inactive for more than 2 minutes)
+        const twoMinutesAgo = new Date(Date.now() - 2 * 60 * 1000).toISOString();
         const activeSessions = allSessions.filter(
-          s => s.last_active > fiveMinutesAgo
+          s => s.last_active > twoMinutesAgo
         );
 
         // Delete stale sessions
         const staleSessions = allSessions.filter(
-          s => s.last_active <= fiveMinutesAgo
+          s => s.last_active <= twoMinutesAgo
         );
         for (const session of staleSessions) {
           await base44.entities.UserSession.delete(session.id);
@@ -82,40 +82,45 @@ export default function SessionManager() {
 
         // Check if there are multiple active sessions
         if (activeSessions.length > 1) {
-          // Find the most recent session
-          const sortedSessions = activeSessions.sort(
-            (a, b) => new Date(b.last_active) - new Date(a.last_active)
-          );
-          const mostRecentSession = sortedSessions[0];
-
-          // If current device is not the most recent, logout
-          if (mostRecentSession.device_id !== deviceId) {
-            // Clean up current session
-            const currentSession = allSessions.find(s => s.device_id === deviceId);
-            if (currentSession) {
+          // Find the most recent session (excluding current device)
+          const otherSessions = activeSessions.filter(s => s.device_id !== deviceId);
+          
+          if (otherSessions.length > 0) {
+            // Sort by last_active to find the most recent other session
+            const sortedOtherSessions = otherSessions.sort(
+              (a, b) => new Date(b.last_active) - new Date(a.last_active)
+            );
+            const mostRecentOtherSession = sortedOtherSessions[0];
+            
+            // Find current session
+            const currentSession = activeSessions.find(s => s.device_id === deviceId);
+            
+            // If another device has a more recent login, logout this device
+            if (currentSession && mostRecentOtherSession.last_active > currentSession.last_active) {
+              // Clean up current session
               await base44.entities.UserSession.delete(currentSession.id);
-            }
 
-            // Pop down user from map
-            const profiles = await base44.entities.UserProfile.filter({
-              user_email: user.email
-            });
-            if (profiles.length > 0 && profiles[0].is_popped_up) {
-              await base44.entities.UserProfile.update(profiles[0].id, {
-                is_popped_up: false,
-                popup_message: ''
+              // Pop down user from map
+              const profiles = await base44.entities.UserProfile.filter({
+                user_email: user.email
               });
+              if (profiles.length > 0 && profiles[0].is_popped_up) {
+                await base44.entities.UserProfile.update(profiles[0].id, {
+                  is_popped_up: false,
+                  popup_message: ''
+                });
+              }
+
+              // Show notification and logout
+              toast.error('Your account is logged in on another device', {
+                description: 'You have been logged out from this device.',
+                duration: 5000
+              });
+
+              setTimeout(() => {
+                base44.auth.logout();
+              }, 2000);
             }
-
-            // Show notification and logout
-            toast.error('Your account is logged in on another device', {
-              description: 'You have been logged out from this device.',
-              duration: 5000
-            });
-
-            setTimeout(() => {
-              base44.auth.logout();
-            }, 2000);
           }
         }
       } catch (error) {
