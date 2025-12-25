@@ -1,12 +1,80 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, X, Video, Loader2, Play } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { FFmpeg } from '@ffmpeg/ffmpeg';
+import { fetchFile, toBlobURL } from '@ffmpeg/util';
 
 export default function VideoGallery({ videos = [], onVideosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [statusMessage, setStatusMessage] = useState('');
+  const ffmpegRef = useRef(new FFmpeg());
+  const [ffmpegLoaded, setFfmpegLoaded] = useState(false);
+
+  const loadFFmpeg = async () => {
+    if (ffmpegLoaded) return true;
+    
+    try {
+      const ffmpeg = ffmpegRef.current;
+      const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+      await ffmpeg.load({
+        coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+      });
+      setFfmpegLoaded(true);
+      return true;
+    } catch (error) {
+      console.error('Failed to load FFmpeg:', error);
+      return false;
+    }
+  };
+
+  const compressVideo = async (file) => {
+    const ffmpeg = ffmpegRef.current;
+    
+    setStatusMessage('Loading video processor...');
+    const loaded = await loadFFmpeg();
+    if (!loaded) {
+      throw new Error('Failed to load video processor');
+    }
+
+    setStatusMessage('Compressing video...');
+    setUploadProgress(10);
+
+    // Write input file
+    await ffmpeg.writeFile('input.mp4', await fetchFile(file));
+    setUploadProgress(20);
+
+    // Compress to 1080p max, CRF 28 for good quality/size balance
+    await ffmpeg.exec([
+      '-i', 'input.mp4',
+      '-vf', 'scale=min(1920\\,iw):-2',
+      '-c:v', 'libx264',
+      '-crf', '28',
+      '-preset', 'medium',
+      '-c:a', 'aac',
+      '-b:a', '128k',
+      '-movflags', '+faststart',
+      'output.mp4'
+    ]);
+    
+    setUploadProgress(70);
+
+    // Read compressed file
+    const data = await ffmpeg.readFile('output.mp4');
+    const compressedBlob = new Blob([data.buffer], { type: 'video/mp4' });
+    
+    // Clean up
+    await ffmpeg.deleteFile('input.mp4');
+    await ffmpeg.deleteFile('output.mp4');
+
+    setStatusMessage('Upload complete!');
+    setUploadProgress(80);
+
+    return new File([compressedBlob], file.name, { type: 'video/mp4' });
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -18,41 +86,43 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
       return;
     }
 
-    // Validate file size (200MB limit)
-    const maxSize = 200 * 1024 * 1024; // 200MB in bytes
-    if (file.size > maxSize) {
-      toast.error('Video size must be less than 200MB');
-      return;
-    }
-
     setUploading(true);
     setUploadProgress(0);
+    setStatusMessage('');
     
     try {
-      // Simulate progress while uploading
-      const progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
-          if (prev >= 90) return prev;
-          return prev + Math.random() * 10;
-        });
-      }, 500);
+      let fileToUpload = file;
+      
+      // Compress if over 50MB or always compress for quality
+      if (file.size > 50 * 1024 * 1024 || true) {
+        fileToUpload = await compressVideo(file);
+        
+        // Check if still too large after compression
+        if (fileToUpload.size > 200 * 1024 * 1024) {
+          toast.error('Video is too large even after compression. Please use a shorter video.');
+          setUploading(false);
+          return;
+        }
+      }
 
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setStatusMessage('Uploading...');
+      setUploadProgress(85);
+
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: fileToUpload });
       
-      clearInterval(progressInterval);
       setUploadProgress(100);
-      
       onVideosChange([...videos, file_url]);
-      toast.success('Video uploaded successfully');
+      toast.success('Video uploaded successfully!');
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('Failed to upload video. Please try again.');
+      toast.error('Failed to upload video: ' + (error.message || 'Unknown error'));
       setUploadProgress(0);
     }
     
     setTimeout(() => {
       setUploading(false);
       setUploadProgress(0);
+      setStatusMessage('');
     }, 500);
   };
 
@@ -120,6 +190,11 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
                 <span className="text-xs text-rose-600 font-medium">
                   {Math.round(uploadProgress)}%
                 </span>
+                {statusMessage && (
+                  <span className="text-xs text-slate-600 text-center px-2">
+                    {statusMessage}
+                  </span>
+                )}
               </div>
             ) : (
               <>
