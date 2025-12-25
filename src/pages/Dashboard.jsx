@@ -198,6 +198,17 @@ export default function Dashboard() {
               <div className="flex-1">
                 <p className="font-medium text-slate-800">Edit Profile</p>
                 <p className="text-sm text-slate-500">Update your photos, bio, and more</p>
+                {subscription && remainingDays !== null && (
+                  <div className="flex items-center gap-1 mt-1 text-xs">
+                    <Clock className="w-3 h-3 text-violet-600" />
+                    <span className="text-violet-600 font-medium">
+                      {remainingDays} {remainingDays === 1 ? 'day' : 'days'} remaining
+                    </span>
+                    <span className="text-slate-400">
+                      ({subscription.status === 'trial' ? 'trial' : 'subscription'})
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </Link>
