@@ -28,10 +28,10 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
       className: 'custom-marker',
       html: `
         <div class="relative">
-          <div class="w-12 h-12 rounded-full border-3 ${isCurrentUser ? 'border-blue-500' : 'border-blue-300'} overflow-hidden shadow-lg bg-white transform transition-transform hover:scale-110">
+          <div class="w-12 h-12 rounded-full border-3 ${isCurrentUser ? 'border-violet-500' : 'border-rose-400'} overflow-hidden shadow-lg bg-white transform transition-transform hover:scale-110">
             <img src="${profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}" class="w-full h-full" style="object-fit: cover; object-position: center; width: 100%; height: 100%;" />
           </div>
-          <div class="absolute left-1/2 transform -translate-x-1/2 w-3 h-3 ${isCurrentUser ? 'bg-blue-500' : 'bg-blue-300'} rotate-45" style="bottom: -6px;"></div>
+          <div class="absolute left-1/2 transform -translate-x-1/2 w-3 h-3 ${isCurrentUser ? 'bg-violet-500' : 'bg-rose-400'} rotate-45" style="bottom: -6px;"></div>
         </div>
       `,
       iconSize: [48, 56],
@@ -95,7 +95,7 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
           <div className="flex items-center gap-2 mb-2">
             <img 
               src={profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'} 
-              className="w-10 h-10 rounded-full object-cover border-2 border-blue-200"
+              className="w-10 h-10 rounded-full object-cover border-2 border-violet-200"
               alt={profile.display_name}
             />
             <div>
@@ -104,7 +104,7 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
             </div>
           </div>
           {profile.popup_message && (
-            <div className="bg-gradient-to-r from-blue-50 to-slate-50 rounded-lg p-2 mt-2">
+            <div className="bg-gradient-to-r from-violet-50 to-rose-50 rounded-lg p-2 mt-2">
               <p className="text-xs text-slate-700 italic">"{profile.popup_message}"</p>
             </div>
           )}
@@ -113,14 +113,14 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={handleVideoCall}
-                className="flex-1 bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white rounded-lg px-2 py-1.5 shadow-lg transition-all hover:scale-105 flex items-center justify-center gap-1.5"
+                className="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white rounded-lg px-2 py-1.5 shadow-lg transition-all hover:scale-105 flex items-center justify-center gap-1.5"
               >
                 <Video className="w-3.5 h-3.5" />
                 <span className="text-xs font-semibold">Video Verify</span>
               </button>
               <button
                 onClick={handleChatClick}
-                className="bg-gradient-to-r from-slate-600 to-slate-700 hover:from-slate-700 hover:to-slate-800 text-white rounded-lg p-1.5 shadow-lg transition-all hover:scale-110"
+                className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-lg p-1.5 shadow-lg transition-all hover:scale-110"
               >
                 <MessageCircle className="w-3.5 h-3.5" />
               </button>

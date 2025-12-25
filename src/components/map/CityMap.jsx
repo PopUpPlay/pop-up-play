@@ -108,10 +108,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png"
-        />
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
         <MapController center={mapCenter} />
         
@@ -127,7 +124,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
       
       <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
         <div className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-blue-400 animate-pulse"></div>
+          <div className="w-3 h-3 rounded-full bg-rose-400 animate-pulse"></div>
           <span className="text-sm text-slate-600 font-medium">{activeUsers.length} active nearby</span>
         </div>
       </div>
