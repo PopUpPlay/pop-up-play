@@ -4,62 +4,68 @@ import { MessageCircle, Circle } from 'lucide-react';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 
-export default function ChatList({ matches, profiles, messages, selectedMatchId, onSelectMatch, currentUserEmail }) {
-  const getLastMessage = (matchId) => {
-    const matchMessages = messages.filter(m => m.match_id === matchId);
-    if (matchMessages.length === 0) return null;
-    return matchMessages[matchMessages.length - 1];
+export default function ChatList({ 
+  conversations, 
+  profiles, 
+  selectedUserEmail,
+  onSelectConversation,
+  currentUserEmail 
+}) {
+  const getLastMessage = (conversation) => {
+    if (!conversation.messages.length) return null;
+    return conversation.messages.reduce((latest, msg) => 
+      new Date(msg.created_date) > new Date(latest.created_date) ? msg : latest
+    );
   };
 
-  const getUnreadCount = (matchId, otherUserEmail) => {
-    return messages.filter(
-      m => m.match_id === matchId && 
-      m.sender_email === otherUserEmail && 
+  const getUnreadCount = (conversation) => {
+    return conversation.messages.filter(m => 
+      m.sender_email === conversation.otherUserEmail && 
+      m.receiver_email === currentUserEmail &&
       !m.read
     ).length;
   };
 
-  const getOtherUserProfile = (match) => {
-    const otherEmail = match.user1_email === currentUserEmail ? match.user2_email : match.user1_email;
-    return profiles.find(p => p.user_email === otherEmail);
+  const getOtherUserProfile = (conversation) => {
+    return profiles.find(p => p.user_email === conversation.otherUserEmail);
   };
 
-  const sortedMatches = [...matches].sort((a, b) => {
-    const lastMsgA = getLastMessage(a.id);
-    const lastMsgB = getLastMessage(b.id);
+  const sortedConversations = [...conversations].sort((a, b) => {
+    const lastMsgA = getLastMessage(a);
+    const lastMsgB = getLastMessage(b);
     if (!lastMsgA) return 1;
     if (!lastMsgB) return -1;
     return new Date(lastMsgB.created_date) - new Date(lastMsgA.created_date);
   });
 
-  if (matches.length === 0) {
+  if (conversations.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-full p-8 text-center">
         <div className="w-20 h-20 rounded-full bg-violet-100 flex items-center justify-center mb-4">
           <MessageCircle className="w-10 h-10 text-violet-400" />
         </div>
-        <h3 className="text-lg font-semibold text-slate-700 mb-2">No matches yet</h3>
-        <p className="text-sm text-slate-500">Start liking profiles to make connections!</p>
+        <h3 className="text-lg font-semibold text-slate-700 mb-2">No conversations yet</h3>
+        <p className="text-sm text-slate-500">Start chatting with people from the map!</p>
       </div>
     );
   }
 
   return (
     <div className="h-full overflow-y-auto">
-      {sortedMatches.map((match) => {
-        const otherProfile = getOtherUserProfile(match);
-        const lastMessage = getLastMessage(match.id);
-        const unreadCount = getUnreadCount(match.id, otherProfile?.user_email);
+      {sortedConversations.map((conversation) => {
+        const otherProfile = getOtherUserProfile(conversation);
+        const lastMessage = getLastMessage(conversation);
+        const unreadCount = getUnreadCount(conversation);
         
         if (!otherProfile) return null;
 
         return (
           <motion.button
-            key={match.id}
-            onClick={() => onSelectMatch(match)}
+            key={conversation.otherUserEmail}
+            onClick={() => onSelectConversation(conversation.otherUserEmail)}
             className={cn(
               "w-full flex items-center gap-3 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100",
-              selectedMatchId === match.id && "bg-violet-50 hover:bg-violet-50"
+              selectedUserEmail === conversation.otherUserEmail && "bg-violet-50 hover:bg-violet-50"
             )}
             whileHover={{ x: 4 }}
           >
