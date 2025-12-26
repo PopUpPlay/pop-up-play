@@ -108,6 +108,9 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
                           src={photo} 
                           alt={`Gallery ${index + 1}`}
                           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          onContextMenu={(e) => e.preventDefault()}
+                          draggable={false}
+                          style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
                         />
                         {editable && (
                           <button
@@ -168,6 +171,9 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
               src={selectedPhoto}
               alt="Full size"
               className="max-w-full max-h-full rounded-lg object-contain"
+              onContextMenu={(e) => e.preventDefault()}
+              draggable={false}
+              style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
             />
             <button
               className="absolute top-6 right-6 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center"
