@@ -87,8 +87,6 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
               src={video}
               className="w-full h-full object-cover"
               controls
-              controlsList="nodownload"
-              onContextMenu={(e) => e.preventDefault()}
             />
             {editable && (
               <button

@@ -30,9 +30,6 @@ export default function AvatarUpload({ currentAvatar, onAvatarChange }) {
           src={currentAvatar || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'}
           alt="Profile"
           className="w-full h-full object-cover"
-          onContextMenu={(e) => e.preventDefault()}
-          draggable={false}
-          style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
         />
       </div>
       

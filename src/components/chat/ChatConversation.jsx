@@ -101,9 +101,6 @@ export default function ChatConversation({
           src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
           alt={otherProfile.display_name}
           className="w-12 h-12 rounded-full object-cover border-2 border-violet-100"
-          onContextMenu={(e) => e.preventDefault()}
-          draggable={false}
-          style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
         />
         
         <div className="flex-1">
@@ -166,9 +163,6 @@ export default function ChatConversation({
                             src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
                             alt={otherProfile.display_name}
                             className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                            onContextMenu={(e) => e.preventDefault()}
-                            draggable={false}
-                            style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
                           />
                         )}
                         {!isOwn && !showAvatar && <div className="w-8" />}
@@ -181,18 +175,13 @@ export default function ChatConversation({
                                   <video
                                     src={message.attachment_url}
                                     controls
-                                    controlsList="nodownload"
                                     className="rounded-xl mb-1 max-w-full shadow-sm max-h-64"
-                                    onContextMenu={(e) => e.preventDefault()}
                                   />
                                 ) : (
                                   <img
                                     src={message.attachment_url}
                                     alt="Attachment"
                                     className="rounded-xl mb-1 max-w-full shadow-sm"
-                                    onContextMenu={(e) => e.preventDefault()}
-                                    draggable={false}
-                                    style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
                                   />
                                 )}
                                 <div className={cn(
