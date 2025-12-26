@@ -73,6 +73,7 @@ export default function AllProfiles() {
 
   const sortedProfiles = React.useMemo(() => {
     let profiles = [...allProfiles]
+      .filter(p => p.user_email !== user?.email) // Exclude own profile
       .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)) // Exclude blocked
       .map(p => {
         const distance = myProfile?.latitude && myProfile?.longitude
@@ -90,7 +91,7 @@ export default function AllProfiles() {
       );
     }
     
-    // Sort by distance
+    // Sort by distance (profiles without distance go to the end)
     profiles.sort((a, b) => {
       if (a.distance === null) return 1;
       if (b.distance === null) return -1;
@@ -98,7 +99,7 @@ export default function AllProfiles() {
     });
     
     return profiles;
-  }, [allProfiles, myProfile, blockedUsers, interestFilter]);
+  }, [allProfiles, user?.email, myProfile, blockedUsers, interestFilter]);
 
   if (!user || isLoading) {
     return (
@@ -158,7 +159,7 @@ export default function AllProfiles() {
           animate={{ opacity: 1, y: 0 }}
         >
           <p className="text-slate-600">
-            {sortedProfiles.length} {sortedProfiles.length === 1 ? 'profile' : 'profiles'} nearby
+            {sortedProfiles.length} {sortedProfiles.length === 1 ? 'profile' : 'profiles'} found
           </p>
         </motion.div>
 
