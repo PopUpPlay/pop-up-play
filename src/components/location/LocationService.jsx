@@ -7,7 +7,6 @@ export default function LocationService({ onLocationUpdate, autoUpdate = true })
   const [status, setStatus] = useState('idle'); // idle, loading, success, error
   const [locationData, setLocationData] = useState(null);
   const [error, setError] = useState(null);
-  const [lastKnownCity, setLastKnownCity] = useState(null);
 
   const reverseGeocode = async (lat, lng) => {
     try {
@@ -41,18 +40,10 @@ export default function LocationService({ onLocationUpdate, autoUpdate = true })
         const { latitude, longitude } = position.coords;
         const geoData = await reverseGeocode(latitude, longitude);
 
-        // Use last known city if current city is "Unknown"
-        let finalCity = geoData.city;
-        if (geoData.city === 'Unknown' && lastKnownCity) {
-          finalCity = lastKnownCity;
-        } else if (geoData.city !== 'Unknown') {
-          setLastKnownCity(geoData.city);
-        }
-
         const locationInfo = {
           latitude,
           longitude,
-          city: finalCity,
+          city: geoData.city,
           zip: geoData.zip,
           country: geoData.country,
           timestamp: new Date().toISOString()
