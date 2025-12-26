@@ -11,7 +11,7 @@ import ChatConversation from '@/components/chat/ChatConversation';
 
 export default function Chat() {
   const [user, setUser] = useState(null);
-  const [selectedMatch, setSelectedMatch] = useState(null);
+  const [selectedConversation, setSelectedConversation] = useState(null);
   const [backUrl, setBackUrl] = useState(createPageUrl('Menu'));
   const queryClient = useQueryClient();
 
@@ -51,53 +51,52 @@ export default function Chat() {
     enabled: !!user?.email
   });
 
-  const { data: matches = [] } = useQuery({
-    queryKey: ['matches', user?.email],
+  const { data: allMessages = [] } = useQuery({
+    queryKey: ['allMessages', user?.email],
     queryFn: async () => {
       if (!user?.email) return [];
-      const allMatches = await base44.entities.Match.list();
-      const myMatches = allMatches.filter(
-        (m) => m.user1_email === user.email || m.user2_email === user.email
+      const messages = await base44.entities.Message.list('-created_date', 1000);
+      return messages.filter(m => 
+        (m.sender_email === user.email || m.receiver_email === user.email) &&
+        !m.deleted_for?.includes(user.email)
       );
-      // Filter out matches with blocked users
-      return myMatches.filter(match => {
-        const otherUserEmail = match.user1_email === user.email ? match.user2_email : match.user1_email;
-        return !blockedUsers.some(b => b.blocked_email === otherUserEmail);
-      });
     },
-    enabled: !!user?.email && blockedUsers !== undefined,
+    enabled: !!user?.email,
     refetchInterval: 10000
   });
 
-  // Auto-select match if user parameter provided, create if doesn't exist
+  // Create conversation list from messages
+  const conversations = React.useMemo(() => {
+    if (!user?.email || !allMessages.length) return [];
+    
+    const conversationMap = new Map();
+    
+    allMessages.forEach(msg => {
+      const otherEmail = msg.sender_email === user.email ? msg.receiver_email : msg.sender_email;
+      
+      // Skip blocked users
+      if (blockedUsers.some(b => b.blocked_email === otherEmail)) return;
+      
+      if (!conversationMap.has(otherEmail)) {
+        conversationMap.set(otherEmail, {
+          otherUserEmail: otherEmail,
+          messages: []
+        });
+      }
+      conversationMap.get(otherEmail).messages.push(msg);
+    });
+    
+    return Array.from(conversationMap.values());
+  }, [allMessages, user?.email, blockedUsers]);
+
+  // Auto-select conversation if user parameter provided
   useEffect(() => {
     const targetUser = sessionStorage.getItem('chatWithUser');
     if (targetUser && user?.email && targetUser !== user.email) {
-      const existingMatch = matches.find((m) =>
-        m.user1_email === targetUser || m.user2_email === targetUser
-      );
-      
-      if (existingMatch) {
-        setSelectedMatch(existingMatch);
-        sessionStorage.removeItem('chatWithUser');
-      } else if (matches !== undefined) {
-        // Create a new match/conversation
-        base44.entities.Match.create({
-          user1_email: user.email,
-          user2_email: targetUser,
-          initiated_by: user.email,
-          status: 'pending'
-        }).then((newMatch) => {
-          setSelectedMatch(newMatch);
-          sessionStorage.removeItem('chatWithUser');
-          queryClient.invalidateQueries({ queryKey: ['matches'] });
-        }).catch(err => {
-          console.error('Failed to create match:', err);
-          sessionStorage.removeItem('chatWithUser');
-        });
-      }
+      setSelectedConversation(targetUser);
+      sessionStorage.removeItem('chatWithUser');
     }
-  }, [matches, user?.email, queryClient]);
+  }, [user?.email]);
 
   const { data: profiles = [] } = useQuery({
     queryKey: ['allProfiles'],
@@ -105,28 +104,17 @@ export default function Chat() {
     refetchInterval: 30000
   });
 
-  const { data: messages = [] } = useQuery({
-    queryKey: ['messages', selectedMatch?.id],
-    queryFn: async () => {
-      if (!selectedMatch?.id) return [];
-      const allMessages = await base44.entities.Message.filter({ match_id: selectedMatch.id }, '-created_date');
-      // Filter out messages deleted by current user
-      return allMessages.filter(msg => !msg.deleted_for?.includes(user.email));
-    },
-    enabled: !!selectedMatch?.id && !!user?.email,
-    refetchInterval: 2000
-  });
+  const conversationMessages = React.useMemo(() => {
+    if (!selectedConversation) return [];
+    const conv = conversations.find(c => c.otherUserEmail === selectedConversation);
+    return conv ? conv.messages.sort((a, b) => new Date(a.created_date) - new Date(b.created_date)) : [];
+  }, [conversations, selectedConversation]);
 
   const sendMessageMutation = useMutation({
     mutationFn: async ({ content, attachment_url }) => {
-      const otherUserEmail = selectedMatch.user1_email === user.email ?
-      selectedMatch.user2_email :
-      selectedMatch.user1_email;
-
       const message = await base44.entities.Message.create({
-        match_id: selectedMatch.id,
         sender_email: user.email,
-        receiver_email: otherUserEmail,
+        receiver_email: selectedConversation,
         content,
         attachment_url
       });
@@ -137,7 +125,7 @@ export default function Chat() {
         const senderName = senderProfile?.display_name || user.full_name || 'Someone';
         
         await base44.integrations.Core.SendEmail({
-          to: otherUserEmail,
+          to: selectedConversation,
           subject: `New message from ${senderName}`,
           body: `You have received a new message from ${senderName}.\n\nMessage: ${content}\n\nLog in to Pop Up Play to reply.`
         });
@@ -148,7 +136,7 @@ export default function Chat() {
       return message;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['allMessages'] });
     }
   });
 
@@ -163,7 +151,7 @@ export default function Chat() {
         await base44.entities.Message.delete(messageId);
       } else {
         // Soft delete - add current user to deleted_for array
-        const message = messages.find(m => m.id === messageId);
+        const message = conversationMessages.find(m => m.id === messageId);
         const deletedFor = message.deleted_for || [];
         await base44.entities.Message.update(messageId, {
           deleted_for: [...deletedFor, user.email]
@@ -171,7 +159,7 @@ export default function Chat() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['messages'] });
+      queryClient.invalidateQueries({ queryKey: ['allMessages'] });
     }
   });
 
@@ -187,8 +175,8 @@ export default function Chat() {
 
   }
 
-  const otherProfile = selectedMatch ? profiles.find((p) =>
-  p.user_email === (selectedMatch.user1_email === user.email ? selectedMatch.user2_email : selectedMatch.user1_email)
+  const otherProfile = selectedConversation ? profiles.find((p) =>
+    p.user_email === selectedConversation
   ) : null;
 
   return (
@@ -213,33 +201,30 @@ export default function Chat() {
             {/* Chat List - Hidden on mobile when chat is selected */}
             <div className={`
               border-r border-slate-200 
-              ${selectedMatch ? 'hidden md:block' : 'block'}
+              ${selectedConversation ? 'hidden md:block' : 'block'}
               h-full overflow-hidden
             `}>
               <ChatList
-                matches={matches}
+                conversations={conversations}
                 profiles={profiles}
-                messages={messages}
-                selectedMatchId={selectedMatch?.id}
-                onSelectMatch={setSelectedMatch}
+                selectedUserEmail={selectedConversation}
+                onSelectConversation={setSelectedConversation}
                 currentUserEmail={user.email} />
 
             </div>
 
             {/* Conversation - Hidden on mobile when no chat selected */}
             <div className={`
-              ${selectedMatch ? 'block' : 'hidden md:flex md:items-center md:justify-center'}
+              ${selectedConversation ? 'block' : 'hidden md:flex md:items-center md:justify-center'}
               h-full
             `}>
-              {selectedMatch && otherProfile ?
+              {selectedConversation && otherProfile ?
               <ChatConversation
-                match={selectedMatch}
+                otherUserEmail={selectedConversation}
                 otherProfile={otherProfile}
-                messages={messages.sort((a, b) =>
-                new Date(a.created_date) - new Date(b.created_date)
-                )}
+                messages={conversationMessages}
                 currentUserEmail={user.email}
-                onBack={() => setSelectedMatch(null)}
+                onBack={() => setSelectedConversation(null)}
                 onSendMessage={handleSendMessage}
                 onDeleteMessage={handleDeleteMessage}
                 isSending={sendMessageMutation.isPending} /> :

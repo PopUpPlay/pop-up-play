@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 export default function ChatConversation({ 
-  match, 
+  otherUserEmail,
   otherProfile, 
   messages, 
   currentUserEmail,
