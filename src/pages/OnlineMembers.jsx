@@ -71,7 +71,6 @@ export default function OnlineMembers() {
 
   const filteredProfiles = React.useMemo(() => {
     let profiles = activeProfiles
-      .filter((profile) => profile.user_email !== user?.email) // Exclude own profile
       .filter((profile) => {
         return !blockedUsers.some(b => b.blocked_email === profile.user_email);
       })
@@ -92,7 +91,7 @@ export default function OnlineMembers() {
     }
     
     return profiles;
-  }, [activeProfiles, user?.email, myProfile, blockedUsers, interestFilter]);
+  }, [activeProfiles, myProfile, blockedUsers, interestFilter]);
 
   if (!user || isLoading) {
     return (
