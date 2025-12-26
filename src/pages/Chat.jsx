@@ -238,7 +238,7 @@ export default function Chat() {
                     Select a conversation
                   </h3>
                   <p className="text-sm text-slate-500">
-                    Choose a match to start chatting
+                    Choose a conversation to start chatting
                   </p>
                 </div>
               }
