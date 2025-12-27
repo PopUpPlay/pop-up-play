@@ -26,9 +26,9 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     }
   }, [userLocation]);
 
-  // Fetch commercial area coordinates for privacy protection
+  // Fetch city center coordinates
   useEffect(() => {
-    const fetchCommercialAreas = async () => {
+    const fetchCityCenters = async () => {
       const cities = [...new Set(activeUsers.map(u => u.current_city).filter(Boolean))];
       const newCenters = {};
       
@@ -39,9 +39,8 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
         }
         
         try {
-          // Search for commercial/downtown areas instead of residential
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?q=downtown+${encodeURIComponent(city)}&format=json&limit=1`
+            `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`
           );
           const data = await response.json();
           if (data[0]) {
@@ -49,21 +48,9 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
               lat: parseFloat(data[0].lat),
               lon: parseFloat(data[0].lon)
             };
-          } else {
-            // Fallback to city center if downtown not found
-            const fallback = await fetch(
-              `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`
-            );
-            const fallbackData = await fallback.json();
-            if (fallbackData[0]) {
-              newCenters[city] = {
-                lat: parseFloat(fallbackData[0].lat),
-                lon: parseFloat(fallbackData[0].lon)
-              };
-            }
           }
         } catch (err) {
-          console.error('Failed to fetch commercial area:', err);
+          console.error('Failed to fetch city center:', err);
         }
       }
       
@@ -73,11 +60,11 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     };
     
     if (activeUsers.length > 0) {
-      fetchCommercialAreas();
+      fetchCityCenters();
     }
   }, [activeUsers.map(u => u.current_city).join(',')]);
 
-  // Position users near commercial areas with clustering offset for privacy
+  // Position users at city center with small clustering offset
   const getUsersWithCityLocation = () => {
     const cityGroups = {};
     
