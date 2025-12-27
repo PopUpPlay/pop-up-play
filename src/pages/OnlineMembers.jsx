@@ -90,6 +90,13 @@ export default function OnlineMembers() {
       );
     }
     
+    // Sort by distance (closest first)
+    profiles.sort((a, b) => {
+      if (a.distance === null || a.distance === undefined) return 1;
+      if (b.distance === null || b.distance === undefined) return -1;
+      return a.distance - b.distance;
+    });
+    
     return profiles;
   }, [activeProfiles, myProfile, blockedUsers, interestFilter]);
 
