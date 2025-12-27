@@ -497,13 +497,39 @@ export default function Profile() {
           </Tabs>
         </motion.div>
 
+        {/* Save Profile Button - Only for own profile */}
+        {isOwnProfile && (
+          <motion.div
+            className="flex justify-center mt-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}>
+            <Button
+              onClick={handleSave}
+              disabled={saveMutation.isPending}
+              className="bg-violet-600 hover:bg-violet-700 text-white px-8 py-3 text-lg rounded-xl">
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="w-5 h-5 mr-2" />
+                  Save Profile
+                </>
+              )}
+            </Button>
+          </motion.div>
+        )}
+
         {/* Delete Account Section - Only for own profile */}
         {isOwnProfile && (
           <motion.div
             className="bg-white rounded-2xl shadow-lg p-6 mt-6 border-2 border-red-100"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}>
+            transition={{ delay: 0.4 }}>
             <h2 className="text-lg font-semibold text-red-600 mb-2">Danger Zone</h2>
             <p className="text-sm text-slate-600 mb-4">
               Once you delete your account, there is no going back. Please be certain.
