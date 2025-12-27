@@ -64,31 +64,17 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     }
   }, [activeUsers.map(u => u.current_city).join(',')]);
 
-  // Position users at city center with small clustering offset
+  // Position users at randomized locations within city area
   const getUsersWithCityLocation = () => {
-    const cityGroups = {};
-    
-    activeUsers.forEach(profile => {
-      if (!profile.current_city) return;
-      
-      if (!cityGroups[profile.current_city]) {
-        cityGroups[profile.current_city] = [];
-      }
-      cityGroups[profile.current_city].push(profile);
-    });
-    
     return activeUsers.map(profile => {
       if (!profile.current_city) return profile;
       
       const cityCenter = cityCenters[profile.current_city];
       if (!cityCenter) return profile;
       
-      const cityUsers = cityGroups[profile.current_city];
-      const userIndex = cityUsers.findIndex(u => u.id === profile.id);
-      
-      // Small offset for visual clustering at city center
-      const angle = (userIndex / cityUsers.length) * 2 * Math.PI;
-      const radius = 0.01;
+      // Randomize location within a larger radius of the city (approximately 5-10 km)
+      const angle = Math.random() * 2 * Math.PI;
+      const radius = 0.05 + (Math.random() * 0.05); // 0.05-0.1 degrees (roughly 5-10km)
       
       return {
         ...profile,
