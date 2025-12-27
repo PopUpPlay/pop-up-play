@@ -159,11 +159,16 @@ export default function Pricing() {
               </ul>
 
               {subscription?.status === 'active' ? (
-                <div className="text-center">
+                <div className="text-center space-y-3">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-100 text-green-800 rounded-full font-semibold">
                     <Check className="w-5 h-5" />
                     Active Subscription
                   </div>
+                  {subscription.current_period_end && (
+                    <p className="text-sm text-slate-600">
+                      {Math.max(0, Math.ceil((new Date(subscription.current_period_end) - new Date()) / (1000 * 60 * 60 * 24)))} days remaining
+                    </p>
+                  )}
                 </div>
               ) : (
                 <Button
