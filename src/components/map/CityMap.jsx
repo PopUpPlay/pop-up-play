@@ -64,36 +64,32 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     }
   }, [activeUsers.map(u => u.current_city).join(',')]);
 
-  // Position users at city center with small clustering offset
+  // Position users with privacy - random offset from actual/city location
   const getUsersWithCityLocation = () => {
-    const cityGroups = {};
-    
-    activeUsers.forEach(profile => {
-      if (!profile.current_city) return;
-      
-      if (!cityGroups[profile.current_city]) {
-        cityGroups[profile.current_city] = [];
-      }
-      cityGroups[profile.current_city].push(profile);
-    });
-    
     return activeUsers.map(profile => {
-      if (!profile.current_city) return profile;
+      let baseLat, baseLon;
       
-      const cityCenter = cityCenters[profile.current_city];
-      if (!cityCenter) return profile;
+      // Use actual GPS if available, otherwise city center
+      if (profile.latitude && profile.longitude) {
+        baseLat = profile.latitude;
+        baseLon = profile.longitude;
+      } else if (profile.current_city && cityCenters[profile.current_city]) {
+        const cityCenter = cityCenters[profile.current_city];
+        baseLat = cityCenter.lat;
+        baseLon = cityCenter.lon;
+      } else {
+        return profile;
+      }
       
-      const cityUsers = cityGroups[profile.current_city];
-      const userIndex = cityUsers.findIndex(u => u.id === profile.id);
-      
-      // Small offset for visual clustering at city center
-      const angle = (userIndex / cityUsers.length) * 2 * Math.PI;
-      const radius = 0.01;
+      // Add random offset within ~1-2 mile radius for privacy
+      // 0.02 degrees ≈ 1.4 miles at mid-latitudes
+      const randomAngle = Math.random() * 2 * Math.PI;
+      const randomRadius = 0.01 + (Math.random() * 0.015); // 0.7-1.7 miles
       
       return {
         ...profile,
-        displayLatitude: cityCenter.lat + (Math.cos(angle) * radius),
-        displayLongitude: cityCenter.lon + (Math.sin(angle) * radius)
+        displayLatitude: baseLat + (Math.cos(randomAngle) * randomRadius),
+        displayLongitude: baseLon + (Math.sin(randomAngle) * randomRadius)
       };
     });
   };
