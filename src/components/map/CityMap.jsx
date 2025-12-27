@@ -122,7 +122,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
         ))}
       </MapContainer>
       
-      <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg">
+      <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-xl px-4 py-2 shadow-lg z-[1000]">
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 rounded-full bg-rose-400 animate-pulse"></div>
           <span className="text-sm text-slate-600 font-medium">{activeUsers.length} active nearby</span>
