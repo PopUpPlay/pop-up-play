@@ -500,7 +500,7 @@ export default function Profile() {
         {/* Save Profile Button - Only for own profile */}
         {isOwnProfile && (
           <motion.div
-            className="flex flex-col items-center mt-6"
+            className="flex justify-center mt-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}>
@@ -520,7 +520,6 @@ export default function Profile() {
                 </>
               )}
             </Button>
-            <p className="text-sm text-slate-600 mt-2">Save Profile</p>
           </motion.div>
         )}
 
