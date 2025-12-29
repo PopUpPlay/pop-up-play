@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, Loader2 } from 'lucide-react';
+import { ArrowLeft, Save, Loader2, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -265,23 +265,30 @@ export default function Profile() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}>
 
-          {isOwnProfile ?
+          {isOwnProfile ? (
           <AvatarUpload
             currentAvatar={formData.avatar_url}
-            onAvatarChange={(url) => setFormData((prev) => ({ ...prev, avatar_url: url }))} /> :
-
-
-          <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
-              <img
-              src={formData.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'}
-              alt="Profile"
-              className="w-full h-full object-cover"
-              onContextMenu={(e) => e.preventDefault()}
-              draggable={false}
-              style={{ pointerEvents: 'none', userSelect: 'none', WebkitUserDrag: 'none' }} />
-
+            onAvatarChange={(url) => setFormData((prev) => ({ ...prev, avatar_url: url }))} />
+          ) : (
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-xl">
+                <img
+                  src={formData.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop'}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                  onContextMenu={(e) => e.preventDefault()}
+                  draggable={false}
+                  style={{ pointerEvents: 'none', userSelect: 'none', WebkitUserDrag: 'none' }}
+                />
+              </div>
+              <Link to={createPageUrl('Chat') + `?user=${viewingUserEmail}`}>
+                <Button className="bg-violet-600 hover:bg-violet-700 text-white gap-2">
+                  <MessageCircle className="w-4 h-4" />
+                  Message
+                </Button>
+              </Link>
             </div>
-          }
+          )}
         </motion.div>
 
         {/* Profile Form */}
