@@ -26,7 +26,16 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 export default function OnlineMembers() {
   const [user, setUser] = useState(null);
   const [interestFilter, setInterestFilter] = useState('');
+  const [backUrl, setBackUrl] = useState(createPageUrl('Menu'));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromParam = params.get('from');
+    if (fromParam === 'home') {
+      setBackUrl(createPageUrl('Home'));
+    }
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
