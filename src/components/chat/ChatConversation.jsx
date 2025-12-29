@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Send, Image as ImageIcon, Loader2, MapPin, MoreVertical, Trash2, ChevronUp, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Send, Image as ImageIcon, Loader2, MapPin, MoreVertical, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
@@ -26,7 +26,6 @@ export default function ChatConversation({
   const [newMessage, setNewMessage] = useState('');
   const [uploading, setUploading] = useState(false);
   const messagesEndRef = useRef(null);
-  const messagesContainerRef = useRef(null);
   const inputRef = useRef(null);
 
   useEffect(() => {
@@ -85,16 +84,6 @@ export default function ChatConversation({
 
   const messageGroups = groupMessagesByDate(messages);
 
-  const scrollMessages = (direction) => {
-    if (messagesContainerRef.current) {
-      const scrollAmount = 300;
-      messagesContainerRef.current.scrollBy({
-        top: direction === 'up' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth'
-      });
-    }
-  };
-
   return (
     <div className="h-full flex flex-col bg-white">
       {/* Header */}
@@ -135,7 +124,7 @@ export default function ChatConversation({
       </div>
 
       {/* Messages */}
-      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 bg-slate-50 relative">
+      <div className="flex-1 overflow-y-auto p-4 bg-slate-50">
         {Object.keys(messageGroups).length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center p-8">
             <div className="w-16 h-16 rounded-full bg-gradient-to-r from-violet-100 to-rose-100 flex items-center justify-center mb-4">
@@ -287,26 +276,6 @@ export default function ChatConversation({
             <div ref={messagesEndRef} />
           </div>
         )}
-
-        {/* Scroll Controls */}
-        <div className="absolute right-4 bottom-4 flex flex-col gap-2">
-          <Button
-            onClick={() => scrollMessages('up')}
-            size="icon"
-            className="rounded-full bg-white hover:bg-slate-50 shadow-lg border border-slate-200 h-10 w-10"
-            variant="ghost"
-          >
-            <ChevronUp className="w-5 h-5 text-slate-600" />
-          </Button>
-          <Button
-            onClick={() => scrollMessages('down')}
-            size="icon"
-            className="rounded-full bg-white hover:bg-slate-50 shadow-lg border border-slate-200 h-10 w-10"
-            variant="ghost"
-          >
-            <ChevronDown className="w-5 h-5 text-slate-600" />
-          </Button>
-        </div>
       </div>
 
       {/* Input */}
