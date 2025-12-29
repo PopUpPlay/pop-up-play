@@ -110,7 +110,7 @@ export default function OnlineMembers() {
 
   const handleVideoCall = (otherUserEmail) => {
     const callId = `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-    navigate(createPageUrl('VideoCall') + `?user=${otherUserEmail}&callId=${callId}`);
+    navigate(createPageUrl('VideoCall') + `?user=${otherUserEmail}&callId=${callId}&from=onlinemembers`);
   };
 
   const handleChat = (otherUserEmail) => {

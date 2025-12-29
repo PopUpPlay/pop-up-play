@@ -16,6 +16,7 @@ export default function VideoCall() {
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [callStatus, setCallStatus] = useState('initializing'); // initializing, calling, connected, ended
+  const [backUrl, setBackUrl] = useState(createPageUrl('Home'));
 
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
@@ -26,8 +27,16 @@ export default function VideoCall() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get('user');
+    const fromParam = params.get('from');
     setOtherUserEmail(userParam);
     setCallId(`call_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
+    
+    // Set back URL based on where the call was initiated
+    if (fromParam === 'onlinemembers') {
+      setBackUrl(createPageUrl('OnlineMembers'));
+    } else {
+      setBackUrl(createPageUrl('Home'));
+    }
   }, []);
 
   useEffect(() => {
@@ -251,7 +260,7 @@ export default function VideoCall() {
       <header className="bg-slate-800/80 backdrop-blur-lg border-b border-slate-700 flex-shrink-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link to={createPageUrl('Home')}>
+            <Link to={backUrl}>
               <Button variant="ghost" size="icon" className="rounded-full text-white hover:bg-slate-700">
                 <ArrowLeft className="w-5 h-5" />
               </Button>
@@ -304,9 +313,9 @@ export default function VideoCall() {
                 <PhoneOff className="w-10 h-10 text-red-400" />
               </div>
               <h3 className="text-white text-xl font-semibold mb-2">Call Ended</h3>
-              <Link to={createPageUrl('Home')}>
+              <Link to={backUrl}>
                 <Button className="bg-purple-700 text-[#ffffff] mt-4 px-4 py-2 text-sm font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-9 hover:bg-violet-700">
-                  Return to Home
+                  Go Back
                 </Button>
               </Link>
             </div>
