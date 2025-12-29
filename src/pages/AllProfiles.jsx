@@ -177,7 +177,7 @@ export default function AllProfiles() {
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ scale: 1.02 }}
                 className="cursor-pointer"
-                onClick={() => navigate(createPageUrl('Profile') + '?user=' + profile.user_email + '&back=Menu')}
+                onClick={() => navigate(createPageUrl('Profile') + '?user=' + profile.user_email + '&back=AllProfiles')}
               >
                 <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                   {/* Avatar */}
