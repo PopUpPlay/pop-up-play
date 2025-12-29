@@ -114,7 +114,7 @@ export default function OnlineMembers() {
   };
 
   const handleChat = (otherUserEmail) => {
-    navigate(createPageUrl('Chat') + `?user=${otherUserEmail}`);
+    navigate(createPageUrl('Chat') + `?user=${otherUserEmail}&from=onlinemembers`);
   };
 
   return (

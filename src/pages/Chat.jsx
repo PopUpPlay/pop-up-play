@@ -27,6 +27,9 @@ export default function Chat() {
       if (fromParam === 'profile') {
         const backToParam = params.get('backTo') || 'Menu';
         setBackUrl(createPageUrl('Profile') + `?user=${userEmail}&back=${backToParam}`);
+      } else if (fromParam === 'onlinemembers') {
+        // If coming from Online Members section
+        setBackUrl(createPageUrl('OnlineMembers'));
       } else {
         // If coming from URL with user param (map popup), set back to Home
         setBackUrl(createPageUrl('Home'));
