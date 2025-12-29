@@ -131,7 +131,7 @@ export default function OnlineMembers() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to={createPageUrl('Menu')}>
+          <Link to={backUrl}>
             <Button variant="ghost" size="icon" className="rounded-full">
               <ArrowLeft className="w-5 h-5" />
             </Button>
