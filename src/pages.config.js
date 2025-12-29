@@ -3,7 +3,6 @@ import AccessCodeManager from './pages/AccessCodeManager';
 import BlockedUsers from './pages/BlockedUsers';
 import Broadcast from './pages/Broadcast';
 import Chat from './pages/Chat';
-import Dashboard from './pages/Dashboard';
 import EnterAccessCode from './pages/EnterAccessCode';
 import Home from './pages/Home';
 import Menu from './pages/Menu';
@@ -14,6 +13,7 @@ import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import VideoCall from './pages/VideoCall';
 import AllProfiles from './pages/AllProfiles';
 import Profile from './pages/Profile';
+import Dashboard from './pages/Dashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -23,7 +23,6 @@ export const PAGES = {
     "BlockedUsers": BlockedUsers,
     "Broadcast": Broadcast,
     "Chat": Chat,
-    "Dashboard": Dashboard,
     "EnterAccessCode": EnterAccessCode,
     "Home": Home,
     "Menu": Menu,
@@ -34,6 +33,7 @@ export const PAGES = {
     "VideoCall": VideoCall,
     "AllProfiles": AllProfiles,
     "Profile": Profile,
+    "Dashboard": Dashboard,
 }
 
 export const pagesConfig = {

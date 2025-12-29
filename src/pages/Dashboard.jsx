@@ -128,7 +128,7 @@ export default function Dashboard() {
                 </div>
               }
             </div>
-            <Link to={createPageUrl('Profile')}>
+            <Link to={createPageUrl('Profile') + '?back=Dashboard'}>
               <Button variant="outline" size="icon" className="rounded-full">
                 <Edit2 className="w-4 h-4" />
               </Button>
