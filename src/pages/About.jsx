@@ -101,13 +101,12 @@ export default function About() {
 
           {currentVideo ?
           <div className="relative">
-              <video
-              src={currentVideo.video_url}
-              controls
-              className="w-full aspect-video bg-slate-900">
-
-                Your browser does not support the video tag.
-              </video>
+              <iframe
+                src="https://www.youtube.com/embed/aFZtCGwX9vg"
+                className="w-full aspect-video"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
               {isAdmin &&
             <div className="p-4 border-t border-slate-200">
                   <div className="flex items-center justify-between">
