@@ -287,7 +287,7 @@ export default function Profile() {
                   style={{ pointerEvents: 'none', userSelect: 'none', WebkitUserDrag: 'none' }}
                 />
               </div>
-              <Link to={createPageUrl('Chat') + `?user=${viewingUserEmail}`}>
+              <Link to={createPageUrl('Chat') + `?user=${viewingUserEmail}&from=profile&backTo=${backUrl}`}>
                 <Button className="bg-violet-600 hover:bg-violet-700 text-white gap-2">
                   <MessageCircle className="w-4 h-4" />
                   Message

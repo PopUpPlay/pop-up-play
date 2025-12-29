@@ -19,11 +19,18 @@ export default function Chat() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const userEmail = params.get('user');
+    const fromParam = params.get('from');
     if (userEmail) {
       // Store it to select match once matches are loaded
       sessionStorage.setItem('chatWithUser', userEmail);
-      // If coming from URL with user param (map popup), set back to Home
-      setBackUrl(createPageUrl('Home'));
+      // If coming from a profile page, return to that profile
+      if (fromParam === 'profile') {
+        const backToParam = params.get('backTo') || 'Menu';
+        setBackUrl(createPageUrl('Profile') + `?user=${userEmail}&back=${backToParam}`);
+      } else {
+        // If coming from URL with user param (map popup), set back to Home
+        setBackUrl(createPageUrl('Home'));
+      }
     } else {
       // Otherwise, back to Menu
       setBackUrl(createPageUrl('Menu'));
