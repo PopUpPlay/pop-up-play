@@ -203,7 +203,7 @@ export default function OnlineMembers() {
                 {/* Profile Image */}
                 <div 
                   className="relative h-64 bg-gradient-to-br from-violet-100 to-rose-100 cursor-pointer"
-                  onClick={() => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)}
+                  onClick={() => navigate(createPageUrl('Profile') + '?user=' + profile.user_email + '&back=OnlineMembers')}
                 >
                   <img
                     src={profile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop'}
