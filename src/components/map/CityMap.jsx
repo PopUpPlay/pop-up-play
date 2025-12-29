@@ -103,6 +103,8 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
       <MapContainer
         center={mapCenter}
         zoom={11}
+        minZoom={1}
+        maxZoom={11}
         className="w-full h-full"
         zoomControl={false}
       >
