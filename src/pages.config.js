@@ -10,10 +10,10 @@ import Home from './pages/Home';
 import Menu from './pages/Menu';
 import OnlineMembers from './pages/OnlineMembers';
 import Pricing from './pages/Pricing';
+import Profile from './pages/Profile';
 import SubscriptionSettings from './pages/SubscriptionSettings';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import VideoCall from './pages/VideoCall';
-import Profile from './pages/Profile';
 import __Layout from './Layout.jsx';
 
 
@@ -30,10 +30,10 @@ export const PAGES = {
     "Menu": Menu,
     "OnlineMembers": OnlineMembers,
     "Pricing": Pricing,
+    "Profile": Profile,
     "SubscriptionSettings": SubscriptionSettings,
     "SubscriptionSuccess": SubscriptionSuccess,
     "VideoCall": VideoCall,
-    "Profile": Profile,
 }
 
 export const pagesConfig = {

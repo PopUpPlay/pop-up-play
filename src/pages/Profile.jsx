@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, Loader2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Save, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -259,21 +259,6 @@ export default function Profile() {
       </header>
 
       <main className="max-w-2xl mx-auto px-4 py-8">
-        {/* Chat Button - Only for viewing other profiles */}
-        {!isOwnProfile && (
-          <motion.div
-            className="flex justify-center mb-6"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}>
-            <Link to={createPageUrl('Chat') + `?user=${viewingUserEmail}`}>
-              <Button className="bg-violet-600 hover:bg-violet-700 text-white px-6 py-3 rounded-xl gap-2">
-                <MessageCircle className="w-5 h-5" />
-                Send Message
-              </Button>
-            </Link>
-          </motion.div>
-        )}
-
         {/* Avatar Section */}
         <motion.div
           className="flex justify-center mb-8"
