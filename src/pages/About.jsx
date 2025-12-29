@@ -94,10 +94,30 @@ export default function About() {
 
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 py-8">
+        {/* YouTube Video Embed */}
+        <motion.div
+          className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}>
+          <div className="aspect-video">
+            <iframe
+              width="100%"
+              height="100%"
+              src="https://www.youtube.com/embed/aFZtCGwX9vg"
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          </div>
+        </motion.div>
+
         <motion.div
           className="bg-white rounded-2xl shadow-lg overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}>
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}>
 
           {currentVideo ?
           <div className="relative">
