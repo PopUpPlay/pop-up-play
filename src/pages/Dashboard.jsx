@@ -164,7 +164,7 @@ export default function Dashboard() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}>
 
-          <Link to={createPageUrl('Profile')}>
+          <Link to={createPageUrl('Profile') + '?back=Dashboard'}>
             <div className="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100">
               <div className="w-10 h-10 rounded-full bg-violet-100 flex items-center justify-center">
                 <Edit2 className="w-5 h-5 text-violet-600" />
@@ -176,7 +176,7 @@ export default function Dashboard() {
             </div>
           </Link>
 
-          <Link to={createPageUrl('BlockedUsers')}>
+          <Link to={createPageUrl('BlockedUsers') + '?from=dashboard'}>
             <div className="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100">
               <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center">
                 <Ban className="w-5 h-5 text-orange-600" />
@@ -189,7 +189,7 @@ export default function Dashboard() {
           </Link>
 
           {user?.role === 'admin' && (
-            <Link to={createPageUrl('SubscriptionSettings')}>
+            <Link to={createPageUrl('SubscriptionSettings') + '?from=dashboard'}>
               <div className="flex items-center gap-4 p-4 hover:bg-slate-50 transition-colors border-b border-slate-100">
                 <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                   <CreditCard className="w-5 h-5 text-green-600" />
