@@ -10,7 +10,16 @@ import { toast } from 'sonner';
 
 export default function BlockedUsers() {
   const [user, setUser] = useState(null);
+  const [backUrl, setBackUrl] = useState(createPageUrl('Home'));
   const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const fromParam = params.get('from');
+    if (fromParam === 'dashboard') {
+      setBackUrl(createPageUrl('Dashboard'));
+    }
+  }, []);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -72,7 +81,7 @@ export default function BlockedUsers() {
       {/* Header */}
       <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-slate-100">
         <div className="max-w-2xl mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to={createPageUrl('Home')}>
+          <Link to={backUrl}>
             <Button variant="ghost" size="icon" className="rounded-full">
               <ArrowLeft className="w-5 h-5" />
             </Button>
