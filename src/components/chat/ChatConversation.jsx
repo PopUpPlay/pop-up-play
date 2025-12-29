@@ -116,7 +116,7 @@ export default function ChatConversation({
         </div>
 
         {otherProfile.current_city && (
-          <div className="hidden sm:flex items-center gap-1 text-sm text-slate-500">
+          <div className="hidden sm:flex items-center gap-1 text-sm text-purple-600">
             <MapPin className="w-4 h-4" />
             {otherProfile.current_city}
           </div>
