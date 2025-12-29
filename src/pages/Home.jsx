@@ -183,9 +183,9 @@ export default function Home() {
             transition={{ delay: 0.05 }}>
             <Link to={createPageUrl('OnlineMembers')}>
               <Button 
-                className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center gap-3 text-lg font-semibold"
+                className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-5 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center gap-2 text-sm font-semibold"
                 style={{ zIndex: 1000 }}>
-                <User className="w-6 h-6" />
+                <User className="w-4 h-4" />
                 Members Online ({activeUsers.length})
               </Button>
             </Link>
