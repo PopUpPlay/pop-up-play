@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MapPin, Loader2, Filter } from 'lucide-react';
+import { ArrowLeft, MapPin, Loader2, Filter, MessageCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Link, useNavigate } from 'react-router-dom';
@@ -177,9 +177,11 @@ export default function AllProfiles() {
                 transition={{ delay: index * 0.05 }}
                 whileHover={{ scale: 1.02 }}
                 className="cursor-pointer"
-                onClick={() => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)}
               >
-                <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+                <div 
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden"
+                  onClick={() => navigate(createPageUrl('Profile') + '?user=' + profile.user_email)}
+                >
                   {/* Avatar */}
                   <div className="aspect-square relative">
                     <img
@@ -246,6 +248,19 @@ export default function AllProfiles() {
                         </p>
                       </div>
                     )}
+
+                    <Button
+                      variant="default"
+                      size="sm"
+                      className="w-full mt-3 bg-purple-600 hover:bg-purple-700 gap-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(createPageUrl('Chat') + '?conversation=' + profile.user_email);
+                      }}
+                    >
+                      <MessageCircle className="w-4 h-4" />
+                      Message
+                    </Button>
                   </div>
                 </div>
               </motion.div>
