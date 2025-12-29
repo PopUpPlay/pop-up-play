@@ -9,7 +9,7 @@ function MapController({ center }) {
   
   useEffect(() => {
     if (center) {
-      map.flyTo(center, 6, { duration: 1.5 });
+      map.flyTo(center, 11, { duration: 1.5 });
     }
   }, [center, map]);
   
@@ -102,7 +102,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl">
       <MapContainer
         center={mapCenter}
-        zoom={6}
+        zoom={11}
         className="w-full h-full"
         zoomControl={false}
       >
