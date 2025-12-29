@@ -24,7 +24,7 @@ export default function Layout({ children, currentPageName }) {
   // Pages that don't require subscription check
   const publicPages = ['Pricing', 'SubscriptionSuccess', 'SubscriptionSettings'];
   const shouldCheckSubscription = !publicPages.includes(currentPageName);
-  // Auto pop-down on browser close or logout
+  // Auto pop-down on browser close (not minimize)
   useEffect(() => {
     const popDownUser = async () => {
       try {
@@ -40,13 +40,27 @@ export default function Layout({ children, currentPageName }) {
           });
         }
       } catch (error) {
-        // Silently fail - user might already be logged out
+        // Silently fail
       }
     };
 
-    // Handle browser close or tab close
-    const handleBeforeUnload = () => {
-      popDownUser();
+    let isPageHidden = false;
+
+    // Track if page is actually being closed vs just hidden/minimized
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        isPageHidden = true;
+      } else {
+        isPageHidden = false;
+      }
+    };
+
+    // Only pop down on actual page unload (close), not minimize
+    const handleBeforeUnload = (e) => {
+      // Use sendBeacon for reliable data sending on page close
+      if (isPageHidden || document.visibilityState === 'hidden') {
+        popDownUser();
+      }
     };
 
     // Intercept logout calls
@@ -56,9 +70,11 @@ export default function Layout({ children, currentPageName }) {
       return originalLogout.apply(this, args);
     };
 
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('beforeunload', handleBeforeUnload);
     
     return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('beforeunload', handleBeforeUnload);
       base44.auth.logout = originalLogout;
     };
