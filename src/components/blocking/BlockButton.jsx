@@ -110,7 +110,7 @@ export default function BlockButton({ targetUserEmail, currentUserEmail, variant
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleToggleBlock} disabled={isPending}>
+          <AlertDialogAction onClick={handleToggleBlock} disabled={isPending} className="text-black">
             {isPending ? 'Blocking...' : 'Block User'}
           </AlertDialogAction>
         </AlertDialogFooter>
