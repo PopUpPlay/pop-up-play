@@ -175,6 +175,22 @@ export default function Home() {
       {/* Main Content */}
       <main className="pt-20 pb-12 px-4">
         <div className="max-w-7xl mx-auto">
+          {/* Members Online Button */}
+          <motion.div
+            className="mb-6 flex justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.05 }}>
+            <Link to={createPageUrl('OnlineMembers')}>
+              <Button 
+                className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-8 py-6 rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center gap-3 text-lg font-semibold"
+                style={{ zIndex: 1000 }}>
+                <User className="w-6 h-6" />
+                Members Online ({activeUsers.length})
+              </Button>
+            </Link>
+          </motion.div>
+
           {/* Location Status */}
           <motion.div
             className="mb-6"
