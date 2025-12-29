@@ -235,16 +235,19 @@ export default function Profile() {
             {isOwnProfile ? 'Edit Profile' : displayProfile?.display_name || 'Profile'}
           </h1>
           {isOwnProfile ? (
-          <Button
-            onClick={handleSave}
-            disabled={saveMutation.isPending}
-            className="bg-violet-600 hover:bg-violet-700 text-white">
-              {saveMutation.isPending ?
-            <Loader2 className="w-4 h-4 animate-spin" /> :
+          <div className="flex flex-col items-center gap-1">
+            <Button
+              onClick={handleSave}
+              disabled={saveMutation.isPending}
+              className="bg-violet-600 hover:bg-violet-700 text-white">
+                {saveMutation.isPending ?
+              <Loader2 className="w-4 h-4 animate-spin" /> :
 
-            <Save className="w-4 h-4" />
-            }
-            </Button>
+              <Save className="w-4 h-4" />
+              }
+              </Button>
+            <span className="text-xs text-purple-600 font-medium">Save Profile</span>
+          </div>
           ) : (
             <BlockButton 
               targetUserEmail={viewingUserEmail}
