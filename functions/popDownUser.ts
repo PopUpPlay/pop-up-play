@@ -2,16 +2,22 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const body = await req.json();
-    const token = body.token;
+    const url = new URL(req.url);
+    const token = url.searchParams.get('token');
 
     if (!token) {
       return Response.json({ error: 'No token provided' }, { status: 401 });
     }
 
-    const base44 = createClientFromRequest(req);
-    base44.setToken(token);
-    
+    // Create a new request with the auth header
+    const newHeaders = new Headers(req.headers);
+    newHeaders.set('Authorization', `Bearer ${token}`);
+    const newReq = new Request(req.url, {
+      method: req.method,
+      headers: newHeaders
+    });
+
+    const base44 = createClientFromRequest(newReq);
     const user = await base44.auth.me();
     
     if (!user) {
