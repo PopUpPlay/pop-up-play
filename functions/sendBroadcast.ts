@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     // Get all users
     const allUsers = await base44.asServiceRole.entities.User.list();
     
-    // Create broadcast message
+    // Create broadcast message record for history
     const broadcast = await base44.asServiceRole.entities.BroadcastMessage.create({
       sender_email: user.email,
       subject: subject || '',
@@ -26,19 +26,22 @@ Deno.serve(async (req) => {
       recipient_count: allUsers.length
     });
 
-    // Create individual user broadcast records
-    const userBroadcasts = allUsers.map(u => ({
-      broadcast_id: broadcast.id,
-      user_email: u.email,
-      read: false
-    }));
+    // Create chat message for each user from admin
+    const chatMessages = allUsers
+      .filter(u => u.email !== user.email) // Don't send to admin themselves
+      .map(u => ({
+        sender_email: user.email,
+        receiver_email: u.email,
+        content: subject ? `📢 ${subject}\n\n${message.trim()}` : `📢 ${message.trim()}`,
+        read: false
+      }));
 
-    await base44.asServiceRole.entities.UserBroadcast.bulkCreate(userBroadcasts);
+    await base44.asServiceRole.entities.Message.bulkCreate(chatMessages);
 
     return Response.json({
       success: true,
       broadcast_id: broadcast.id,
-      recipients: allUsers.length,
+      recipients: chatMessages.length,
       message: 'Broadcast sent successfully'
     });
   } catch (error) {

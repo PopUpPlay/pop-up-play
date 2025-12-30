@@ -3,7 +3,7 @@ import { Toaster } from 'sonner';
 import { base44 } from '@/api/base44Client';
 import SessionManager from '@/components/auth/SessionManager';
 import InactivityManager from '@/components/auth/InactivityManager';
-import BroadcastNotifications from '@/components/broadcasts/BroadcastNotifications';
+
 import SubscriptionGate from '@/components/subscription/SubscriptionGate';
 
 export default function Layout({ children, currentPageName }) {
@@ -77,7 +77,6 @@ export default function Layout({ children, currentPageName }) {
     <div className="min-h-screen bg-slate-50">
       <SessionManager />
       <InactivityManager />
-      <BroadcastNotifications userEmail={userEmail} />
       <style>{`
         :root {
           --primary: 139 92 246;
