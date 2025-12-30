@@ -45,12 +45,13 @@ export default function Layout({ children, currentPageName }) {
     };
 
     // Handle browser close or tab close with sendBeacon for reliability
-    const handleBeforeUnload = async () => {
+    const handleBeforeUnload = () => {
       try {
-        const user = await base44.auth.me();
-        if (user?.email) {
+        // Use sendBeacon for reliable one-way request on close
+        const token = localStorage.getItem('base44_token');
+        if (token) {
           const url = `${window.location.origin}/api/functions/popDownUser`;
-          const blob = new Blob([JSON.stringify({ user_email: user.email })], { type: 'application/json' });
+          const blob = new Blob([JSON.stringify({})], { type: 'application/json' });
           navigator.sendBeacon(url, blob);
         }
       } catch (error) {
