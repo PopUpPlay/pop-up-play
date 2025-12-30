@@ -99,7 +99,7 @@ export default function ChatConversation({
           <ArrowLeft className="w-5 h-5" />
           </Button>
 
-          <Link to={createPageUrl('Profile') + `?user=${otherUserEmail}&back=Chat`}>
+          <Link to={createPageUrl('Profile') + `?user=${otherUserEmail}&back=Chat&chatWith=${otherUserEmail}`}>
             <img
               src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
               alt={otherProfile.display_name}
@@ -163,7 +163,7 @@ export default function ChatConversation({
                         )}
                       >
                         {!isOwn && showAvatar && (
-                          <Link to={createPageUrl('Profile') + `?user=${otherUserEmail}&back=Chat`}>
+                          <Link to={createPageUrl('Profile') + `?user=${otherUserEmail}&back=Chat&chatWith=${otherUserEmail}`}>
                             <img
                               src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
                               alt={otherProfile.display_name}
