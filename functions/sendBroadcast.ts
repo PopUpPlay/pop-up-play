@@ -38,18 +38,25 @@ Deno.serve(async (req) => {
 
     await base44.asServiceRole.entities.Message.bulkCreate(chatMessages);
 
-    // Send email notification to all users
-    const emailPromises = allUsers
-      .filter(u => u.email !== user.email)
-      .map(u => 
+    // Send email notifications to all users in batches to avoid rate limiting
+    const recipientUsers = allUsers.filter(u => u.email !== user.email);
+    const batchSize = 10;
+    
+    for (let i = 0; i < recipientUsers.length; i += batchSize) {
+      const batch = recipientUsers.slice(i, i + batchSize);
+      const batchPromises = batch.map(u => 
         base44.asServiceRole.integrations.Core.SendEmail({
           to: u.email,
           subject: subject || 'New Broadcast Message',
           body: `You have received a new broadcast message.\n\n${subject ? `Subject: ${subject}\n\n` : ''}${message.trim()}\n\nLog in to Pop Up Play to view your messages.`
         }).catch(err => console.error(`Failed to send email to ${u.email}:`, err))
       );
-
-    await Promise.all(emailPromises);
+      await Promise.all(batchPromises);
+      // Small delay between batches
+      if (i + batchSize < recipientUsers.length) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+    }
 
     return Response.json({
       success: true,
