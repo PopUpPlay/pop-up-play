@@ -1,16 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
 
 // Generate a unique device ID stored in localStorage
 const getDeviceId = () => {
@@ -26,8 +16,6 @@ export default function SessionManager() {
   const checkIntervalRef = useRef(null);
   const deviceId = getDeviceId();
   const isCheckingRef = useRef(false);
-  const [showDialog, setShowDialog] = useState(false);
-  const otherSessionsRef = useRef([]);
 
   useEffect(() => {
     let mounted = true;
@@ -94,23 +82,23 @@ export default function SessionManager() {
 
         // Check if there are multiple active sessions
         if (activeSessions.length > 1) {
-          // Find the most recent session (excluding current device)
-          const otherSessions = activeSessions.filter(s => s.device_id !== deviceId);
+          // Sort all sessions by last_active to find the oldest
+          const sortedSessions = activeSessions.sort(
+            (a, b) => new Date(a.last_active) - new Date(b.last_active)
+          );
           
-          if (otherSessions.length > 0) {
-            // Sort by last_active to find the most recent other session
-            const sortedOtherSessions = otherSessions.sort(
-              (a, b) => new Date(b.last_active) - new Date(a.last_active)
-            );
-            const mostRecentOtherSession = sortedOtherSessions[0];
+          // Delete all sessions except the most recent one
+          for (let i = 0; i < sortedSessions.length - 1; i++) {
+            const oldSession = sortedSessions[i];
+            await base44.entities.UserSession.delete(oldSession.id);
             
-            // Find current session
-            const currentSession = activeSessions.find(s => s.device_id === deviceId);
-            
-            // If another device has a more recent login, show dialog
-            if (currentSession && mostRecentOtherSession.last_active > currentSession.last_active) {
-              otherSessionsRef.current = otherSessions;
-              setShowDialog(true);
+            // If the current device was logged out, refresh the page
+            if (oldSession.device_id === deviceId) {
+              toast.error('Your session was ended due to a login on another device');
+              setTimeout(() => {
+                window.location.reload();
+              }, 2000);
+              return;
             }
           }
         }
@@ -139,43 +127,5 @@ export default function SessionManager() {
     };
   }, [deviceId]);
 
-  const handleLogoutOtherDevices = async () => {
-    try {
-      const user = await base44.auth.me();
-      
-      // Delete other sessions
-      for (const session of otherSessionsRef.current) {
-        await base44.entities.UserSession.delete(session.id);
-      }
-      
-      toast.success('Other devices have been logged out');
-      setShowDialog(false);
-    } catch (error) {
-      toast.error('Failed to logout other devices');
-    }
-  };
-
-  const handleKeepBothSessions = () => {
-    setShowDialog(false);
-    // Do nothing - allow both sessions to remain active
-  };
-
-  return (
-    <AlertDialog open={showDialog} onOpenChange={setShowDialog}>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>Account Logged In On Another Device</AlertDialogTitle>
-          <AlertDialogDescription>
-            Your account is currently active on another device. Would you like to log out of the other device?
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel onClick={handleKeepBothSessions}>No</AlertDialogCancel>
-          <AlertDialogAction onClick={handleLogoutOtherDevices}>
-            Yes, Log Out Other Device
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
-  );
+  return null;
 }
