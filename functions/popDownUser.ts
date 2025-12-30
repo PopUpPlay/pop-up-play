@@ -1,17 +1,8 @@
-import { createClient } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const body = await req.json();
-    const token = body.token;
-    
-    if (!token) {
-      return Response.json({ error: 'No token provided' }, { status: 400 });
-    }
-
-    const base44 = createClient();
-    base44.setToken(token);
-    
+    const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
     
     if (!user) {

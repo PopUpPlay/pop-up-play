@@ -51,7 +51,7 @@ export default function Layout({ children, currentPageName }) {
         const token = localStorage.getItem('base44_token');
         if (token) {
           const url = `${window.location.origin}/api/functions/popDownUser`;
-          const blob = new Blob([JSON.stringify({ token })], { type: 'application/json' });
+          const blob = new Blob([JSON.stringify({})], { type: 'application/json' });
           navigator.sendBeacon(url, blob);
         }
       } catch (error) {
