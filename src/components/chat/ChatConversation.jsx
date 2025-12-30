@@ -6,6 +6,8 @@ import { Input } from '@/components/ui/input';
 import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { base44 } from '@/api/base44Client';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -95,13 +97,15 @@ export default function ChatConversation({
           className="md:hidden rounded-full"
         >
           <ArrowLeft className="w-5 h-5" />
-        </Button>
-        
-        <img
-          src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
-          alt={otherProfile.display_name}
-          className="w-12 h-12 rounded-full object-cover border-2 border-violet-100"
-        />
+          </Button>
+
+          <Link to={createPageUrl('Profile') + `?user=${otherUserEmail}&back=Chat`}>
+            <img
+              src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
+              alt={otherProfile.display_name}
+              className="w-12 h-12 rounded-full object-cover border-2 border-violet-100 cursor-pointer hover:border-violet-300 transition-colors"
+            />
+          </Link>
         
         <div className="flex-1">
           <h2 className="font-semibold text-slate-800">{otherProfile.display_name}</h2>
@@ -159,11 +163,13 @@ export default function ChatConversation({
                         )}
                       >
                         {!isOwn && showAvatar && (
-                          <img
-                            src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
-                            alt={otherProfile.display_name}
-                            className="w-8 h-8 rounded-full object-cover flex-shrink-0"
-                          />
+                          <Link to={createPageUrl('Profile') + `?user=${otherUserEmail}&back=Chat`}>
+                            <img
+                              src={otherProfile.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
+                              alt={otherProfile.display_name}
+                              className="w-8 h-8 rounded-full object-cover flex-shrink-0 cursor-pointer hover:ring-2 hover:ring-violet-300 transition-all"
+                            />
+                          </Link>
                         )}
                         {!isOwn && !showAvatar && <div className="w-8" />}
                         
