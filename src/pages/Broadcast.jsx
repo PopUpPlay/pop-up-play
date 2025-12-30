@@ -2,8 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Send, Loader2, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Send, Loader2, CheckCircle2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -16,6 +26,8 @@ export default function Broadcast() {
   const [user, setUser] = useState(null);
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [broadcastToDelete, setBroadcastToDelete] = useState(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -65,6 +77,32 @@ export default function Broadcast() {
       return;
     }
     sendBroadcastMutation.mutate({ subject, message });
+  };
+
+  const deleteBroadcastMutation = useMutation({
+    mutationFn: async (broadcastId) => {
+      await base44.entities.BroadcastMessage.delete(broadcastId);
+    },
+    onSuccess: () => {
+      toast.success('Broadcast deleted');
+      queryClient.invalidateQueries({ queryKey: ['broadcasts'] });
+      setDeleteDialogOpen(false);
+      setBroadcastToDelete(null);
+    },
+    onError: () => {
+      toast.error('Failed to delete broadcast');
+    }
+  });
+
+  const handleDeleteClick = (broadcast) => {
+    setBroadcastToDelete(broadcast);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = () => {
+    if (broadcastToDelete) {
+      deleteBroadcastMutation.mutate(broadcastToDelete.id);
+    }
   };
 
   if (!user) {
@@ -173,6 +211,14 @@ export default function Broadcast() {
                         </span>
                       </div>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleDeleteClick(broadcast)}
+                      className="text-slate-400 hover:text-red-600"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
                 </Card>
               ))}
@@ -180,6 +226,35 @@ export default function Broadcast() {
           )}
         </motion.div>
       </main>
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Broadcast Message?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently delete this broadcast message from the history. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={deleteBroadcastMutation.isPending}
+            >
+              {deleteBroadcastMutation.isPending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                'Delete'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
