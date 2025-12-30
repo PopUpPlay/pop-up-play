@@ -45,9 +45,17 @@ export default function Profile() {
     const params = new URLSearchParams(window.location.search);
     const userParam = params.get('user');
     const backParam = params.get('back');
+    const chatWithParam = params.get('chatWith');
+    
     setViewingUserEmail(userParam);
+    
     if (backParam) {
-      setBackUrl(backParam);
+      // If coming from Chat and chatWith parameter exists, open that conversation
+      if (backParam === 'Chat' && chatWithParam) {
+        setBackUrl(backParam + `?user=${chatWithParam}&from=profile`);
+      } else {
+        setBackUrl(backParam);
+      }
     }
   }, []);
 
