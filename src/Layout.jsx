@@ -50,8 +50,8 @@ export default function Layout({ children, currentPageName }) {
         // Use sendBeacon for reliable one-way request on close
         const token = localStorage.getItem('base44_token');
         if (token) {
-          const url = `${window.location.origin}/api/functions/popDownUser?token=${encodeURIComponent(token)}`;
-          const blob = new Blob([JSON.stringify({})], { type: 'application/json' });
+          const url = `${window.location.origin}/api/functions/popDownUser`;
+          const blob = new Blob([JSON.stringify({ token })], { type: 'application/json' });
           navigator.sendBeacon(url, blob);
         }
       } catch (error) {
