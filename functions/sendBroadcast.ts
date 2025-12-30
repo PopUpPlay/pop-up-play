@@ -38,6 +38,20 @@ Deno.serve(async (req) => {
 
     await base44.asServiceRole.entities.Message.bulkCreate(chatMessages);
 
+    // Send email notifications to all users
+    const emailPromises = allUsers
+      .filter(u => u.email !== user.email) // Don't email admin themselves
+      .map(u => 
+        base44.asServiceRole.integrations.Core.SendEmail({
+          to: u.email,
+          subject: subject || 'New Broadcast Message from Pop Up Play',
+          body: `You have received a new broadcast message.\n\n${subject ? `Subject: ${subject}\n\n` : ''}${message.trim()}\n\nLog in to Pop Up Play to view it in your messages.`
+        }).catch(err => console.error(`Failed to send email to ${u.email}:`, err))
+      );
+
+    // Send all emails in parallel
+    await Promise.all(emailPromises);
+
     return Response.json({
       success: true,
       broadcast_id: broadcast.id,
