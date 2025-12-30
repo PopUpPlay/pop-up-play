@@ -177,6 +177,32 @@ export default function Chat() {
     deleteMessageMutation.mutate({ messageId, deleteForEveryone });
   };
 
+  const handleDeleteConversation = async (otherUserEmail) => {
+    // Find all messages in this conversation
+    const messagesToDelete = allMessages.filter(m => 
+      (m.sender_email === user.email && m.receiver_email === otherUserEmail) ||
+      (m.receiver_email === user.email && m.sender_email === otherUserEmail)
+    );
+
+    // Soft delete all messages for current user
+    for (const message of messagesToDelete) {
+      const deletedFor = message.deleted_for || [];
+      if (!deletedFor.includes(user.email)) {
+        await base44.entities.Message.update(message.id, {
+          deleted_for: [...deletedFor, user.email]
+        });
+      }
+    }
+
+    // Clear selection if this was the selected conversation
+    if (selectedConversation === otherUserEmail) {
+      setSelectedConversation(null);
+    }
+
+    // Refresh messages
+    queryClient.invalidateQueries({ queryKey: ['allMessages'] });
+  };
+
   if (!user) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
@@ -219,7 +245,8 @@ export default function Chat() {
                 profiles={profiles}
                 selectedUserEmail={selectedConversation}
                 onSelectConversation={setSelectedConversation}
-                currentUserEmail={user.email} />
+                currentUserEmail={user.email}
+                onDeleteConversation={handleDeleteConversation} />
 
             </div>
 
