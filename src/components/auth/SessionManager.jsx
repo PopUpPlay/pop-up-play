@@ -171,7 +171,7 @@ export default function SessionManager() {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel onClick={handleKeepBothSessions}>No</AlertDialogCancel>
-          <AlertDialogAction onClick={handleLogoutOtherDevices}>
+          <AlertDialogAction onClick={handleLogoutOtherDevices} className="text-purple-600">
             Yes, Log Out Other Device
           </AlertDialogAction>
         </AlertDialogFooter>
