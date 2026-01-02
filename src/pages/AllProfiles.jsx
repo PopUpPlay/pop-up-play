@@ -37,43 +37,10 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return R * c;
 };
 
-// Geocode a location (city, state, ZIP, country) to coordinates
-const geocodeLocation = async (city, state, zip, country) => {
-  try {
-    // Build query string prioritizing ZIP code for accuracy
-    const parts = [];
-    if (zip) parts.push(zip);
-    if (city) parts.push(city);
-    if (state) parts.push(state);
-    if (country) parts.push(country);
-    
-    if (parts.length === 0) return null;
-    
-    const query = parts.join(', ');
-    const response = await fetch(
-      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`
-    );
-    const data = await response.json();
-    
-    if (data && data.length > 0) {
-      return {
-        lat: parseFloat(data[0].lat),
-        lon: parseFloat(data[0].lon)
-      };
-    }
-    return null;
-  } catch (error) {
-    console.error('Geocoding error:', error);
-    return null;
-  }
-};
-
 export default function AllProfiles() {
   const [user, setUser] = useState(null);
   const [interestFilter, setInterestFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
-  const [profilesWithDistance, setProfilesWithDistance] = useState([]);
-  const [isCalculatingDistances, setIsCalculatingDistances] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -119,57 +86,8 @@ export default function AllProfiles() {
     enabled: !!user?.email
   });
 
-  // Calculate distances when profiles or myProfile changes
-  useEffect(() => {
-    const calculateDistances = async () => {
-      if (!myProfile || allProfiles.length === 0) {
-        setProfilesWithDistance([]);
-        return;
-      }
-
-      setIsCalculatingDistances(true);
-
-      // Geocode user's location from their entered profile data
-      const myCoords = await geocodeLocation(
-        myProfile.current_city,
-        myProfile.current_state,
-        myProfile.current_zip,
-        myProfile.current_country
-      );
-
-      if (!myCoords) {
-        setProfilesWithDistance(allProfiles.map(p => ({ ...p, distance: null })));
-        setIsCalculatingDistances(false);
-        return;
-      }
-
-      // Calculate distances for each profile
-      const profilesWithDist = await Promise.all(
-        allProfiles.map(async (profile) => {
-          const profileCoords = await geocodeLocation(
-            profile.current_city,
-            profile.current_state,
-            profile.current_zip,
-            profile.current_country
-          );
-
-          const distance = profileCoords
-            ? calculateDistance(myCoords.lat, myCoords.lon, profileCoords.lat, profileCoords.lon)
-            : null;
-
-          return { ...profile, distance };
-        })
-      );
-
-      setProfilesWithDistance(profilesWithDist);
-      setIsCalculatingDistances(false);
-    };
-
-    calculateDistances();
-  }, [allProfiles, myProfile]);
-
   const sortedProfiles = React.useMemo(() => {
-    let profiles = [...profilesWithDistance]
+    let profiles = [...allProfiles]
       .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)); // Exclude blocked
     
     // Filter by interests
@@ -202,23 +120,61 @@ export default function AllProfiles() {
       });
     }
     
-    // Sort by distance (closest first)
-    profiles.sort((a, b) => {
-      if (a.distance === null || a.distance === undefined) return 1;
-      if (b.distance === null || b.distance === undefined) return -1;
-      return a.distance - b.distance;
-    });
+    // Sort by location proximity based on entered location fields
+    if (myProfile) {
+      const myCity = (myProfile.current_city || '').toLowerCase();
+      const myState = (myProfile.current_state || '').toLowerCase();
+      const myZip = (myProfile.current_zip || '').toLowerCase();
+      const myCountry = (myProfile.current_country || '').toLowerCase();
+      
+      profiles.sort((a, b) => {
+        const aCity = (a.current_city || '').toLowerCase();
+        const aState = (a.current_state || '').toLowerCase();
+        const aZip = (a.current_zip || '').toLowerCase();
+        const aCountry = (a.current_country || '').toLowerCase();
+        
+        const bCity = (b.current_city || '').toLowerCase();
+        const bState = (b.current_state || '').toLowerCase();
+        const bZip = (b.current_zip || '').toLowerCase();
+        const bCountry = (b.current_country || '').toLowerCase();
+        
+        // Calculate proximity score (higher = closer)
+        const scoreA = 
+          (aCity && myCity && aCity === myCity ? 1000 : 0) +
+          (aZip && myZip && aZip === myZip ? 800 : 0) +
+          (aState && myState && aState === myState ? 500 : 0) +
+          (aCountry && myCountry && aCountry === myCountry ? 100 : 0);
+          
+        const scoreB = 
+          (bCity && myCity && bCity === myCity ? 1000 : 0) +
+          (bZip && myZip && bZip === myZip ? 800 : 0) +
+          (bState && myState && bState === myState ? 500 : 0) +
+          (bCountry && myCountry && bCountry === myCountry ? 100 : 0);
+        
+        // Sort by score descending (highest score first = closest)
+        if (scoreB !== scoreA) return scoreB - scoreA;
+        
+        // If same score, sort alphabetically by location
+        const aLocation = `${aCity} ${aState}`.trim();
+        const bLocation = `${bCity} ${bState}`.trim();
+        return aLocation.localeCompare(bLocation);
+      });
+    } else {
+      // Fallback: Sort alphabetically by location
+      profiles.sort((a, b) => {
+        const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
+        const bLocation = `${b.current_city || ''} ${b.current_state || ''}`.trim();
+        return aLocation.localeCompare(bLocation);
+      });
+    }
     
     return profiles;
-  }, [profilesWithDistance, blockedUsers, interestFilter, locationFilter]);
+  }, [allProfiles, blockedUsers, interestFilter, locationFilter, myProfile]);
 
-  if (!user || isLoading || isCalculatingDistances) {
+  if (!user || isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-violet-50 via-white to-rose-50">
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 text-violet-500 animate-spin mx-auto mb-2" />
-          {isCalculatingDistances && <p className="text-sm text-slate-500">Calculating distances...</p>}
-        </div>
+        <Loader2 className="w-8 h-8 text-violet-500 animate-spin" />
       </div>
     );
   }
@@ -343,11 +299,6 @@ export default function AllProfiles() {
                               .filter(Boolean)
                               .join(', ')}
                           </span>
-                          {profile.distance !== null && profile.distance !== undefined && (
-                            <span className="text-purple-600 font-semibold">
-                              • {profile.distance.toFixed(1)} mi
-                            </span>
-                          )}
                         </div>
                       )}
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
