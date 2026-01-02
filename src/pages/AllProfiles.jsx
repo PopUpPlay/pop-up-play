@@ -122,20 +122,26 @@ export default function AllProfiles() {
     
     // Calculate distance for each profile and sort by distance
     if (myProfile?.latitude && myProfile?.longitude) {
-      profiles = profiles.map(p => ({
-        ...p,
-        distance: calculateDistance(
-          myProfile.latitude,
-          myProfile.longitude,
-          p.latitude,
-          p.longitude
-        )
-      }));
+      profiles = profiles.map(p => {
+        // Only calculate distance if the profile has valid coordinates
+        if (p.latitude && p.longitude && p.latitude !== 0 && p.longitude !== 0) {
+          return {
+            ...p,
+            distance: calculateDistance(
+              myProfile.latitude,
+              myProfile.longitude,
+              p.latitude,
+              p.longitude
+            )
+          };
+        }
+        return { ...p, distance: null };
+      });
       
       // Sort by distance (closest first)
       profiles.sort((a, b) => {
-        if (a.distance === null) return 1;
-        if (b.distance === null) return -1;
+        if (a.distance === null || a.distance === undefined) return 1;
+        if (b.distance === null || b.distance === undefined) return -1;
         return a.distance - b.distance;
       });
     } else {
