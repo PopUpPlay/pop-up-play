@@ -64,38 +64,13 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     }
   }, [activeUsers.map(u => u.current_city).join(',')]);
 
-  // Position users at city center with small clustering offset
-  const getUsersWithCityLocation = () => {
-    const cityGroups = {};
-    
-    activeUsers.forEach(profile => {
-      if (!profile.current_city) return;
-      
-      if (!cityGroups[profile.current_city]) {
-        cityGroups[profile.current_city] = [];
-      }
-      cityGroups[profile.current_city].push(profile);
-    });
-    
-    return activeUsers.map(profile => {
-      if (!profile.current_city) return profile;
-      
-      const cityCenter = cityCenters[profile.current_city];
-      if (!cityCenter) return profile;
-      
-      const cityUsers = cityGroups[profile.current_city];
-      const userIndex = cityUsers.findIndex(u => u.id === profile.id);
-      
-      // Small offset for visual clustering at city center
-      const angle = (userIndex / cityUsers.length) * 2 * Math.PI;
-      const radius = 0.01;
-      
-      return {
-        ...profile,
-        displayLatitude: cityCenter.lat + (Math.cos(angle) * radius),
-        displayLongitude: cityCenter.lon + (Math.sin(angle) * radius)
-      };
-    });
+  // Use precise latitude and longitude coordinates for each user
+  const getUsersWithLocation = () => {
+    return activeUsers.map(profile => ({
+      ...profile,
+      displayLatitude: profile.latitude,
+      displayLongitude: profile.longitude
+    }));
   };
 
   return (
