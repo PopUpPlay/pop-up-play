@@ -277,7 +277,7 @@ export default function VideoCall() {
     <div className="h-screen bg-slate-900 flex flex-col">
       {/* Ringing Sound */}
       <audio ref={ringingAudioRef} loop>
-        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg" />
+        <source src="https://assets.mixkit.co/active_storage/sfx/2997/2997-preview.mp3" type="audio/mpeg" />
       </audio>
       
       {/* Header */}
