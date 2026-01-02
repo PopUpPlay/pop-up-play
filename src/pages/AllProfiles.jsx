@@ -281,10 +281,8 @@ export default function AllProfiles() {
                         </div>
                       )}
                       {profile.distance !== null && profile.distance !== undefined && (
-                        <span className="text-xs font-medium text-violet-600">
-                          {profile.distance < 1 
-                            ? '< 1 mile away' 
-                            : `${Math.round(profile.distance)} miles away`}
+                        <span className="text-purple-600 font-semibold">
+                          • {profile.distance.toFixed(1)} mi
                         </span>
                       )}
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
