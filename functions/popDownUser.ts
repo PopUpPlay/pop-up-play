@@ -1,9 +1,29 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClientFromRequest, createClient } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
   try {
-    const base44 = createClientFromRequest(req);
-    const user = await base44.auth.me();
+    // Try to get token from request body (for sendBeacon)
+    let base44;
+    let user;
+    
+    try {
+      const body = await req.json();
+      if (body.token) {
+        // Use token from body
+        base44 = createClient({
+          token: body.token,
+          appId: Deno.env.get('BASE44_APP_ID')
+        });
+      } else {
+        // Fall back to normal request-based auth
+        base44 = createClientFromRequest(req);
+      }
+    } catch {
+      // If body parsing fails, use request-based auth
+      base44 = createClientFromRequest(req);
+    }
+    
+    user = await base44.auth.me();
     
     if (!user) {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
