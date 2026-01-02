@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { MessageCircle, Heart, Users, Info, ArrowLeft, Key, CreditCard, LogOut } from 'lucide-react';
+import { MessageCircle, Heart, Users, Info, ArrowLeft, Key, CreditCard, LogOut, Flame } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import NotificationBadge from '@/components/notifications/NotificationBadge';
@@ -127,7 +127,10 @@ export default function Menu() {
                     )}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-slate-800 mb-1">
+                    <h3 className="text-xl font-semibold text-slate-800 mb-1 relative">
+                      {item.label === 'Members Popped Up' && (
+                        <Flame className="w-5 h-5 text-red-500 absolute -left-7 top-0.5" />
+                      )}
                       {item.label}
                     </h3>
                     <p className="text-sm text-slate-500">
