@@ -86,8 +86,8 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
             <video 
               src={video}
               className="w-full h-full object-cover"
-              controls={editable}
-              controlsList={editable ? "" : "nodownload"}
+              controls
+              controlsList="nodownload"
               onContextMenu={(e) => e.preventDefault()}
               style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
             />
