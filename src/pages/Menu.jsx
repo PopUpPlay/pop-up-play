@@ -129,7 +129,10 @@ export default function Menu() {
                   <div className="flex-1">
                     <h3 className="text-xl font-semibold text-slate-800 mb-1 relative">
                       {item.label === 'Members Popped Up' && (
-                        <Flame className="w-5 h-5 text-red-500 absolute -left-7 top-0.5" />
+                        <>
+                          <Flame className="w-5 h-5 text-red-500 absolute -left-7 top-0.5" />
+                          <Flame className="w-3 h-3 text-yellow-400 absolute -left-6 top-1.5" />
+                        </>
                       )}
                       {item.label}
                     </h3>
