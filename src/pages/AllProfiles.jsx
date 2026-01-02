@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, MapPin, Loader2, Filter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
@@ -26,6 +27,10 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 export default function AllProfiles() {
   const [user, setUser] = useState(null);
   const [interestFilter, setInterestFilter] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
+  const [zipFilter, setZipFilter] = useState('');
+  const [countryFilter, setCountryFilter] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,6 +89,26 @@ export default function AllProfiles() {
       );
     }
     
+    // Filter by city
+    if (cityFilter) {
+      profiles = profiles.filter(p => p.current_city === cityFilter);
+    }
+    
+    // Filter by state
+    if (stateFilter) {
+      profiles = profiles.filter(p => p.current_state === stateFilter);
+    }
+    
+    // Filter by ZIP
+    if (zipFilter) {
+      profiles = profiles.filter(p => p.current_zip === zipFilter);
+    }
+    
+    // Filter by country
+    if (countryFilter) {
+      profiles = profiles.filter(p => p.current_country === countryFilter);
+    }
+    
     // Sort alphabetically by location (city, then state)
     profiles.sort((a, b) => {
       const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
@@ -92,7 +117,28 @@ export default function AllProfiles() {
     });
     
     return profiles;
-  }, [allProfiles, blockedUsers, interestFilter]);
+  }, [allProfiles, blockedUsers, interestFilter, cityFilter, stateFilter, zipFilter, countryFilter]);
+
+  // Get unique values for filters
+  const uniqueCities = React.useMemo(() => 
+    [...new Set(allProfiles.map(p => p.current_city).filter(Boolean))].sort(),
+    [allProfiles]
+  );
+  
+  const uniqueStates = React.useMemo(() => 
+    [...new Set(allProfiles.map(p => p.current_state).filter(Boolean))].sort(),
+    [allProfiles]
+  );
+  
+  const uniqueZips = React.useMemo(() => 
+    [...new Set(allProfiles.map(p => p.current_zip).filter(Boolean))].sort(),
+    [allProfiles]
+  );
+  
+  const uniqueCountries = React.useMemo(() => 
+    [...new Set(allProfiles.map(p => p.current_country).filter(Boolean))].sort(),
+    [allProfiles]
+  );
 
   if (!user || isLoading) {
     return (
@@ -124,7 +170,7 @@ export default function AllProfiles() {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
-          <div className="bg-white rounded-2xl shadow-sm p-4">
+          <div className="bg-white rounded-2xl shadow-sm p-4 space-y-4">
             <div className="flex items-center gap-3">
               <Filter className="w-5 h-5 text-slate-400" />
               <Input
@@ -142,6 +188,73 @@ export default function AllProfiles() {
                 </Button>
               )}
             </div>
+            
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <Select value={cityFilter} onValueChange={setCityFilter}>
+                <SelectTrigger className="rounded-xl border-slate-200">
+                  <SelectValue placeholder="City" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Cities</SelectItem>
+                  {uniqueCities.map(city => (
+                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={stateFilter} onValueChange={setStateFilter}>
+                <SelectTrigger className="rounded-xl border-slate-200">
+                  <SelectValue placeholder="State" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All States</SelectItem>
+                  {uniqueStates.map(state => (
+                    <SelectItem key={state} value={state}>{state}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={zipFilter} onValueChange={setZipFilter}>
+                <SelectTrigger className="rounded-xl border-slate-200">
+                  <SelectValue placeholder="ZIP Code" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All ZIP Codes</SelectItem>
+                  {uniqueZips.map(zip => (
+                    <SelectItem key={zip} value={zip}>{zip}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              <Select value={countryFilter} onValueChange={setCountryFilter}>
+                <SelectTrigger className="rounded-xl border-slate-200">
+                  <SelectValue placeholder="Country" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Countries</SelectItem>
+                  {uniqueCountries.map(country => (
+                    <SelectItem key={country} value={country}>{country}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            {(cityFilter || stateFilter || zipFilter || countryFilter) && (
+              <div className="flex justify-end">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setCityFilter('');
+                    setStateFilter('');
+                    setZipFilter('');
+                    setCountryFilter('');
+                  }}
+                  className="text-slate-500">
+                  Clear Location Filters
+                </Button>
+              </div>
+            )}
           </div>
         </motion.div>
 
