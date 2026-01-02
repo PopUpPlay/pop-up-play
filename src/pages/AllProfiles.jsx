@@ -127,36 +127,41 @@ export default function AllProfiles() {
       const myZip = (myProfile.current_zip || '').toLowerCase();
       const myCountry = (myProfile.current_country || '').toLowerCase();
       
-      profiles.sort((a, b) => {
-        const aCity = (a.current_city || '').toLowerCase();
-        const aState = (a.current_state || '').toLowerCase();
-        const aZip = (a.current_zip || '').toLowerCase();
-        const aCountry = (a.current_country || '').toLowerCase();
-        
-        const bCity = (b.current_city || '').toLowerCase();
-        const bState = (b.current_state || '').toLowerCase();
-        const bZip = (b.current_zip || '').toLowerCase();
-        const bCountry = (b.current_country || '').toLowerCase();
+      profiles = profiles.map(p => {
+        const pCity = (p.current_city || '').toLowerCase();
+        const pState = (p.current_state || '').toLowerCase();
+        const pZip = (p.current_zip || '').toLowerCase();
+        const pCountry = (p.current_country || '').toLowerCase();
         
         // Calculate proximity score based on ZIP code and location (higher = closer)
-        const scoreA = 
-          (aZip && myZip && aZip === myZip ? 10000 : 0) +
-          (aCity && myCity && aCity === myCity ? 1000 : 0) +
-          (aState && myState && aState === myState ? 500 : 0) +
-          (aCountry && myCountry && aCountry === myCountry ? 100 : 0);
-          
-        const scoreB = 
-          (bZip && myZip && bZip === myZip ? 10000 : 0) +
-          (bCity && myCity && bCity === myCity ? 1000 : 0) +
-          (bState && myState && bState === myState ? 500 : 0) +
-          (bCountry && myCountry && bCountry === myCountry ? 100 : 0);
+        const proximityScore = 
+          (pZip && myZip && pZip === myZip ? 10000 : 0) +
+          (pCity && myCity && pCity === myCity ? 1000 : 0) +
+          (pState && myState && pState === myState ? 500 : 0) +
+          (pCountry && myCountry && pCountry === myCountry ? 100 : 0);
         
-        // Sort by score descending (highest score first = closest)
-        if (scoreB !== scoreA) return scoreB - scoreA;
+        // Determine proximity label
+        let proximityLabel = null;
+        if (pZip && myZip && pZip === myZip) {
+          proximityLabel = 'Same ZIP';
+        } else if (pCity && myCity && pCity === myCity) {
+          proximityLabel = 'Same City';
+        } else if (pState && myState && pState === myState) {
+          proximityLabel = 'Same State';
+        } else if (pCountry && myCountry && pCountry === myCountry) {
+          proximityLabel = 'Same Country';
+        }
+        
+        return { ...p, proximityScore, proximityLabel };
+      });
+      
+      // Sort by proximity score descending (highest score first = closest)
+      profiles.sort((a, b) => {
+        if (b.proximityScore !== a.proximityScore) return b.proximityScore - a.proximityScore;
         
         // If same score, sort alphabetically by location
-        const aLocation = `${aCity} ${aState}`.trim();
-        const bLocation = `${bCity} ${bState}`.trim();
+        const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
+        const bLocation = `${b.current_city || ''} ${b.current_state || ''}`.trim();
         return aLocation.localeCompare(bLocation);
       });
     } else {
@@ -299,6 +304,11 @@ export default function AllProfiles() {
                               .filter(Boolean)
                               .join(', ')}
                           </span>
+                          {profile.proximityLabel && (
+                            <span className="text-purple-600 font-semibold ml-1">
+                              • {profile.proximityLabel}
+                            </span>
+                          )}
                         </div>
                       )}
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
