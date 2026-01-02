@@ -153,7 +153,7 @@ export default function OnlineMembers() {
         >
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-3">
-              <Filter className="w-5 h-5 text-slate-400" />
+              <Filter className="w-5 h-5 text-purple-600" />
               <Input
                 placeholder="Filter by interests (e.g., hiking, cooking)..."
                 value={interestFilter}
