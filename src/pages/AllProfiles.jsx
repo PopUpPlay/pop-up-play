@@ -120,15 +120,35 @@ export default function AllProfiles() {
       });
     }
     
-    // Sort alphabetically by location (city, then state)
-    profiles.sort((a, b) => {
-      const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
-      const bLocation = `${b.current_city || ''} ${b.current_state || ''}`.trim();
-      return aLocation.localeCompare(bLocation);
-    });
+    // Calculate distance for each profile and sort by distance
+    if (myProfile?.latitude && myProfile?.longitude) {
+      profiles = profiles.map(p => ({
+        ...p,
+        distance: calculateDistance(
+          myProfile.latitude,
+          myProfile.longitude,
+          p.latitude,
+          p.longitude
+        )
+      }));
+      
+      // Sort by distance (closest first)
+      profiles.sort((a, b) => {
+        if (a.distance === null) return 1;
+        if (b.distance === null) return -1;
+        return a.distance - b.distance;
+      });
+    } else {
+      // Fallback: Sort alphabetically by location if user location not available
+      profiles.sort((a, b) => {
+        const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
+        const bLocation = `${b.current_city || ''} ${b.current_state || ''}`.trim();
+        return aLocation.localeCompare(bLocation);
+      });
+    }
     
     return profiles;
-  }, [allProfiles, blockedUsers, interestFilter, locationFilter]);
+  }, [allProfiles, blockedUsers, interestFilter, locationFilter, myProfile]);
 
   if (!user || isLoading) {
     return (
@@ -259,6 +279,13 @@ export default function AllProfiles() {
                               .join(', ')}
                           </span>
                         </div>
+                      )}
+                      {profile.distance !== null && profile.distance !== undefined && (
+                        <span className="text-xs font-medium text-violet-600">
+                          {profile.distance < 1 
+                            ? '< 1 mile away' 
+                            : `${Math.round(profile.distance)} miles away`}
+                        </span>
                       )}
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         profile.is_popped_up 
