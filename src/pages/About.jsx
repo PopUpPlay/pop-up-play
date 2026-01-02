@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 export default function About() {
   const [user, setUser] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [youtubeUrl, setYoutubeUrl] = useState('');
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -66,6 +67,35 @@ export default function About() {
     }
   };
 
+  const handleYoutubeSubmit = async () => {
+    if (!youtubeUrl.trim()) {
+      toast.error('Please enter a YouTube URL');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Delete existing video if any
+      if (aboutVideos.length > 0) {
+        await base44.entities.AboutVideo.delete(aboutVideos[0].id);
+      }
+
+      // Create new video record with YouTube URL
+      await base44.entities.AboutVideo.create({
+        video_url: youtubeUrl.trim(),
+        uploaded_by: user.email
+      });
+
+      queryClient.invalidateQueries({ queryKey: ['aboutVideos'] });
+      toast.success('YouTube video added successfully');
+      setYoutubeUrl('');
+    } catch (error) {
+      toast.error('Failed to add YouTube video');
+    } finally {
+      setUploading(false);
+    }
+  };
+
   const currentVideo = aboutVideos[0];
   const isAdmin = user?.role === 'admin';
 
@@ -101,13 +131,21 @@ export default function About() {
 
           {currentVideo ?
           <div className="relative">
-              <video
-              src={currentVideo.video_url}
-              controls
-              className="w-full aspect-video bg-slate-900">
-
-                Your browser does not support the video tag.
-              </video>
+              {currentVideo.video_url.includes('youtube.com') || currentVideo.video_url.includes('youtu.be') ? (
+                <iframe
+                  src={currentVideo.video_url.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
+                  className="w-full aspect-video"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <video
+                  src={currentVideo.video_url}
+                  controls
+                  className="w-full aspect-video bg-slate-900">
+                  Your browser does not support the video tag.
+                </video>
+              )}
               {isAdmin &&
             <div className="p-4 border-t border-slate-200">
                   <div className="flex items-center justify-between">
@@ -165,6 +203,35 @@ export default function About() {
               <h2 className="text-lg font-semibold text-slate-800 mb-4">
                 Admin Controls
               </h2>
+              
+              {/* YouTube URL Input */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-slate-700 mb-2">
+                  Add YouTube Video
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                    placeholder="Paste YouTube URL here..."
+                    className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
+                    disabled={uploading}
+                  />
+                  <Button
+                    onClick={handleYoutubeSubmit}
+                    disabled={uploading || !youtubeUrl.trim()}
+                    className="bg-red-600 hover:bg-red-700">
+                    {uploading ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      'Add'
+                    )}
+                  </Button>
+                </div>
+              </div>
+
+              {/* File Upload */}
               <label className="block">
                 <input
                 type="file"
@@ -188,7 +255,7 @@ export default function About() {
 
                   <>
                         <Upload className="w-5 h-5 mr-2" />
-                        {currentVideo ? 'Replace Video' : 'Upload Video'}
+                        {currentVideo ? 'Replace with File' : 'Upload Video File'}
                       </>
                   }
                   </label>
