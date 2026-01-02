@@ -180,7 +180,7 @@ export default function Home() {
                 className="bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white px-5 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all flex items-center gap-2 text-sm font-semibold"
                 style={{ zIndex: 1000 }}>
                 <User className="w-4 h-4" />
-                Members Online ({activeUsers.length})
+                Members Popped Up ({activeUsers.length})
               </Button>
             </Link>
           </motion.div>
