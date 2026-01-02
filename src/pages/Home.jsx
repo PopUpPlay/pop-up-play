@@ -88,18 +88,12 @@ export default function Home() {
   const handleLocationUpdate = useCallback((locationInfo) => {
     setUserLocation(locationInfo);
     if (user?.email) {
-      // If city is "Unknown" but we have a ZIP, keep the last known city
+      // Only update GPS coordinates, don't overwrite user's manually entered location
       const updateData = {
         latitude: locationInfo.latitude,
         longitude: locationInfo.longitude,
-        current_zip: locationInfo.zip,
         last_location_update: locationInfo.timestamp
       };
-      
-      // Only update city if it's valid (not "Unknown")
-      if (locationInfo.city && locationInfo.city !== 'Unknown') {
-        updateData.current_city = locationInfo.city;
-      }
       
       updateProfileMutation.mutate(updateData);
     }
