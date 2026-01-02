@@ -27,6 +27,7 @@ export default function OnlineMembers() {
   const [user, setUser] = useState(null);
   const [interestFilter, setInterestFilter] = useState('');
   const [backUrl, setBackUrl] = useState('Menu');
+  const [geocodedCities, setGeocodedCities] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -78,6 +79,36 @@ export default function OnlineMembers() {
     enabled: !!user?.email
   });
 
+  // Reverse geocode GPS coordinates to get city
+  useEffect(() => {
+    const geocodeProfiles = async () => {
+      const newCities = {};
+      for (const profile of activeProfiles) {
+        if (profile.latitude && profile.longitude && !geocodedCities[profile.id]) {
+          try {
+            const response = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${profile.latitude}&lon=${profile.longitude}&format=json`
+            );
+            const data = await response.json();
+            const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county;
+            if (city) {
+              newCities[profile.id] = city;
+            }
+          } catch (error) {
+            console.error('Reverse geocoding failed:', error);
+          }
+        }
+      }
+      if (Object.keys(newCities).length > 0) {
+        setGeocodedCities(prev => ({ ...prev, ...newCities }));
+      }
+    };
+    
+    if (activeProfiles.length > 0) {
+      geocodeProfiles();
+    }
+  }, [activeProfiles]);
+
   const filteredProfiles = React.useMemo(() => {
     let profiles = activeProfiles
       .filter((profile) => {
@@ -87,7 +118,8 @@ export default function OnlineMembers() {
         const distance = myProfile?.latitude && myProfile?.longitude
           ? calculateDistance(myProfile.latitude, myProfile.longitude, profile.latitude, profile.longitude)
           : null;
-        return { ...profile, distance };
+        const gpsCity = geocodedCities[profile.id];
+        return { ...profile, distance, gpsCity };
       });
     
     // Filter by interests
@@ -107,7 +139,7 @@ export default function OnlineMembers() {
     });
     
     return profiles;
-  }, [activeProfiles, myProfile, blockedUsers, interestFilter]);
+  }, [activeProfiles, myProfile, blockedUsers, interestFilter, geocodedCities]);
 
   if (!user || isLoading) {
     return (
@@ -232,10 +264,10 @@ export default function OnlineMembers() {
                       <h3 className="text-lg font-bold text-slate-800">
                         {profile.display_name}{profile.age && `, ${profile.age}`}
                       </h3>
-                      {profile.current_city && (
+                      {profile.gpsCity && (
                         <div className="flex items-center gap-1 text-sm text-slate-500 mt-1 flex-wrap">
                           <MapPin className="w-3 h-3 text-violet-600" />
-                          {profile.current_city}
+                          {profile.gpsCity}
                           {profile.distance !== null && profile.distance !== undefined && (
                             <span className="text-purple-600 font-semibold ml-1">
                               • {profile.distance.toFixed(1)} mi
