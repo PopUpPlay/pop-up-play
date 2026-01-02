@@ -22,6 +22,7 @@ export default function VideoCall() {
   const remoteVideoRef = useRef(null);
   const peerConnectionRef = useRef(null);
   const localStreamRef = useRef(null);
+  const ringingAudioRef = useRef(null);
   const queryClient = useQueryClient();
 
   useEffect(() => {
@@ -132,6 +133,12 @@ export default function VideoCall() {
             remoteVideoRef.current.srcObject = event.streams[0];
             setIsConnecting(false);
             setCallStatus('connected');
+            
+            // Stop ringing sound when connected
+            if (ringingAudioRef.current) {
+              ringingAudioRef.current.pause();
+              ringingAudioRef.current.currentTime = 0;
+            }
           }
         };
 
@@ -155,6 +162,11 @@ export default function VideoCall() {
 
         setCallStatus('calling');
         setIsConnecting(false);
+        
+        // Play ringing sound
+        if (ringingAudioRef.current) {
+          ringingAudioRef.current.play().catch(err => console.log('Audio play failed:', err));
+        }
       } catch (error) {
         console.error('Error initializing WebRTC:', error);
         toast.error('Failed to access camera/microphone');
@@ -238,6 +250,13 @@ export default function VideoCall() {
       signal_data: {}
     });
     setCallStatus('ended');
+    
+    // Stop ringing sound
+    if (ringingAudioRef.current) {
+      ringingAudioRef.current.pause();
+      ringingAudioRef.current.currentTime = 0;
+    }
+    
     if (localStreamRef.current) {
       localStreamRef.current.getTracks().forEach((track) => track.stop());
     }
@@ -256,6 +275,11 @@ export default function VideoCall() {
 
   return (
     <div className="h-screen bg-slate-900 flex flex-col">
+      {/* Ringing Sound */}
+      <audio ref={ringingAudioRef} loop>
+        <source src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" type="audio/mpeg" />
+      </audio>
+      
       {/* Header */}
       <header className="bg-slate-800/80 backdrop-blur-lg border-b border-slate-700 flex-shrink-0 z-10">
         <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
