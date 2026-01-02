@@ -229,7 +229,7 @@ export default function AllProfiles() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
-          <h1 className="text-lg font-semibold text-slate-800">All Profiles</h1>
+          <h1 className="text-lg font-semibold text-purple-800">All Profiles</h1>
           <div className="w-9"></div>
         </div>
       </header>
