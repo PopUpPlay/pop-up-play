@@ -34,7 +34,11 @@ export default function Profile() {
     looking_for: '',
     avatar_url: '',
     photos: [],
-    videos: []
+    videos: [],
+    current_city: '',
+    current_state: '',
+    current_zip: '',
+    current_country: ''
   });
   const [interestInput, setInterestInput] = useState('');
   const queryClient = useQueryClient();
@@ -107,7 +111,11 @@ export default function Profile() {
         looking_for: displayProfile.looking_for || '',
         avatar_url: displayProfile.avatar_url || '',
         photos: displayProfile.photos || [],
-        videos: displayProfile.videos || []
+        videos: displayProfile.videos || [],
+        current_city: displayProfile.current_city || '',
+        current_state: displayProfile.current_state || '',
+        current_zip: displayProfile.current_zip || '',
+        current_country: displayProfile.current_country || ''
       });
     } else if (user && isOwnProfile) {
       setFormData((prev) => ({
@@ -482,6 +490,66 @@ export default function Profile() {
                 className="mt-1 rounded-xl border-slate-200 resize-none"
                 rows={2}
                 disabled={!isOwnProfile} />
+              </div>
+              </div>
+              </motion.div>
+
+              {/* Location Section */}
+              <motion.div
+              className="bg-white rounded-2xl shadow-lg p-6 mb-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15 }}>
+
+              <h2 className="text-lg font-semibold text-slate-800 mb-4">Location</h2>
+
+              <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="current_city" className="text-slate-600">City</Label>
+                <Input
+                  id="current_city"
+                  value={formData.current_city}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, current_city: e.target.value }))}
+                  placeholder="City"
+                  className="mt-1 rounded-xl border-slate-200"
+                  disabled={!isOwnProfile} />
+              </div>
+
+              <div>
+                <Label htmlFor="current_state" className="text-slate-600">State</Label>
+                <Input
+                  id="current_state"
+                  value={formData.current_state}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, current_state: e.target.value }))}
+                  placeholder="State"
+                  className="mt-1 rounded-xl border-slate-200"
+                  disabled={!isOwnProfile} />
+              </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="current_zip" className="text-slate-600">ZIP Code</Label>
+                <Input
+                  id="current_zip"
+                  value={formData.current_zip}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, current_zip: e.target.value }))}
+                  placeholder="ZIP Code"
+                  className="mt-1 rounded-xl border-slate-200"
+                  disabled={!isOwnProfile} />
+              </div>
+
+              <div>
+                <Label htmlFor="current_country" className="text-slate-600">Country</Label>
+                <Input
+                  id="current_country"
+                  value={formData.current_country}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, current_country: e.target.value }))}
+                  placeholder="Country"
+                  className="mt-1 rounded-xl border-slate-200"
+                  disabled={!isOwnProfile} />
+              </div>
               </div>
               </div>
               </motion.div>
