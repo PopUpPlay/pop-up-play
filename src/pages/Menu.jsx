@@ -54,7 +54,7 @@ export default function Menu() {
       description: 'Browse all members nearby'
     },
     {
-      label: 'Members Online',
+      label: 'Members Popped Up',
       icon: Users,
       path: 'OnlineMembers',
       color: 'bg-emerald-300',
