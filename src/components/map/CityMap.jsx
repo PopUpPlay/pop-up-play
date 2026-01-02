@@ -26,44 +26,6 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     }
   }, [userLocation]);
 
-  // Fetch city center coordinates
-  useEffect(() => {
-    const fetchCityCenters = async () => {
-      const cities = [...new Set(activeUsers.map(u => u.current_city).filter(Boolean))];
-      const newCenters = {};
-      
-      for (const city of cities) {
-        if (cityCenters[city]) {
-          newCenters[city] = cityCenters[city];
-          continue;
-        }
-        
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?city=${encodeURIComponent(city)}&format=json&limit=1`
-          );
-          const data = await response.json();
-          if (data[0]) {
-            newCenters[city] = {
-              lat: parseFloat(data[0].lat),
-              lon: parseFloat(data[0].lon)
-            };
-          }
-        } catch (err) {
-          console.error('Failed to fetch city center:', err);
-        }
-      }
-      
-      if (Object.keys(newCenters).length > 0) {
-        setCityCenters(prev => ({ ...prev, ...newCenters }));
-      }
-    };
-    
-    if (activeUsers.length > 0) {
-      fetchCityCenters();
-    }
-  }, [activeUsers.map(u => u.current_city).join(',')]);
-
   // Use precise latitude and longitude coordinates for each user
   const getUsersWithLocation = () => {
     return activeUsers.map(profile => ({
