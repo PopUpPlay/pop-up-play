@@ -38,7 +38,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
     <div className="relative w-full h-full rounded-2xl overflow-hidden shadow-xl">
       <MapContainer
         center={mapCenter}
-        zoom={11}
+        zoom={10}
         minZoom={1}
         maxZoom={11}
         className="w-full h-full"
