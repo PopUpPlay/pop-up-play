@@ -268,7 +268,7 @@ export default function AllProfiles() {
                 placeholder="Filter by location (city, state, ZIP, country)..."
                 value={locationFilter}
                 onChange={(e) => setLocationFilter(e.target.value)}
-                className="flex-1 rounded-xl border-slate-200" />
+                className="flex-1 rounded-xl border-purple-200 focus:border-purple-400" />
               {locationFilter && (
                 <Button
                   variant="ghost"
