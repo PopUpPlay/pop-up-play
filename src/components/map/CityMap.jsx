@@ -89,7 +89,7 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
         />
         <MapController center={mapCenter} />
         
-        {getUsersWithCityLocation().map(profile => (
+        {getUsersWithLocation().map(profile => (
           <UserMarker 
             key={profile.id} 
             profile={profile}
