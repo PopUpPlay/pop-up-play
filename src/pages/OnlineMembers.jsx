@@ -168,9 +168,10 @@ export default function OnlineMembers() {
               <ArrowLeft className="w-5 h-5" />
             </Button>
           </Link>
-          <div className="flex items-center gap-2">
-            <Users className="w-6 h-6 text-violet-600" />
-            <h1 className="text-lg font-semibold text-violet-600">Popped Up Now</h1>
+          <div className="flex items-center gap-2 relative">
+            <Users className="w-6 h-6 text-violet-600 relative z-10" />
+            <h1 className="text-lg font-semibold text-violet-600 relative z-10">Popped Up Now</h1>
+            <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-orange-500 to-red-500 opacity-40 blur-xl animate-pulse rounded-full"></div>
           </div>
           <div className="w-10"></div>
         </div>
