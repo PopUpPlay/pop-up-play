@@ -44,37 +44,26 @@ export default function Layout({ children, currentPageName }) {
       }
     };
 
-    // Send pop-down request using sendBeacon
-    const sendPopDownBeacon = async () => {
+    // Send pop-down request using sendBeacon (must be synchronous)
+    const sendPopDownBeacon = () => {
       try {
-        // Get user email first
-        const user = await base44.auth.me();
-        if (!user) return;
-
-        // Get profile
-        const profiles = await base44.entities.UserProfile.filter({ 
-          user_email: user.email 
-        });
+        // Get token from localStorage - check all possible keys
+        let token = null;
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && key.includes('token')) {
+            token = localStorage.getItem(key);
+            break;
+          }
+        }
         
-        if (profiles.length > 0 && profiles[0].is_popped_up) {
-          // Try to update directly first
-          await base44.entities.UserProfile.update(profiles[0].id, { 
-            is_popped_up: false,
-            popup_message: ''
-          });
+        if (token) {
+          const url = `${window.location.origin}/api/functions/popDownUser`;
+          const data = JSON.stringify({ token });
+          navigator.sendBeacon(url, new Blob([data], { type: 'application/json' }));
         }
       } catch (error) {
-        // If direct update fails, try beacon as fallback
-        try {
-          const token = localStorage.getItem('sb-token') || localStorage.getItem('base44_token');
-          if (token) {
-            const url = `${window.location.origin}/api/functions/popDownUser`;
-            const blob = new Blob([JSON.stringify({ token })], { type: 'application/json' });
-            navigator.sendBeacon(url, blob);
-          }
-        } catch (e) {
-          console.error('Failed to send pop-down beacon:', e);
-        }
+        console.error('Pop-down failed:', error);
       }
     };
 
