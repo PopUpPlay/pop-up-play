@@ -138,7 +138,7 @@ export default function OnlineMembers() {
           </Link>
           <div className="flex items-center gap-2">
             <Users className="w-6 h-6 text-violet-600" />
-            <h1 className="text-lg font-semibold text-slate-800">Online Now</h1>
+            <h1 className="text-lg font-semibold text-purple-800">Online Now</h1>
           </div>
           <div className="w-10"></div>
         </div>
