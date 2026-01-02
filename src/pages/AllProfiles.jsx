@@ -41,6 +41,7 @@ export default function AllProfiles() {
   const [user, setUser] = useState(null);
   const [interestFilter, setInterestFilter] = useState('');
   const [locationFilter, setLocationFilter] = useState('');
+  const [profilesWithDistance, setProfilesWithDistance] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -86,8 +87,52 @@ export default function AllProfiles() {
     enabled: !!user?.email
   });
 
+  // Calculate distances based on ZIP codes
+  useEffect(() => {
+    const calculateDistances = async () => {
+      if (!myProfile?.current_zip) {
+        setProfilesWithDistance(allProfiles);
+        return;
+      }
+      
+      // Geocode user's ZIP
+      const myCoords = await geocodeZip(myProfile.current_zip, myProfile.current_country || 'US');
+      if (!myCoords) {
+        setProfilesWithDistance(allProfiles);
+        return;
+      }
+      
+      // Calculate distances for all profiles
+      const profilesWithDist = await Promise.all(
+        allProfiles.map(async (profile) => {
+          if (!profile.current_zip) {
+            return { ...profile, zipDistance: null };
+          }
+          
+          const profileCoords = await geocodeZip(profile.current_zip, profile.current_country || 'US');
+          if (!profileCoords) {
+            return { ...profile, zipDistance: null };
+          }
+          
+          const distance = calculateDistance(
+            myCoords.lat,
+            myCoords.lon,
+            profileCoords.lat,
+            profileCoords.lon
+          );
+          
+          return { ...profile, zipDistance: distance };
+        })
+      );
+      
+      setProfilesWithDistance(profilesWithDist);
+    };
+    
+    calculateDistances();
+  }, [allProfiles, myProfile]);
+
   const sortedProfiles = React.useMemo(() => {
-    let profiles = [...allProfiles]
+    let profiles = [...profilesWithDistance]
       .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)); // Exclude blocked
     
     // Filter by interests
@@ -120,56 +165,21 @@ export default function AllProfiles() {
       });
     }
     
-    // Sort by location proximity based on ZIP code entered in Edit Profile
-    if (myProfile) {
-      const myCity = (myProfile.current_city || '').toLowerCase();
-      const myState = (myProfile.current_state || '').toLowerCase();
-      const myZip = (myProfile.current_zip || '').toLowerCase();
-      const myCountry = (myProfile.current_country || '').toLowerCase();
-      
-      profiles.sort((a, b) => {
-        const aCity = (a.current_city || '').toLowerCase();
-        const aState = (a.current_state || '').toLowerCase();
-        const aZip = (a.current_zip || '').toLowerCase();
-        const aCountry = (a.current_country || '').toLowerCase();
-        
-        const bCity = (b.current_city || '').toLowerCase();
-        const bState = (b.current_state || '').toLowerCase();
-        const bZip = (b.current_zip || '').toLowerCase();
-        const bCountry = (b.current_country || '').toLowerCase();
-        
-        // Calculate proximity score based on ZIP code and location (higher = closer)
-        const scoreA = 
-          (aZip && myZip && aZip === myZip ? 10000 : 0) +
-          (aCity && myCity && aCity === myCity ? 1000 : 0) +
-          (aState && myState && aState === myState ? 500 : 0) +
-          (aCountry && myCountry && aCountry === myCountry ? 100 : 0);
-          
-        const scoreB = 
-          (bZip && myZip && bZip === myZip ? 10000 : 0) +
-          (bCity && myCity && bCity === myCity ? 1000 : 0) +
-          (bState && myState && bState === myState ? 500 : 0) +
-          (bCountry && myCountry && bCountry === myCountry ? 100 : 0);
-        
-        // Sort by score descending (highest score first = closest)
-        if (scoreB !== scoreA) return scoreB - scoreA;
-        
-        // If same score, sort alphabetically by location
-        const aLocation = `${aCity} ${aState}`.trim();
-        const bLocation = `${bCity} ${bState}`.trim();
-        return aLocation.localeCompare(bLocation);
-      });
-    } else {
-      // Fallback: Sort alphabetically by location
-      profiles.sort((a, b) => {
+    // Sort by ZIP code distance
+    profiles.sort((a, b) => {
+      if (a.zipDistance === null && b.zipDistance === null) {
+        // Both have no distance, sort alphabetically
         const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
         const bLocation = `${b.current_city || ''} ${b.current_state || ''}`.trim();
         return aLocation.localeCompare(bLocation);
-      });
-    }
+      }
+      if (a.zipDistance === null) return 1; // a goes to end
+      if (b.zipDistance === null) return -1; // b goes to end
+      return a.zipDistance - b.zipDistance; // Sort by distance ascending
+    });
     
     return profiles;
-  }, [allProfiles, blockedUsers, interestFilter, locationFilter, myProfile]);
+  }, [profilesWithDistance, blockedUsers, interestFilter, locationFilter]);
 
   if (!user || isLoading) {
     return (
@@ -300,6 +310,11 @@ export default function AllProfiles() {
                               .join(', ')}
                           </span>
                         </div>
+                      )}
+                      {profile.zipDistance !== null && profile.zipDistance !== undefined && (
+                        <span className="text-purple-600 font-semibold">
+                          • {profile.zipDistance.toFixed(1)} mi
+                        </span>
                       )}
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         profile.is_popped_up 
