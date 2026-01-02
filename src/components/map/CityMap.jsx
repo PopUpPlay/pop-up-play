@@ -18,7 +18,6 @@ function MapController({ center }) {
 
 export default function CityMap({ activeUsers, currentUserProfile, userLocation, onProfileClick }) {
   const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]); // Default NYC
-  const [cityCenters, setCityCenters] = useState({});
   
   useEffect(() => {
     if (userLocation) {
