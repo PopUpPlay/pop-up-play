@@ -22,6 +22,36 @@ const stateMapping = {
   'virginia': 'VA', 'washington': 'WA', 'west virginia': 'WV', 'wisconsin': 'WI', 'wyoming': 'WY'
 };
 
+// Cache for geocoded ZIP codes
+const zipCache = new Map();
+
+// Geocode ZIP code to coordinates
+const geocodeZip = async (zip, country = 'US') => {
+  if (!zip) return null;
+  
+  const cacheKey = `${zip}_${country}`;
+  if (zipCache.has(cacheKey)) {
+    return zipCache.get(cacheKey);
+  }
+  
+  try {
+    const response = await fetch(
+      `https://nominatim.openstreetmap.org/search?postalcode=${zip}&country=${country}&format=json&limit=1`
+    );
+    const data = await response.json();
+    
+    if (data && data.length > 0) {
+      const coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+      zipCache.set(cacheKey, coords);
+      return coords;
+    }
+  } catch (error) {
+    console.error('Geocoding failed:', error);
+  }
+  
+  return null;
+};
+
 // Calculate distance between two coordinates in miles
 const calculateDistance = (lat1, lon1, lat2, lon2) => {
   if (!lat1 || !lon1 || !lat2 || !lon2) return null;
