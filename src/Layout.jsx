@@ -44,10 +44,9 @@ export default function Layout({ children, currentPageName }) {
       }
     };
 
-    // Handle browser close or tab close with sendBeacon for reliability
-    const handleBeforeUnload = () => {
+    // Send pop-down request using sendBeacon
+    const sendPopDownBeacon = () => {
       try {
-        // Use sendBeacon for reliable one-way request on close
         const token = localStorage.getItem('base44_token');
         if (token) {
           const url = `${window.location.origin}/api/functions/popDownUser`;
@@ -55,7 +54,19 @@ export default function Layout({ children, currentPageName }) {
           navigator.sendBeacon(url, blob);
         }
       } catch (error) {
-        // Silently fail
+        console.error('Failed to send pop-down beacon:', error);
+      }
+    };
+
+    // Handle browser/tab close
+    const handleBeforeUnload = () => {
+      sendPopDownBeacon();
+    };
+
+    // Handle page visibility change (more reliable on mobile)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        sendPopDownBeacon();
       }
     };
 
@@ -67,9 +78,13 @@ export default function Layout({ children, currentPageName }) {
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handleBeforeUnload);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handleBeforeUnload);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       base44.auth.logout = originalLogout;
     };
   }, []);
