@@ -26,6 +26,7 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
 export default function AllProfiles() {
   const [user, setUser] = useState(null);
   const [interestFilter, setInterestFilter] = useState('');
+  const [locationFilter, setLocationFilter] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,6 +85,22 @@ export default function AllProfiles() {
       );
     }
     
+    // Filter by location
+    if (locationFilter.trim()) {
+      profiles = profiles.filter(p => {
+        const searchTerm = locationFilter.toLowerCase();
+        const city = (p.current_city || '').toLowerCase();
+        const state = (p.current_state || '').toLowerCase();
+        const zip = (p.current_zip || '').toLowerCase();
+        const country = (p.current_country || '').toLowerCase();
+        
+        return city.includes(searchTerm) || 
+               state.includes(searchTerm) || 
+               zip.includes(searchTerm) || 
+               country.includes(searchTerm);
+      });
+    }
+    
     // Sort alphabetically by location (city, then state)
     profiles.sort((a, b) => {
       const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
@@ -92,7 +109,7 @@ export default function AllProfiles() {
     });
     
     return profiles;
-  }, [allProfiles, blockedUsers, interestFilter]);
+  }, [allProfiles, blockedUsers, interestFilter, locationFilter]);
 
   if (!user || isLoading) {
     return (
@@ -120,7 +137,7 @@ export default function AllProfiles() {
       <main className="max-w-6xl mx-auto px-4 py-8">
         {/* Filter Bar */}
         <motion.div
-          className="mb-6"
+          className="mb-6 space-y-3"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -137,6 +154,26 @@ export default function AllProfiles() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setInterestFilter('')}
+                  className="text-slate-500">
+                  Clear
+                </Button>
+              )}
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-2xl shadow-sm p-4">
+            <div className="flex items-center gap-3">
+              <MapPin className="w-5 h-5 text-slate-400" />
+              <Input
+                placeholder="Filter by location (city, state, ZIP, country)..."
+                value={locationFilter}
+                onChange={(e) => setLocationFilter(e.target.value)}
+                className="flex-1 rounded-xl border-slate-200" />
+              {locationFilter && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setLocationFilter('')}
                   className="text-slate-500">
                   Clear
                 </Button>
