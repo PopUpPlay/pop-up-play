@@ -132,6 +132,9 @@ export default function Menu() {
                         <>
                           <Flame className="w-5 h-5 text-red-500 absolute -left-7 top-0.5" />
                           <Flame className="w-3 h-3 text-yellow-400 absolute -left-6 top-1.5" />
+                          <Flame className="w-4 h-4 text-orange-500 absolute -left-9 top-1" />
+                          <Flame className="w-3 h-3 text-red-400 absolute -left-5 top-0" />
+                          <Flame className="w-2 h-2 text-yellow-300 absolute -left-8 top-2" />
                         </>
                       )}
                       {item.label}
