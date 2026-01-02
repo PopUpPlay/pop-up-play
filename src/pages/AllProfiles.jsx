@@ -120,7 +120,7 @@ export default function AllProfiles() {
       });
     }
     
-    // Sort by location proximity based on entered location fields
+    // Sort by location proximity based on ZIP code entered in Edit Profile
     if (myProfile) {
       const myCity = (myProfile.current_city || '').toLowerCase();
       const myState = (myProfile.current_state || '').toLowerCase();
@@ -138,16 +138,16 @@ export default function AllProfiles() {
         const bZip = (b.current_zip || '').toLowerCase();
         const bCountry = (b.current_country || '').toLowerCase();
         
-        // Calculate proximity score (higher = closer)
+        // Calculate proximity score based on ZIP code and location (higher = closer)
         const scoreA = 
+          (aZip && myZip && aZip === myZip ? 10000 : 0) +
           (aCity && myCity && aCity === myCity ? 1000 : 0) +
-          (aZip && myZip && aZip === myZip ? 800 : 0) +
           (aState && myState && aState === myState ? 500 : 0) +
           (aCountry && myCountry && aCountry === myCountry ? 100 : 0);
           
         const scoreB = 
+          (bZip && myZip && bZip === myZip ? 10000 : 0) +
           (bCity && myCity && bCity === myCity ? 1000 : 0) +
-          (bZip && myZip && bZip === myZip ? 800 : 0) +
           (bState && myState && bState === myState ? 500 : 0) +
           (bCountry && myCountry && bCountry === myCountry ? 100 : 0);
         
