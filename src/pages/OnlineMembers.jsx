@@ -27,7 +27,6 @@ export default function OnlineMembers() {
   const [user, setUser] = useState(null);
   const [interestFilter, setInterestFilter] = useState('');
   const [backUrl, setBackUrl] = useState('Menu');
-  const [geocodedCities, setGeocodedCities] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,43 +78,6 @@ export default function OnlineMembers() {
     enabled: !!user?.email
   });
 
-  // Reverse geocode coordinates to get city
-  const reverseGeocode = async (lat, lng) => {
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-      );
-      const data = await response.json();
-      const city = data.address?.city || data.address?.town || data.address?.village || data.address?.county;
-      return city;
-    } catch (error) {
-      console.error('Reverse geocoding failed:', error);
-      return null;
-    }
-  };
-
-  // Geocode all active profiles
-  useEffect(() => {
-    const geocodeProfiles = async () => {
-      const cities = {};
-      for (const profile of activeProfiles) {
-        if (profile.latitude && profile.longitude && !geocodedCities[profile.id]) {
-          const city = await reverseGeocode(profile.latitude, profile.longitude);
-          if (city) {
-            cities[profile.id] = city;
-          }
-        }
-      }
-      if (Object.keys(cities).length > 0) {
-        setGeocodedCities(prev => ({ ...prev, ...cities }));
-      }
-    };
-    
-    if (activeProfiles.length > 0) {
-      geocodeProfiles();
-    }
-  }, [activeProfiles]);
-
   const filteredProfiles = React.useMemo(() => {
     let profiles = activeProfiles
       .filter((profile) => {
@@ -125,16 +87,7 @@ export default function OnlineMembers() {
         const distance = myProfile?.latitude && myProfile?.longitude
           ? calculateDistance(myProfile.latitude, myProfile.longitude, profile.latitude, profile.longitude)
           : null;
-        
-        // Get the city from pop-up location (geocoded)
-        const popupCity = geocodedCities[profile.id];
-        
-        // Only show Edit Profile city if it matches the pop-up city
-        const displayCity = popupCity && profile.current_city?.toLowerCase() === popupCity.toLowerCase()
-          ? profile.current_city
-          : popupCity;
-        
-        return { ...profile, distance, displayCity };
+        return { ...profile, distance };
       });
     
     // Filter by interests
@@ -154,7 +107,7 @@ export default function OnlineMembers() {
     });
     
     return profiles;
-  }, [activeProfiles, myProfile, blockedUsers, interestFilter, geocodedCities]);
+  }, [activeProfiles, myProfile, blockedUsers, interestFilter]);
 
   if (!user || isLoading) {
     return (
@@ -185,7 +138,7 @@ export default function OnlineMembers() {
           </Link>
           <div className="flex items-center gap-2">
             <Users className="w-6 h-6 text-violet-600" />
-            <h1 className="text-lg font-semibold text-purple-800">Online Now</h1>
+            <h1 className="text-lg font-semibold text-slate-800">Online Now</h1>
           </div>
           <div className="w-10"></div>
         </div>
@@ -200,12 +153,12 @@ export default function OnlineMembers() {
         >
           <div className="bg-white rounded-2xl shadow-sm p-4">
             <div className="flex items-center gap-3">
-              <Filter className="w-5 h-5 text-purple-600" />
+              <Filter className="w-5 h-5 text-slate-400" />
               <Input
                 placeholder="Filter by interests (e.g., hiking, cooking)..."
                 value={interestFilter}
                 onChange={(e) => setInterestFilter(e.target.value)}
-                className="flex-1 rounded-xl border-purple-200 focus:border-purple-400" />
+                className="flex-1 rounded-xl border-slate-200" />
               {interestFilter && (
                 <Button
                   variant="ghost"
@@ -279,10 +232,10 @@ export default function OnlineMembers() {
                       <h3 className="text-lg font-bold text-slate-800">
                         {profile.display_name}{profile.age && `, ${profile.age}`}
                       </h3>
-                      {profile.displayCity && (
+                      {profile.current_city && (
                         <div className="flex items-center gap-1 text-sm text-slate-500 mt-1 flex-wrap">
                           <MapPin className="w-3 h-3 text-violet-600" />
-                          {profile.displayCity}
+                          {profile.current_city}
                           {profile.distance !== null && profile.distance !== undefined && (
                             <span className="text-purple-600 font-semibold ml-1">
                               • {profile.distance.toFixed(1)} mi
