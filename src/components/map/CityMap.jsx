@@ -9,7 +9,7 @@ function MapController({ center }) {
   
   useEffect(() => {
     if (center) {
-      map.flyTo(center, 11, { duration: 1.5 });
+      map.flyTo(center, 10, { duration: 1.5 });
     }
   }, [center, map]);
   
