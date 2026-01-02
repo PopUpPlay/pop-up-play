@@ -73,13 +73,7 @@ export default function AllProfiles() {
 
   const sortedProfiles = React.useMemo(() => {
     let profiles = [...allProfiles]
-      .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)) // Exclude blocked
-      .map(p => {
-        const distance = myProfile?.latitude && myProfile?.longitude
-          ? calculateDistance(myProfile.latitude, myProfile.longitude, p.latitude, p.longitude)
-          : null;
-        return { ...p, distance };
-      });
+      .filter(p => !blockedUsers.some(b => b.blocked_email === p.user_email)); // Exclude blocked
     
     // Filter by interests
     if (interestFilter.trim()) {
@@ -90,15 +84,15 @@ export default function AllProfiles() {
       );
     }
     
-    // Sort by distance
+    // Sort alphabetically by location (city, then state)
     profiles.sort((a, b) => {
-      if (a.distance === null) return 1;
-      if (b.distance === null) return -1;
-      return a.distance - b.distance;
+      const aLocation = `${a.current_city || ''} ${a.current_state || ''}`.trim();
+      const bLocation = `${b.current_city || ''} ${b.current_state || ''}`.trim();
+      return aLocation.localeCompare(bLocation);
     });
     
     return profiles;
-  }, [allProfiles, myProfile, blockedUsers, interestFilter]);
+  }, [allProfiles, blockedUsers, interestFilter]);
 
   if (!user || isLoading) {
     return (
@@ -200,16 +194,15 @@ export default function AllProfiles() {
                     </h3>
                     
                     <div className="flex items-center gap-2 text-sm text-slate-500 mb-2 flex-wrap">
-                      {profile.current_city && (
+                      {(profile.current_city || profile.current_state || profile.current_country) && (
                         <div className="flex items-center gap-1">
                           <MapPin className="w-4 h-4 text-purple-600" />
-                          <span>{profile.current_city}</span>
+                          <span>
+                            {[profile.current_city, profile.current_state, profile.current_country]
+                              .filter(Boolean)
+                              .join(', ')}
+                          </span>
                         </div>
-                      )}
-                      {profile.distance !== null && profile.distance !== undefined && (
-                        <span className="text-purple-600 font-semibold">
-                          • {profile.distance.toFixed(1)} mi
-                        </span>
                       )}
                       <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                         profile.is_popped_up 
