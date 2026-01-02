@@ -158,7 +158,7 @@ export default function OnlineMembers() {
                 placeholder="Filter by interests (e.g., hiking, cooking)..."
                 value={interestFilter}
                 onChange={(e) => setInterestFilter(e.target.value)}
-                className="flex-1 rounded-xl border-slate-200" />
+                className="flex-1 rounded-xl border-purple-200 focus:border-purple-400" />
               {interestFilter && (
                 <Button
                   variant="ghost"
