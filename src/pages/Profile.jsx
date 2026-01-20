@@ -180,9 +180,10 @@ export default function Profile() {
   });
 
   const handleSave = () => {
-    // Validate required fields (only Age, Gender, Interested In are mandatory)
-    if (!formData.display_name || !formData.age || !formData.gender || !formData.interested_in || !formData.avatar_url) {
-      toast.error('Please complete all required fields (Display Name, Age, Gender, Interested In, and Profile Picture)');
+    // Validate required fields
+    if (!formData.display_name || !formData.age || !formData.gender || !formData.interested_in || !formData.avatar_url || 
+        !formData.current_city || !formData.current_state || !formData.current_zip || !formData.current_country) {
+      toast.error('Please complete all required fields (Display Name, Age, Gender, Interested In, Profile Picture, City, State, ZIP Code, and Country)');
       return;
     }
     // Validate age requirement
@@ -506,49 +507,53 @@ export default function Profile() {
               <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="current_city" className="text-slate-600">City</Label>
+                <Label htmlFor="current_city" className="text-slate-600">City *</Label>
                 <Input
                   id="current_city"
                   value={formData.current_city}
                   onChange={(e) => setFormData((prev) => ({ ...prev, current_city: e.target.value }))}
                   placeholder="City"
                   className="mt-1 rounded-xl border-slate-200"
-                  disabled={!isOwnProfile} />
+                  disabled={!isOwnProfile}
+                  required />
               </div>
 
               <div>
-                <Label htmlFor="current_state" className="text-slate-600">State</Label>
+                <Label htmlFor="current_state" className="text-slate-600">State *</Label>
                 <Input
                   id="current_state"
                   value={formData.current_state}
                   onChange={(e) => setFormData((prev) => ({ ...prev, current_state: e.target.value }))}
                   placeholder="State"
                   className="mt-1 rounded-xl border-slate-200"
-                  disabled={!isOwnProfile} />
+                  disabled={!isOwnProfile}
+                  required />
               </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="current_zip" className="text-slate-600">ZIP Code</Label>
+                <Label htmlFor="current_zip" className="text-slate-600">ZIP Code *</Label>
                 <Input
                   id="current_zip"
                   value={formData.current_zip}
                   onChange={(e) => setFormData((prev) => ({ ...prev, current_zip: e.target.value }))}
                   placeholder="ZIP Code"
                   className="mt-1 rounded-xl border-slate-200"
-                  disabled={!isOwnProfile} />
+                  disabled={!isOwnProfile}
+                  required />
               </div>
 
               <div>
-                <Label htmlFor="current_country" className="text-slate-600">Country</Label>
+                <Label htmlFor="current_country" className="text-slate-600">Country *</Label>
                 <Input
                   id="current_country"
                   value={formData.current_country}
                   onChange={(e) => setFormData((prev) => ({ ...prev, current_country: e.target.value }))}
                   placeholder="Country"
                   className="mt-1 rounded-xl border-slate-200"
-                  disabled={!isOwnProfile} />
+                  disabled={!isOwnProfile}
+                  required />
               </div>
               </div>
               </div>
