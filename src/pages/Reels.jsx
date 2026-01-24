@@ -229,13 +229,6 @@ export default function Reels() {
 
 
 
-      {/* Progress Indicator */}
-      <div className="absolute top-20 right-4 z-50">
-        <div className="text-white/70 text-sm font-medium bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full">
-          {currentIndex + 1} / {reels.length}
-        </div>
-      </div>
-
       {/* Upload Modal */}
       <AnimatePresence>
         {showUpload && (
