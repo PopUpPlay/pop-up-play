@@ -198,8 +198,7 @@ export default function Reels() {
             <Button
               onClick={() => setShowUpload(true)}
               size="icon"
-              variant="ghost"
-              className="rounded-full bg-white/20 hover:bg-white/30 text-white">
+              className="rounded-full bg-violet-600 hover:bg-violet-700 text-white">
               <Plus className="w-5 h-5 text-white" />
             </Button>
           </div>
