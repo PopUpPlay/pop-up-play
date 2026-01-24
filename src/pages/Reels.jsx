@@ -153,8 +153,8 @@ export default function Reels() {
           <p className="text-white/70 mb-6">Be the first to share a reel!</p>
           <Button
             onClick={() => setShowUpload(true)}
-            className="bg-violet-600 hover:bg-violet-700">
-            <Plus className="w-5 h-5 mr-2" />
+            className="bg-violet-600 hover:bg-violet-700 text-white">
+            <Plus className="w-5 h-5 mr-2 text-white" />
             Upload Reel
           </Button>
         </div>
