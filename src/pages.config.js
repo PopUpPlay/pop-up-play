@@ -14,6 +14,7 @@ import Profile from './pages/Profile';
 import SubscriptionSettings from './pages/SubscriptionSettings';
 import SubscriptionSuccess from './pages/SubscriptionSuccess';
 import VideoCall from './pages/VideoCall';
+import Reels from './pages/Reels';
 import __Layout from './Layout.jsx';
 
 
@@ -34,6 +35,7 @@ export const PAGES = {
     "SubscriptionSettings": SubscriptionSettings,
     "SubscriptionSuccess": SubscriptionSuccess,
     "VideoCall": VideoCall,
+    "Reels": Reels,
 }
 
 export const pagesConfig = {

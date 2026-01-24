@@ -1,0 +1,191 @@
+import React, { useState } from 'react';
+import { base44 } from '@/api/base44Client';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { Upload, X, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { motion, AnimatePresence } from 'framer-motion';
+
+export default function ReelUpload({ onUploadComplete, onClose }) {
+  const [uploading, setUploading] = useState(false);
+  const [caption, setCaption] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  const handleFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('video/')) {
+      toast.error('Please select a video file');
+      return;
+    }
+
+    // Validate file size (max 100MB)
+    if (file.size > 100 * 1024 * 1024) {
+      toast.error('Video file must be less than 100MB');
+      return;
+    }
+
+    setSelectedFile(file);
+    setPreviewUrl(URL.createObjectURL(file));
+  };
+
+  const handleUpload = async () => {
+    if (!selectedFile) {
+      toast.error('Please select a video file');
+      return;
+    }
+
+    setUploading(true);
+    try {
+      // Get current user
+      const user = await base44.auth.me();
+
+      // Upload video file
+      const { file_url } = await base44.integrations.Core.UploadFile({ file: selectedFile });
+
+      // Get video duration
+      const video = document.createElement('video');
+      video.src = previewUrl;
+      await new Promise((resolve) => {
+        video.onloadedmetadata = resolve;
+      });
+      const duration = Math.round(video.duration);
+
+      // Create reel record
+      await base44.entities.Reel.create({
+        user_email: user.email,
+        video_url: file_url,
+        caption: caption.trim() || null,
+        duration
+      });
+
+      toast.success('Reel uploaded successfully!');
+      
+      // Clean up
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+      
+      if (onUploadComplete) {
+        onUploadComplete();
+      }
+    } catch (error) {
+      toast.error('Failed to upload reel: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <motion.div
+      className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}>
+      <motion.div
+        className="bg-white rounded-2xl max-w-md w-full p-6"
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}>
+        
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-bold text-slate-800">Upload Reel</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            disabled={uploading}
+            className="rounded-full">
+            <X className="w-5 h-5" />
+          </Button>
+        </div>
+
+        {/* Video Preview */}
+        {previewUrl && (
+          <div className="mb-4 relative rounded-xl overflow-hidden bg-black aspect-[9/16]">
+            <video
+              src={previewUrl}
+              controls
+              className="w-full h-full object-contain" />
+          </div>
+        )}
+
+        {/* File Input */}
+        {!selectedFile && (
+          <label className="block mb-4">
+            <input
+              type="file"
+              accept="video/*"
+              onChange={handleFileSelect}
+              disabled={uploading}
+              className="hidden"
+              id="reel-upload" />
+            <Button
+              asChild
+              disabled={uploading}
+              className="w-full bg-violet-600 hover:bg-violet-700">
+              <label htmlFor="reel-upload" className="cursor-pointer">
+                <Upload className="w-5 h-5 mr-2" />
+                Select Video
+              </label>
+            </Button>
+          </label>
+        )}
+
+        {/* Caption */}
+        {selectedFile && (
+          <>
+            <div className="mb-4">
+              <Textarea
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="Add a caption... (optional)"
+                className="rounded-xl border-slate-200 resize-none"
+                rows={3}
+                disabled={uploading}
+                maxLength={500} />
+              <p className="text-xs text-slate-400 mt-1 text-right">
+                {caption.length}/500
+              </p>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSelectedFile(null);
+                  setPreviewUrl(null);
+                  setCaption('');
+                }}
+                disabled={uploading}
+                className="flex-1">
+                Change Video
+              </Button>
+              <Button
+                onClick={handleUpload}
+                disabled={uploading}
+                className="flex-1 bg-violet-600 hover:bg-violet-700">
+                {uploading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    Uploading...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="w-5 h-5 mr-2" />
+                    Upload
+                  </>
+                )}
+              </Button>
+            </div>
+          </>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
