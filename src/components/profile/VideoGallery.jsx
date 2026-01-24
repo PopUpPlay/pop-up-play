@@ -136,7 +136,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
                 onClick={() => handlePushToReels(video, index)}
                 disabled={pushingToReels === index}
                 size="sm"
-                className="w-full bg-violet-600 hover:bg-violet-700 text-white gap-1"
+                className="bg-violet-600 hover:bg-violet-700 text-white gap-1 px-3 py-1 h-auto"
               >
                 {pushingToReels === index ? (
                   <Loader2 className="w-3 h-3 animate-spin text-white" />
