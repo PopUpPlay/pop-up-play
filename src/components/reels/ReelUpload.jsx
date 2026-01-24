@@ -86,14 +86,14 @@ export default function ReelUpload({ onUploadComplete, onClose }) {
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}>
       <motion.div
-        className="bg-white rounded-2xl max-w-md w-full p-6"
+        className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-6"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}>
         
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-slate-800">Upload Reel</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-bold text-slate-800">Upload Reel</h2>
           <Button
             variant="ghost"
             size="icon"
@@ -106,7 +106,7 @@ export default function ReelUpload({ onUploadComplete, onClose }) {
 
         {/* Video Preview */}
         {previewUrl && (
-          <div className="mb-4 relative rounded-xl overflow-hidden bg-black aspect-[9/16]">
+          <div className="mb-3 relative rounded-xl overflow-hidden bg-black aspect-[9/16] max-h-[40vh]">
             <video
               src={previewUrl}
               controls
@@ -141,13 +141,13 @@ export default function ReelUpload({ onUploadComplete, onClose }) {
         {/* Caption */}
         {selectedFile && (
           <>
-            <div className="mb-4">
+            <div className="mb-3">
               <Textarea
                 value={caption}
                 onChange={(e) => setCaption(e.target.value)}
                 placeholder="Add a caption... (optional)"
                 className="rounded-xl border-slate-200 resize-none"
-                rows={3}
+                rows={2}
                 disabled={uploading}
                 maxLength={500} />
               <p className="text-xs text-slate-400 mt-1 text-right">
