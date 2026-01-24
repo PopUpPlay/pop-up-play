@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
-export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMuted, reelIndex }) {
+export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMuted }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -55,7 +55,7 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
 
       {/* Overlay - User Info & Caption */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-        <Link to={createPageUrl('Profile') + '?user=' + reel.user_email + '&reelIndex=' + reelIndex}>
+        <Link to={createPageUrl('Profile') + '?user=' + reel.user_email}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
               <img

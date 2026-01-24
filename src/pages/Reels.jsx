@@ -24,15 +24,6 @@ export default function Reels() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
-        
-        // Check if returning from profile with stored index
-        const params = new URLSearchParams(window.location.search);
-        const reelIndex = params.get('reelIndex');
-        if (reelIndex) {
-          setCurrentIndex(parseInt(reelIndex, 10));
-          // Clean up URL
-          window.history.replaceState({}, '', window.location.pathname);
-        }
       } catch (err) {
         base44.auth.redirectToLogin();
       }
@@ -231,8 +222,7 @@ export default function Reels() {
               profile={getProfileForReel(reels[currentIndex])}
               isActive={true}
               onToggleMute={() => setIsMuted(!isMuted)}
-              isMuted={isMuted}
-              reelIndex={currentIndex} />
+              isMuted={isMuted} />
           </motion.div>
         </AnimatePresence>
       </div>
