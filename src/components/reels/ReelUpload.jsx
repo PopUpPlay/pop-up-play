@@ -127,9 +127,9 @@ export default function ReelUpload({ onUploadComplete, onClose }) {
             <Button
               asChild
               disabled={uploading}
-              className="w-full bg-violet-600 hover:bg-violet-700">
-              <label htmlFor="reel-upload" className="cursor-pointer">
-                <Upload className="w-5 h-5 mr-2" />
+              className="w-full bg-violet-600 hover:bg-violet-700 text-white">
+              <label htmlFor="reel-upload" className="cursor-pointer text-white">
+                <Upload className="w-5 h-5 mr-2 text-white" />
                 Select Video
               </label>
             </Button>
