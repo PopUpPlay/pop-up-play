@@ -104,7 +104,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
           </ul>
         </div>
       )}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-4">
         {videos.map((video, index) => (
           <motion.div
             key={index}
@@ -133,7 +133,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
                   onClick={() => handlePushToReels(video, index)}
                   disabled={pushingToReels === index}
                   size="sm"
-                  className="absolute bottom-2 right-2 bg-violet-600 hover:bg-violet-700 text-white gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  className="absolute bottom-2 right-2 bg-violet-600 hover:bg-violet-700 text-white gap-1 z-10"
                 >
                   {pushingToReels === index ? (
                     <Loader2 className="w-3 h-3 animate-spin text-white" />
@@ -150,7 +150,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
         ))}
         
         {editable && videos.length < 4 && (
-          <label className="aspect-video rounded-xl border-2 border-dashed border-rose-200 hover:border-rose-400 flex flex-col items-center justify-center cursor-pointer transition-colors bg-rose-50/50 hover:bg-rose-50">
+          <label className="aspect-video rounded-xl border-2 border-dashed border-rose-200 hover:border-rose-400 flex flex-col items-center justify-center cursor-pointer transition-colors bg-rose-50/50 hover:bg-rose-50 min-h-[200px]">
             <input
               type="file"
               accept="video/*"
