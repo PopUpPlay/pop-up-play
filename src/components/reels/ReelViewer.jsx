@@ -106,6 +106,8 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         {reel.caption && (
           <p className="text-white text-sm mb-2">{reel.caption}</p>
         )}
+        
+        <p className="text-white/70 text-xs">{views} {views === 1 ? 'view' : 'views'}</p>
       </div>
 
 
