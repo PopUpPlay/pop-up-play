@@ -29,6 +29,15 @@ export default function Reels() {
       }
     };
     loadUser();
+
+    // Check if returning from profile with reel index
+    const params = new URLSearchParams(window.location.search);
+    const reelIndex = params.get('reelIndex');
+    if (reelIndex !== null) {
+      setCurrentIndex(parseInt(reelIndex, 10));
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
   }, []);
 
   const { data: reels = [], isLoading } = useQuery({
@@ -222,7 +231,8 @@ export default function Reels() {
               profile={getProfileForReel(reels[currentIndex])}
               isActive={true}
               onToggleMute={() => setIsMuted(!isMuted)}
-              isMuted={isMuted} />
+              isMuted={isMuted}
+              reelIndex={currentIndex} />
           </motion.div>
         </AnimatePresence>
       </div>
