@@ -93,6 +93,8 @@ export default function ReelGallery({ userEmail, editable = true }) {
               <video
                 src={reel.video_url}
                 className="w-full h-full object-cover"
+                controlsList="nodownload"
+                onContextMenu={(e) => e.preventDefault()}
                 muted
                 playsInline />
               
@@ -151,6 +153,8 @@ export default function ReelGallery({ userEmail, editable = true }) {
             <video
               src={previewReel.video_url}
               controls
+              controlsList="nodownload"
+              onContextMenu={(e) => e.preventDefault()}
               autoPlay
               className="max-h-full max-w-full"
               onClick={(e) => e.stopPropagation()} />

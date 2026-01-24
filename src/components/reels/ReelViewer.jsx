@@ -48,6 +48,8 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         className="w-full h-full object-contain cursor-pointer"
         loop
         playsInline
+        controlsList="nodownload"
+        onContextMenu={(e) => e.preventDefault()}
         onClick={handleVideoClick}
         onEnded={() => setIsPlaying(false)} />
 
