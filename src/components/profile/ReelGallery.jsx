@@ -110,7 +110,7 @@ export default function ReelGallery({ userEmail, editable = true }) {
                     e.stopPropagation();
                     setDeleteReelId(reel.id);
                   }}
-                  className="absolute top-2 right-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                  className="absolute top-2 right-2 rounded-full">
                   <Trash2 className="w-4 h-4" />
                 </Button>
               )}
