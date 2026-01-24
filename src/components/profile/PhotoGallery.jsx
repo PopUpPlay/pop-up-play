@@ -5,10 +5,21 @@ import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function PhotoGallery({ photos = [], onPhotosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [deleteIndex, setDeleteIndex] = useState(null);
 
   const handleUpload = async (e) => {
     const files = Array.from(e.target.files || []);
@@ -53,6 +64,7 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
   const handleRemove = (index) => {
     const newPhotos = photos.filter((_, i) => i !== index);
     onPhotosChange(newPhotos);
+    setDeleteIndex(null);
   };
 
   const handleDragEnd = (result) => {
@@ -116,7 +128,7 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
                           <button
                             onClick={(e) => {
                               e.stopPropagation();
-                              handleRemove(index);
+                              setDeleteIndex(index);
                             }}
                             className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           >
@@ -184,6 +196,26 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Delete Confirmation */}
+      <AlertDialog open={deleteIndex !== null} onOpenChange={(open) => !open && setDeleteIndex(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Photo?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This photo will be permanently removed from your profile.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => handleRemove(deleteIndex)}
+              className="bg-red-600 hover:bg-red-700 text-white">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
