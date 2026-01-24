@@ -132,21 +132,23 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
               )}
             </div>
             {editable && (
-              <Button
-                onClick={() => handlePushToReels(video, index)}
-                disabled={pushingToReels === index}
-                size="sm"
-                className="bg-violet-600 hover:bg-violet-700 text-white gap-1 px-3 py-1 h-auto"
-              >
-                {pushingToReels === index ? (
-                  <Loader2 className="w-3 h-3 animate-spin text-white" />
-                ) : (
-                  <>
-                    <Send className="w-3 h-3 text-white" />
-                    <span className="text-xs text-white">Push to Reels</span>
-                  </>
-                )}
-              </Button>
+              <div className="flex justify-center">
+                <Button
+                  onClick={() => handlePushToReels(video, index)}
+                  disabled={pushingToReels === index}
+                  size="sm"
+                  className="bg-violet-600 hover:bg-violet-700 text-white gap-1 px-3 py-1 h-auto"
+                >
+                  {pushingToReels === index ? (
+                    <Loader2 className="w-3 h-3 animate-spin text-white" />
+                  ) : (
+                    <>
+                      <Send className="w-3 h-3 text-white" />
+                      <span className="text-xs text-white">Push to Reels</span>
+                    </>
+                  )}
+                </Button>
+              </div>
             )}
           </motion.div>
         ))}
