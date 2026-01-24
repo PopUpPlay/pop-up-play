@@ -91,7 +91,7 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
       </div>
 
       {/* Play/Pause Indicator */}
-      {!isPlaying && isActive && (
+      {!isPlaying && (
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
           initial={{ opacity: 0, scale: 0.8 }}
