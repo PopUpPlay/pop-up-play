@@ -227,17 +227,7 @@ export default function Reels() {
         </AnimatePresence>
       </div>
 
-      {/* Upload Button */}
-      <motion.div
-        className="absolute top-4 right-4 z-50"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}>
-        <Button
-          onClick={() => setShowUpload(true)}
-          className="rounded-full w-14 h-14 bg-violet-600 hover:bg-violet-700 shadow-2xl">
-          <Plus className="w-6 h-6 text-white" />
-        </Button>
-      </motion.div>
+
 
       {/* Progress Indicator */}
       <div className="absolute top-20 right-4 z-50">
