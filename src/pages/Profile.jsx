@@ -51,6 +51,7 @@ export default function Profile() {
     const userParam = params.get('user');
     const backParam = params.get('back');
     const chatWithParam = params.get('chatWith');
+    const reelIndexParam = params.get('reelIndex');
     
     setViewingUserEmail(userParam);
     
@@ -58,6 +59,8 @@ export default function Profile() {
       // If coming from Chat and chatWith parameter exists, open that conversation
       if (backParam === 'Chat' && chatWithParam) {
         setBackUrl(backParam + `?user=${chatWithParam}&from=profile`);
+      } else if (backParam === 'Reels' && reelIndexParam !== null) {
+        setBackUrl(backParam + `?reelIndex=${reelIndexParam}`);
       } else {
         setBackUrl(backParam);
       }
