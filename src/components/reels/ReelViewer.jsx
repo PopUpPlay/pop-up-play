@@ -53,6 +53,19 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         onClick={handleVideoClick}
         onEnded={() => setIsPlaying(false)} />
 
+      {/* User Avatar - Top Left */}
+      <Link 
+        to={createPageUrl('Profile') + '?user=' + reel.user_email}
+        className="absolute top-4 left-4 z-10"
+        onClick={(e) => e.stopPropagation()}>
+        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform">
+          <img
+            src={profile?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
+            alt="Profile"
+            className="w-full h-full object-cover" />
+        </div>
+      </Link>
+
       {/* Overlay - User Info & Caption */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
         <Link to={createPageUrl('Profile') + '?user=' + reel.user_email}>
