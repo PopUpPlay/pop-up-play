@@ -174,15 +174,19 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
             className="space-y-2"
           >
             <div className="relative aspect-video rounded-xl overflow-hidden group bg-slate-900">
-              <video 
-                src={video}
-                className="w-full h-full object-cover"
-                controls
-                controlsList="nodownload"
-                onContextMenu={(e) => e.preventDefault()}
-                style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
-              />
-            </div>
+               <video 
+                 src={video}
+                 className="w-full h-full object-cover"
+                 controls
+                 controlsList="nodownload"
+                 onContextMenu={(e) => e.preventDefault()}
+                 style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
+               />
+               <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 px-2 py-1 rounded text-white text-xs">
+                 <Eye className="w-3 h-3" />
+                 <span>{getVideoViews(video)} {getVideoViews(video) === 1 ? 'view' : 'views'}</span>
+               </div>
+             </div>
             {editable && (
               <div className="flex justify-center gap-2">
                 <Button
