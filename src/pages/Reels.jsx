@@ -195,12 +195,6 @@ export default function Reels() {
               className="rounded-full bg-white/20 hover:bg-white/30 text-white">
               {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </Button>
-            <Button
-              onClick={() => setShowUpload(true)}
-              size="sm"
-              className="rounded-full bg-violet-600 hover:bg-violet-700 text-white h-8 w-8 p-0">
-              <Plus className="w-4 h-4 text-white" />
-            </Button>
           </div>
           <h1 className="text-white font-bold text-lg">Reels</h1>
           <div className="w-10"></div>
@@ -227,7 +221,17 @@ export default function Reels() {
         </AnimatePresence>
       </div>
 
-
+      {/* Upload Button */}
+      <motion.div
+        className="absolute top-4 right-4 z-50"
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}>
+        <Button
+          onClick={() => setShowUpload(true)}
+          className="rounded-full w-14 h-14 bg-violet-600 hover:bg-violet-700 shadow-2xl">
+          <Plus className="w-6 h-6 text-white" />
+        </Button>
+      </motion.div>
 
       {/* Progress Indicator */}
       <div className="absolute top-20 right-4 z-50">
