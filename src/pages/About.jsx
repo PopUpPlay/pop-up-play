@@ -264,6 +264,13 @@ export default function About() {
             </div>
           </motion.div>
         }
+
+        {/* Terms Footer */}
+        <div className="mt-8 pb-8">
+          <p className="text-xs text-slate-500 text-center leading-relaxed px-4">
+            Popup-Play is an alternative lifestyle platform designed to connect couples and singles for spontaneous encounters in their local area. By uploading photos or videos to Popup-Play.com, you grant the platform permission to host your content. Subscriptions are billed monthly and will continue until canceled. Prostitution is strictly prohibited, and all members must meet the legal age requirements of their country. Any violation of these terms will result in immediate account termination without a refund.
+          </p>
+        </div>
       </main>
     </div>);
 
