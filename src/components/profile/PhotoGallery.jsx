@@ -130,7 +130,7 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
                               e.stopPropagation();
                               setDeleteIndex(index);
                             }}
-                            className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute top-2 right-2 w-7 h-7 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center transition-colors"
                           >
                             <X className="w-4 h-4 text-white" />
                           </button>
