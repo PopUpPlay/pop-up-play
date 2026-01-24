@@ -85,42 +85,46 @@ export default function ReelGallery({ userEmail, editable = true }) {
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {reels.map((reel) => (
-            <motion.div
-              key={reel.id}
-              className="relative aspect-[9/16] rounded-xl overflow-hidden bg-black group cursor-pointer"
-              whileHover={{ scale: 1.02 }}
-              onClick={() => setPreviewReel(reel)}>
-              <video
-                src={reel.video_url}
-                className="w-full h-full object-cover"
-                controlsList="nodownload"
-                onContextMenu={(e) => e.preventDefault()}
-                muted
-                playsInline />
-              
-              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                <Play className="w-12 h-12 text-white" />
-              </div>
+            <div className="space-y-2">
+              <motion.div
+                key={reel.id}
+                className="relative aspect-[9/16] rounded-xl overflow-hidden bg-black group cursor-pointer"
+                whileHover={{ scale: 1.02 }}
+                onClick={() => setPreviewReel(reel)}>
+                <video
+                  src={reel.video_url}
+                  className="w-full h-full object-cover"
+                  controlsList="nodownload"
+                  onContextMenu={(e) => e.preventDefault()}
+                  muted
+                  playsInline />
 
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <Play className="w-12 h-12 text-white" />
+                </div>
+
+                {reel.caption && (
+                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
+                    <p className="text-white text-xs line-clamp-2">{reel.caption}</p>
+                  </div>
+                )}
+              </motion.div>
               {editable && (
-                <Button
-                  variant="destructive"
-                  size="icon"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDeleteReelId(reel.id);
-                  }}
-                  className="absolute top-2 right-2 rounded-full">
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-
-              {reel.caption && (
-                <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
-                  <p className="text-white text-xs line-clamp-2">{reel.caption}</p>
+                <div className="flex justify-center">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteReelId(reel.id);
+                    }}
+                    className="gap-1 px-3 py-1 h-auto">
+                    <Trash2 className="w-3 h-3" />
+                    <span className="text-xs">Delete</span>
+                  </Button>
                 </div>
               )}
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

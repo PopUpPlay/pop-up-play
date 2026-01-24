@@ -134,17 +134,9 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
                 onContextMenu={(e) => e.preventDefault()}
                 style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
               />
-              {editable && (
-                <button
-                  onClick={() => setDeleteIndex(index)}
-                  className="absolute top-2 right-2 w-8 h-8 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-colors z-10"
-                >
-                  <Trash2 className="w-4 h-4 text-white" />
-                </button>
-              )}
             </div>
             {editable && (
-              <div className="flex justify-center">
+              <div className="flex justify-center gap-2">
                 <Button
                   onClick={() => handlePushToReels(video, index)}
                   disabled={pushingToReels === index}
@@ -159,6 +151,15 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
                       <span className="text-xs text-white">Push to Reels</span>
                     </>
                   )}
+                </Button>
+                <Button
+                  onClick={() => setDeleteIndex(index)}
+                  size="sm"
+                  variant="destructive"
+                  className="gap-1 px-3 py-1 h-auto"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  <span className="text-xs">Delete</span>
                 </Button>
               </div>
             )}
