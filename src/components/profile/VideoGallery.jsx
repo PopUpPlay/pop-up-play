@@ -106,7 +106,18 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
     }, 500);
   };
 
-  const handleRemove = (index) => {
+  const handleRemove = async (index) => {
+    try {
+      const videoUrl = videos[index];
+      // Delete ProfileVideo record
+      const profileVideo = profileVideos.find(pv => pv.video_url === videoUrl);
+      if (profileVideo) {
+        await base44.entities.ProfileVideo.delete(profileVideo.id);
+      }
+    } catch (error) {
+      console.error('Error deleting ProfileVideo record:', error);
+    }
+    
     const newVideos = videos.filter((_, i) => i !== index);
     onVideosChange(newVideos);
     setDeleteIndex(null);
