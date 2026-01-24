@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, X, Video, Loader2, Play } from 'lucide-react';
+import { Plus, X, Video, Loader2, Play, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 export default function VideoGallery({ videos = [], onVideosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [pushingToReels, setPushingToReels] = useState(null);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -61,6 +63,34 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
     onVideosChange(newVideos);
   };
 
+  const handlePushToReels = async (videoUrl, index) => {
+    setPushingToReels(index);
+    try {
+      const user = await base44.auth.me();
+      
+      // Get video duration
+      const video = document.createElement('video');
+      video.src = videoUrl;
+      await new Promise((resolve) => {
+        video.onloadedmetadata = resolve;
+      });
+      const duration = Math.round(video.duration);
+
+      // Create reel
+      await base44.entities.Reel.create({
+        user_email: user.email,
+        video_url: videoUrl,
+        duration
+      });
+
+      toast.success('Video pushed to Reels feed!');
+    } catch (error) {
+      toast.error('Failed to push to Reels: ' + error.message);
+    } finally {
+      setPushingToReels(null);
+    }
+  };
+
   return (
     <div>
       {editable && (
@@ -92,12 +122,29 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
               style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
             />
             {editable && (
-              <button
-                onClick={() => handleRemove(index)}
-                className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
-              >
-                <X className="w-4 h-4 text-white" />
-              </button>
+              <>
+                <button
+                  onClick={() => handleRemove(index)}
+                  className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                >
+                  <X className="w-4 h-4 text-white" />
+                </button>
+                <Button
+                  onClick={() => handlePushToReels(video, index)}
+                  disabled={pushingToReels === index}
+                  size="sm"
+                  className="absolute bottom-2 right-2 bg-violet-600 hover:bg-violet-700 text-white gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                >
+                  {pushingToReels === index ? (
+                    <Loader2 className="w-3 h-3 animate-spin text-white" />
+                  ) : (
+                    <>
+                      <Send className="w-3 h-3 text-white" />
+                      <span className="text-xs text-white">Push to Reels</span>
+                    </>
+                  )}
+                </Button>
+              </>
             )}
           </motion.div>
         ))}
