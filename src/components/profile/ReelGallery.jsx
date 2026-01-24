@@ -103,6 +103,10 @@ export default function ReelGallery({ userEmail, editable = true }) {
                   <Play className="w-12 h-12 text-white" />
                 </div>
 
+                <div className="absolute top-2 right-2 text-white text-xs bg-black/50 px-2 py-1 rounded">
+                  {reel.views || 0} {(reel.views || 0) === 1 ? 'view' : 'views'}
+                </div>
+
                 {reel.caption && (
                   <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent">
                     <p className="text-white text-xs line-clamp-2">{reel.caption}</p>
