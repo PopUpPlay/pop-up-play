@@ -222,16 +222,15 @@ export default function Reels() {
       </div>
 
       {/* Upload Button */}
-      <motion.div
-        className="absolute top-4 right-4 z-50"
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}>
+      <div className="absolute top-4 left-4 z-50 flex flex-col gap-2">
         <Button
+          variant="ghost"
+          size="icon"
           onClick={() => setShowUpload(true)}
-          className="rounded-full w-14 h-14 bg-violet-600 hover:bg-violet-700 shadow-2xl">
-          <Plus className="w-6 h-6 text-white" />
+          className="rounded-full bg-violet-600 hover:bg-violet-700 text-white">
+          <Plus className="w-5 h-5" />
         </Button>
-      </motion.div>
+      </div>
 
       {/* Progress Indicator */}
       <div className="absolute top-20 right-4 z-50">
