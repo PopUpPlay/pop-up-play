@@ -220,7 +220,7 @@ export default function Reels() {
         <Button
           onClick={() => setShowUpload(true)}
           className="rounded-full w-14 h-14 bg-violet-600 hover:bg-violet-700 shadow-2xl">
-          <Plus className="w-6 h-6" />
+          <Plus className="w-6 h-6 text-white" />
         </Button>
       </motion.div>
 
