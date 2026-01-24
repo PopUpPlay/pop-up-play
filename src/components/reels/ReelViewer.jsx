@@ -39,6 +39,10 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   };
 
+  if (!reel) {
+    return <div className="relative w-full h-full bg-black" />;
+  }
+
   return (
     <div className="relative w-full h-full bg-black">
       {/* Video */}
