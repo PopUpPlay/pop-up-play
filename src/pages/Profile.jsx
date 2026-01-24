@@ -13,6 +13,7 @@ import { createPageUrl } from '@/utils';
 import AvatarUpload from '@/components/profile/AvatarUpload';
 import PhotoGallery from '@/components/profile/PhotoGallery';
 import VideoGallery from '@/components/profile/VideoGallery';
+import ReelGallery from '@/components/profile/ReelGallery';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
@@ -574,6 +575,9 @@ export default function Profile() {
               <TabsTrigger value="videos" className="flex-1 rounded-lg data-[state=active]:bg-white">
                 Videos
               </TabsTrigger>
+              <TabsTrigger value="reels" className="flex-1 rounded-lg data-[state=active]:bg-white">
+                Reels
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="photos">
@@ -591,7 +595,13 @@ export default function Profile() {
                 editable={isOwnProfile} />
 
             </TabsContent>
-          </Tabs>
+
+            <TabsContent value="reels">
+              <ReelGallery
+                userEmail={isOwnProfile ? user?.email : viewingUserEmail}
+                editable={isOwnProfile} />
+            </TabsContent>
+            </Tabs>
         </motion.div>
 
         {/* Save Profile Button - Only for own profile */}
