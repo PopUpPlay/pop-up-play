@@ -169,15 +169,15 @@ export default function ReelUpload({ onUploadComplete, onClose }) {
               <Button
                 onClick={handleUpload}
                 disabled={uploading}
-                className="flex-1 bg-violet-600 hover:bg-violet-700">
+                className="flex-1 bg-violet-600 hover:bg-violet-700 text-white">
                 {uploading ? (
                   <>
-                    <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                    <Loader2 className="w-5 h-5 mr-2 animate-spin text-white" />
                     Uploading...
                   </>
                 ) : (
                   <>
-                    <Upload className="w-5 h-5 mr-2" />
+                    <Upload className="w-5 h-5 mr-2 text-white" />
                     Upload
                   </>
                 )}
