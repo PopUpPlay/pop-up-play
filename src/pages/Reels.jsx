@@ -220,21 +220,23 @@ export default function Reels() {
       {/* Reels Container */}
       <div className="h-full w-full relative">
         <AnimatePresence mode="wait">
-          <motion.div
-            key={currentIndex}
-            initial={{ y: '100%', opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: '-100%', opacity: 0 }}
-            transition={{ type: 'tween', duration: 0.3 }}
-            className="absolute inset-0">
-            <ReelViewer
-              reel={reels[currentIndex]}
-              profile={getProfileForReel(reels[currentIndex])}
-              isActive={true}
-              onToggleMute={() => setIsMuted(!isMuted)}
-              isMuted={isMuted}
-              reelIndex={currentIndex} />
-          </motion.div>
+          {reels[currentIndex] && (
+            <motion.div
+              key={currentIndex}
+              initial={{ y: '100%', opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: '-100%', opacity: 0 }}
+              transition={{ type: 'tween', duration: 0.3 }}
+              className="absolute inset-0">
+              <ReelViewer
+                reel={reels[currentIndex]}
+                profile={getProfileForReel(reels[currentIndex])}
+                isActive={true}
+                onToggleMute={() => setIsMuted(!isMuted)}
+                isMuted={isMuted}
+                reelIndex={currentIndex} />
+            </motion.div>
+          )}
         </AnimatePresence>
       </div>
 
