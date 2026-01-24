@@ -21,6 +21,33 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
   const [uploadProgress, setUploadProgress] = useState(0);
   const [pushingToReels, setPushingToReels] = useState(null);
   const [deleteIndex, setDeleteIndex] = useState(null);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      } catch (error) {
+        // Silently fail
+      }
+    };
+    loadUser();
+  }, []);
+
+  const { data: profileVideos = [] } = useQuery({
+    queryKey: ['profileVideos', user?.email],
+    queryFn: async () => {
+      if (!user?.email) return [];
+      return await base44.entities.ProfileVideo.filter({ user_email: user.email });
+    },
+    enabled: !!user?.email
+  });
+
+  const getVideoViews = (videoUrl) => {
+    const profileVideo = profileVideos.find(pv => pv.video_url === videoUrl);
+    return profileVideo?.views || 0;
+  };
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
