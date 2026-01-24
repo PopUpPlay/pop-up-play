@@ -130,9 +130,9 @@ export default function PhotoGallery({ photos = [], onPhotosChange, editable = t
                               e.stopPropagation();
                               setDeleteIndex(index);
                             }}
-                            className="absolute top-2 right-2 w-7 h-7 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center transition-colors"
+                            className="absolute top-1 right-1 w-6 h-6 bg-black/70 hover:bg-black/90 rounded-full flex items-center justify-center transition-colors"
                           >
-                            <X className="w-4 h-4 text-white" />
+                            <X className="w-3.5 h-3.5 text-white" />
                           </button>
                         )}
                       </motion.div>
