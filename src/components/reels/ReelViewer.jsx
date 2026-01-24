@@ -8,6 +8,31 @@ import { createPageUrl } from '@/utils';
 export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMuted, reelIndex }) {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [viewCounted, setViewCounted] = useState(false);
+  const [views, setViews] = useState(reel?.views || 0);
+
+  // Increment view count when reel becomes active
+  useEffect(() => {
+    if (isActive && !viewCounted && reel?.id) {
+      const incrementView = async () => {
+        try {
+          const { base44 } = await import('@/api/base44Client');
+          await base44.entities.Reel.update(reel.id, { views: (reel.views || 0) + 1 });
+          setViews((reel.views || 0) + 1);
+          setViewCounted(true);
+        } catch (error) {
+          // Silently fail
+        }
+      };
+      incrementView();
+    }
+  }, [isActive, reel?.id, viewCounted]);
+
+  // Reset view count when reel changes
+  useEffect(() => {
+    setViewCounted(false);
+    setViews(reel?.views || 0);
+  }, [reel?.id]);
 
   useEffect(() => {
     if (!videoRef.current) return;
