@@ -1,14 +1,25 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Plus, X, Video, Loader2, Play, Send } from 'lucide-react';
+import { Plus, X, Video, Loader2, Play, Send, Trash2 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 export default function VideoGallery({ videos = [], onVideosChange, editable = true }) {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [pushingToReels, setPushingToReels] = useState(null);
+  const [deleteIndex, setDeleteIndex] = useState(null);
 
   const handleUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -61,6 +72,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
   const handleRemove = (index) => {
     const newVideos = videos.filter((_, i) => i !== index);
     onVideosChange(newVideos);
+    setDeleteIndex(null);
   };
 
   const handlePushToReels = async (videoUrl, index) => {
@@ -124,10 +136,10 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
               />
               {editable && (
                 <button
-                  onClick={() => handleRemove(index)}
-                  className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
+                  onClick={() => setDeleteIndex(index)}
+                  className="absolute top-2 right-2 w-8 h-8 bg-red-600 hover:bg-red-700 rounded-full flex items-center justify-center transition-colors z-10"
                 >
-                  <X className="w-4 h-4 text-white" />
+                  <Trash2 className="w-4 h-4 text-white" />
                 </button>
               )}
             </div>
