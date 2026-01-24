@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Loader2 } from 'lucide-react';
+import { ArrowLeft, Plus, Loader2, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -182,11 +182,20 @@ export default function Reels() {
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-gradient-to-b from-black/50 to-transparent">
         <div className="flex items-center justify-between">
-          <Link to={createPageUrl('Menu')}>
-            <Button variant="ghost" size="icon" className="rounded-full bg-white/20 hover:bg-white/30 text-white">
-              <ArrowLeft className="w-5 h-5" />
+          <div className="flex flex-col gap-2">
+            <Link to={createPageUrl('Menu')}>
+              <Button variant="ghost" size="icon" className="rounded-full bg-white/20 hover:bg-white/30 text-white">
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+            </Link>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setIsMuted(!isMuted)}
+              className="rounded-full bg-white/20 hover:bg-white/30 text-white">
+              {isMuted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
             </Button>
-          </Link>
+          </div>
           <h1 className="text-white font-bold text-lg">Reels</h1>
           <div className="w-10"></div>
         </div>

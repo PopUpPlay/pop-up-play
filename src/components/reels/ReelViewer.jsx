@@ -79,16 +79,7 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         )}
       </div>
 
-      {/* Right Side Actions */}
-      <div className="absolute right-4 bottom-24 flex flex-col gap-6">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onToggleMute}
-          className="rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white">
-          {isMuted ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
-        </Button>
-      </div>
+
 
       {/* Play/Pause Indicator */}
       {!isPlaying && isActive && (
