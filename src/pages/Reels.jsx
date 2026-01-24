@@ -133,6 +133,7 @@ export default function Reels() {
   const handleUploadComplete = () => {
     setShowUpload(false);
     queryClient.invalidateQueries({ queryKey: ['reels'] });
+    setCurrentIndex(0);
   };
 
   if (!user || isLoading) {
