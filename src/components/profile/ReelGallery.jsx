@@ -175,9 +175,9 @@ export default function ReelGallery({ userEmail, editable = true }) {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteMutation.mutate(deleteReelId)}
-              className="bg-red-600 hover:bg-red-700">
+              className="bg-red-600 hover:bg-red-700 text-white">
               {deleteMutation.isPending ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin text-white" />
               ) : (
                 'Delete'
               )}
