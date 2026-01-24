@@ -182,7 +182,7 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
                  onContextMenu={(e) => e.preventDefault()}
                  style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
                />
-               <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/60 px-2 py-1 rounded text-white text-xs">
+               <div className="absolute bottom-2 right-2 flex items-center gap-1 bg-black/60 px-2 py-1 rounded text-white text-xs">
                  <Eye className="w-3 h-3" />
                  <span>{getVideoViews(video)} {getVideoViews(video) === 1 ? 'view' : 'views'}</span>
                </div>
