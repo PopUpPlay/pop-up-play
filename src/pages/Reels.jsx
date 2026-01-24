@@ -138,7 +138,7 @@ export default function Reels() {
     return (
       <div className="h-screen bg-black flex flex-col items-center justify-center p-4">
         <div className="absolute top-4 left-4 z-50">
-          <Link to={createPageUrl('Home')}>
+          <Link to={createPageUrl('Menu')}>
             <Button variant="ghost" size="icon" className="rounded-full bg-white/20 hover:bg-white/30 text-white">
               <ArrowLeft className="w-5 h-5" />
             </Button>
@@ -182,7 +182,7 @@ export default function Reels() {
       {/* Header */}
       <div className="absolute top-0 left-0 right-0 z-50 p-4 bg-gradient-to-b from-black/50 to-transparent">
         <div className="flex items-center justify-between">
-          <Link to={createPageUrl('Home')}>
+          <Link to={createPageUrl('Menu')}>
             <Button variant="ghost" size="icon" className="rounded-full bg-white/20 hover:bg-white/30 text-white">
               <ArrowLeft className="w-5 h-5" />
             </Button>
