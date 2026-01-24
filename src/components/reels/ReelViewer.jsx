@@ -91,14 +91,20 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
       </div>
 
       {/* Play/Pause Indicator */}
-      {!isPlaying && isActive && (
+      {isActive && (
         <motion.div
           className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0.8 }}>
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}>
           <div className="w-20 h-20 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-            <div className="w-0 h-0 border-l-[20px] border-l-white border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1" />
+            {isPlaying ? (
+              <div className="flex gap-1.5">
+                <div className="w-1.5 h-6 bg-white rounded-sm" />
+                <div className="w-1.5 h-6 bg-white rounded-sm" />
+              </div>
+            ) : (
+              <div className="w-0 h-0 border-l-[20px] border-l-white border-t-[12px] border-t-transparent border-b-[12px] border-b-transparent ml-1" />
+            )}
           </div>
         </motion.div>
       )}
