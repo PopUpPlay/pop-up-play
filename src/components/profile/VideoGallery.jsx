@@ -111,40 +111,42 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
             layout
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative aspect-video rounded-xl overflow-hidden group bg-slate-900"
+            className="space-y-2"
           >
-            <video 
-              src={video}
-              className="w-full h-full object-cover"
-              controls
-              controlsList="nodownload"
-              onContextMenu={(e) => e.preventDefault()}
-              style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
-            />
-            {editable && (
-              <>
+            <div className="relative aspect-video rounded-xl overflow-hidden group bg-slate-900">
+              <video 
+                src={video}
+                className="w-full h-full object-cover"
+                controls
+                controlsList="nodownload"
+                onContextMenu={(e) => e.preventDefault()}
+                style={{ userSelect: 'none', WebkitUserDrag: 'none' }}
+              />
+              {editable && (
                 <button
                   onClick={() => handleRemove(index)}
                   className="absolute top-2 right-2 w-7 h-7 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
                 >
                   <X className="w-4 h-4 text-white" />
                 </button>
-                <Button
-                  onClick={() => handlePushToReels(video, index)}
-                  disabled={pushingToReels === index}
-                  size="sm"
-                  className="absolute bottom-2 right-2 bg-violet-600 hover:bg-violet-700 text-white gap-1 z-10"
-                >
-                  {pushingToReels === index ? (
-                    <Loader2 className="w-3 h-3 animate-spin text-white" />
-                  ) : (
-                    <>
-                      <Send className="w-3 h-3 text-white" />
-                      <span className="text-xs text-white">Push to Reels</span>
-                    </>
-                  )}
-                </Button>
-              </>
+              )}
+            </div>
+            {editable && (
+              <Button
+                onClick={() => handlePushToReels(video, index)}
+                disabled={pushingToReels === index}
+                size="sm"
+                className="w-full bg-violet-600 hover:bg-violet-700 text-white gap-1"
+              >
+                {pushingToReels === index ? (
+                  <Loader2 className="w-3 h-3 animate-spin text-white" />
+                ) : (
+                  <>
+                    <Send className="w-3 h-3 text-white" />
+                    <span className="text-xs text-white">Push to Reels</span>
+                  </>
+                )}
+              </Button>
             )}
           </motion.div>
         ))}
