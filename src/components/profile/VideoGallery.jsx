@@ -79,12 +79,21 @@ export default function VideoGallery({ videos = [], onVideosChange, editable = t
       }, 500);
 
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
-      
-      clearInterval(progressInterval);
-      setUploadProgress(100);
-      
-      onVideosChange([...videos, file_url]);
-      toast.success('Video uploaded successfully');
+
+       clearInterval(progressInterval);
+       setUploadProgress(100);
+
+       // Create ProfileVideo record with 0 views
+       if (user?.email) {
+         await base44.entities.ProfileVideo.create({
+           user_email: user.email,
+           video_url: file_url,
+           views: 0
+         });
+       }
+
+       onVideosChange([...videos, file_url]);
+       toast.success('Video uploaded successfully');
     } catch (error) {
       console.error('Upload failed:', error);
       toast.error('Failed to upload video. Please try again.');
