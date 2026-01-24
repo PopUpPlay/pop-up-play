@@ -211,7 +211,7 @@ export default function Reels() {
               <Plus className="w-5 h-5 text-white" />
             </Button>
           </div>
-          <h1 className="text-white font-bold text-lg">Reels</h1>
+
           <div className="w-10"></div>
         </div>
       </div>
