@@ -61,6 +61,13 @@ export default function Menu() {
       description: 'See who\'s active now'
     },
     {
+      label: 'Reels',
+      icon: Flame,
+      path: 'Reels',
+      color: 'bg-rose-300',
+      description: 'Watch short video clips'
+    },
+    {
       label: 'About',
       icon: Info,
       path: 'About',
