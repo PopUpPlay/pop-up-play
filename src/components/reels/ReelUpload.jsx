@@ -175,12 +175,12 @@ export default function ReelUpload({ onUploadComplete, onClose }) {
                 {uploading ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin text-white" />
-                    Uploading...
+                    Posting...
                   </>
                 ) : (
                   <>
                     <Upload className="w-5 h-5 mr-2 text-white" />
-                    Upload
+                    Post
                   </>
                 )}
               </Button>
