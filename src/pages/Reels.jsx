@@ -223,7 +223,7 @@ export default function Reels() {
 
       {/* Upload Button */}
       <motion.div
-        className="absolute bottom-24 left-1/2 -translate-x-1/2 z-50"
+        className="absolute top-4 right-4 z-50"
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}>
         <Button
