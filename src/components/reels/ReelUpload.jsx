@@ -93,7 +93,7 @@ export default function ReelUpload({ onUploadComplete, onClose }) {
         
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-bold text-slate-800">Upload Reel</h2>
+          <h2 className="text-lg font-bold text-violet-600">Upload Reel</h2>
           <Button
             variant="ghost"
             size="icon"
