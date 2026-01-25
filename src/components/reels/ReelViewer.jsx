@@ -174,8 +174,11 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
 
       {/* User Info - Top Right */}
       <div className="absolute top-6 right-6 z-20">
-        <Link to={createPageUrl('Profile') + '?user=' + reel.user_email + '&back=Reels&reelIndex=' + reelIndex}>
-          <div className="flex flex-col items-end gap-2">
+        <Link 
+          to={createPageUrl('Profile') + '?user=' + reel.user_email + '&back=Reels&reelIndex=' + reelIndex}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex flex-col items-end gap-2 cursor-pointer">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg">
               <img
                 src={profile?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
