@@ -245,7 +245,7 @@ export default function AllProfiles() {
             <div className="flex items-center gap-3">
               <Filter className="w-5 h-5 text-purple-600" />
               <Input
-                placeholder="Filter by interests (e.g., hiking, cooking)..."
+                placeholder="Filter by interests (e.g., Couples, BBC, Unicorns)..."
                 value={interestFilter}
                 onChange={(e) => setInterestFilter(e.target.value)}
                 className="flex-1 rounded-xl border-purple-200 focus:border-purple-400" />
