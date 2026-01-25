@@ -86,11 +86,13 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
   };
 
   const handleProgressMouseDown = (e) => {
+    e.stopPropagation();
     setIsDragging(true);
     handleSeek(e.clientX);
   };
 
   const handleProgressTouchStart = (e) => {
+    e.stopPropagation();
     setIsDragging(true);
     handleSeek(e.touches[0].clientX);
   };
@@ -147,23 +149,25 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         controlsList="nodownload"
         onContextMenu={(e) => e.preventDefault()}
         onClick={handleVideoClick}
+        onLoadedMetadata={(e) => setDuration(e.target.duration)}
         onEnded={() => setIsPlaying(false)} />
 
       {/* Progress Bar */}
-      <div className="absolute bottom-24 left-0 right-0 px-6">
+      <div className="absolute bottom-24 left-0 right-0 px-6 z-10 pointer-events-auto">
         <div
           ref={progressBarRef}
-          className="h-1 bg-white/30 rounded-full cursor-pointer relative"
+          className="h-3 bg-white/30 rounded-full cursor-pointer relative"
           onMouseDown={handleProgressMouseDown}
           onTouchStart={handleProgressTouchStart}
+          onClick={(e) => e.stopPropagation()}
         >
           <div
-            className="h-full bg-white rounded-full transition-all"
+            className="h-full bg-white rounded-full pointer-events-none"
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
           />
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg"
-            style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, marginLeft: '-6px' }}
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg pointer-events-none"
+            style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, marginLeft: '-8px' }}
           />
         </div>
       </div>
