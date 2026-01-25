@@ -153,7 +153,7 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         onEnded={() => setIsPlaying(false)} />
 
       {/* Progress Bar */}
-      <div className="absolute bottom-[139px] left-0 right-0 px-6 z-10 pointer-events-auto">
+      <div className="absolute bottom-[126px] left-0 right-0 px-6 z-10 pointer-events-auto">
         <div
           ref={progressBarRef}
           className="h-1.5 bg-white/30 rounded-full cursor-pointer relative"
@@ -172,29 +172,33 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         </div>
       </div>
 
-      {/* User Info - Top Right */}
-      <div className="absolute top-6 right-6 z-20">
+      {/* Overlay - User Info & Caption */}
+      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
         <Link to={createPageUrl('Profile') + '?user=' + reel.user_email + '&back=Reels&reelIndex=' + reelIndex}>
-          <div className="flex flex-col items-end gap-2">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg">
+          <div className="flex items-center gap-3 mb-3">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
               <img
                 src={profile?.avatar_url || 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop'}
                 alt="Profile"
                 className="w-full h-full object-cover" />
             </div>
-            <div className="bg-black/60 backdrop-blur-sm px-3 py-1 rounded-full">
-              <p className="text-white/90 text-xs font-medium">{views} {views === 1 ? 'view' : 'views'}</p>
+            <div>
+              <p className="text-white font-semibold">
+                {profile?.display_name || 'Unknown User'}
+              </p>
+              <p className="text-white/70 text-sm">
+                {profile?.current_city}, {profile?.current_state}
+              </p>
             </div>
           </div>
         </Link>
-      </div>
 
-      {/* Caption - Bottom */}
-      {reel.caption && (
-        <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
-          <p className="text-white text-sm">{reel.caption}</p>
-        </div>
-      )}
+        {reel.caption && (
+          <p className="text-white text-sm mb-2">{reel.caption}</p>
+        )}
+        
+        <p className="text-white/70 text-xs">{views} {views === 1 ? 'view' : 'views'}</p>
+      </div>
 
 
 
