@@ -153,10 +153,10 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         onEnded={() => setIsPlaying(false)} />
 
       {/* Progress Bar */}
-      <div className="absolute bottom-44 left-0 right-0 px-6 z-10 pointer-events-auto">
+      <div className="absolute bottom-40 left-0 right-0 px-6 z-10 pointer-events-auto">
         <div
           ref={progressBarRef}
-          className="h-1 bg-white/30 rounded-full cursor-pointer relative py-2"
+          className="h-3 bg-white/30 rounded-full cursor-pointer relative"
           onMouseDown={handleProgressMouseDown}
           onTouchStart={handleProgressTouchStart}
           onClick={(e) => e.stopPropagation()}
@@ -166,8 +166,8 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
           />
           <div
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg pointer-events-none"
-            style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, marginLeft: '-6px' }}
+            className="absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg pointer-events-none"
+            style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, marginLeft: '-8px' }}
           />
         </div>
       </div>
