@@ -65,6 +65,13 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   };
 
+  const handleSkip = (seconds) => {
+    if (!videoRef.current) return;
+    videoRef.current.currentTime = Math.max(0, Math.min(videoRef.current.duration, videoRef.current.currentTime + seconds));
+    setShowSkipIndicator(seconds > 0 ? 'forward' : 'backward');
+    setTimeout(() => setShowSkipIndicator(null), 500);
+  };
+
   if (!reel) {
     return <div className="relative w-full h-full bg-black" />;
   }
