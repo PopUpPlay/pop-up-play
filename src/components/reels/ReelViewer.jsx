@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Heart, MessageCircle, Share2, MoreVertical, Volume2, VolumeX } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Heart, MessageCircle, Share2, MoreVertical, Volume2, VolumeX, RotateCcw, RotateCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -10,6 +10,7 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
   const [isPlaying, setIsPlaying] = useState(false);
   const [viewCounted, setViewCounted] = useState(false);
   const [views, setViews] = useState(reel?.views || 0);
+  const [showSkipIndicator, setShowSkipIndicator] = useState(null);
 
   // Increment view count when reel becomes active
   useEffect(() => {
@@ -74,13 +75,57 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
       <video
         ref={videoRef}
         src={reel.video_url}
-        className="w-full h-full object-contain cursor-pointer"
+        className="w-full h-full object-contain"
         loop
         playsInline
         controlsList="nodownload"
         onContextMenu={(e) => e.preventDefault()}
-        onClick={handleVideoClick}
         onEnded={() => setIsPlaying(false)} />
+
+      {/* Invisible tap zones */}
+      <div className="absolute inset-0 flex">
+        {/* Left zone - rewind */}
+        <div 
+          className="w-[30%] h-full cursor-pointer"
+          onClick={() => handleSkip(-10)}
+        />
+        {/* Center zone - play/pause */}
+        <div 
+          className="flex-1 h-full cursor-pointer"
+          onClick={handleVideoClick}
+        />
+        {/* Right zone - fast forward */}
+        <div 
+          className="w-[30%] h-full cursor-pointer"
+          onClick={() => handleSkip(10)}
+        />
+      </div>
+
+      {/* Skip indicators */}
+      <AnimatePresence>
+        {showSkipIndicator === 'backward' && (
+          <motion.div
+            className="absolute left-8 top-1/2 -translate-y-1/2 pointer-events-none"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}>
+            <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+              <RotateCcw className="w-8 h-8 text-white" />
+            </div>
+          </motion.div>
+        )}
+        {showSkipIndicator === 'forward' && (
+          <motion.div
+            className="absolute right-8 top-1/2 -translate-y-1/2 pointer-events-none"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}>
+            <div className="w-16 h-16 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center">
+              <RotateCw className="w-8 h-8 text-white" />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Overlay - User Info & Caption */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
