@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, MessageCircle, Share2, MoreVertical, Volume2, VolumeX, RotateCcw, RotateCw } from 'lucide-react';
+import { Heart, MessageCircle, Share2, MoreVertical, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -64,23 +64,6 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   };
 
-  const handleRewind = (e) => {
-    e.stopPropagation();
-    if (videoRef.current) {
-      videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
-    }
-  };
-
-  const handleFastForward = (e) => {
-    e.stopPropagation();
-    if (videoRef.current) {
-      videoRef.current.currentTime = Math.min(
-        videoRef.current.duration,
-        videoRef.current.currentTime + 10
-      );
-    }
-  };
-
   if (!reel) {
     return <div className="relative w-full h-full bg-black" />;
   }
@@ -98,24 +81,6 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         onContextMenu={(e) => e.preventDefault()}
         onClick={handleVideoClick}
         onEnded={() => setIsPlaying(false)} />
-
-      {/* Video Controls - Rewind & Fast Forward */}
-      <div className="absolute bottom-32 left-0 right-0 flex items-center justify-center gap-8 px-6">
-        <Button
-          onClick={handleRewind}
-          size="icon"
-          variant="ghost"
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white border border-white/20">
-          <RotateCcw className="w-5 h-5" />
-        </Button>
-        <Button
-          onClick={handleFastForward}
-          size="icon"
-          variant="ghost"
-          className="w-12 h-12 rounded-full bg-black/40 hover:bg-black/60 backdrop-blur-sm text-white border border-white/20">
-          <RotateCw className="w-5 h-5" />
-        </Button>
-      </div>
 
       {/* Overlay - User Info & Caption */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
