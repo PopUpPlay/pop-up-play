@@ -64,6 +64,23 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   };
 
+  const handleRewind = (e) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
+    }
+  };
+
+  const handleFastForward = (e) => {
+    e.stopPropagation();
+    if (videoRef.current) {
+      videoRef.current.currentTime = Math.min(
+        videoRef.current.duration,
+        videoRef.current.currentTime + 10
+      );
+    }
+  };
+
   if (!reel) {
     return <div className="relative w-full h-full bg-black" />;
   }
