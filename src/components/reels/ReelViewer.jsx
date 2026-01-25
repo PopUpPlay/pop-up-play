@@ -10,6 +10,10 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
   const [isPlaying, setIsPlaying] = useState(false);
   const [viewCounted, setViewCounted] = useState(false);
   const [views, setViews] = useState(reel?.views || 0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const progressBarRef = useRef(null);
 
   // Increment view count when reel becomes active
   useEffect(() => {
@@ -52,6 +56,69 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   }, [isMuted]);
 
+  // Update progress
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const updateTime = () => setCurrentTime(video.currentTime);
+    const updateDuration = () => setDuration(video.duration);
+
+    video.addEventListener('timeupdate', updateTime);
+    video.addEventListener('loadedmetadata', updateDuration);
+
+    return () => {
+      video.removeEventListener('timeupdate', updateTime);
+      video.removeEventListener('loadedmetadata', updateDuration);
+    };
+  }, []);
+
+  const handleSeek = (clientX) => {
+    if (!progressBarRef.current || !videoRef.current) return;
+
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const percentage = Math.max(0, Math.min(1, x / rect.width));
+    const newTime = percentage * duration;
+    
+    videoRef.current.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const handleProgressMouseDown = (e) => {
+    setIsDragging(true);
+    handleSeek(e.clientX);
+  };
+
+  const handleProgressTouchStart = (e) => {
+    setIsDragging(true);
+    handleSeek(e.touches[0].clientX);
+  };
+
+  useEffect(() => {
+    const handleMove = (e) => {
+      if (!isDragging) return;
+      const clientX = e.type.includes('mouse') ? e.clientX : e.touches[0].clientX;
+      handleSeek(clientX);
+    };
+
+    const handleEnd = () => setIsDragging(false);
+
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMove);
+      window.addEventListener('mouseup', handleEnd);
+      window.addEventListener('touchmove', handleMove);
+      window.addEventListener('touchend', handleEnd);
+    }
+
+    return () => {
+      window.removeEventListener('mousemove', handleMove);
+      window.removeEventListener('mouseup', handleEnd);
+      window.removeEventListener('touchmove', handleMove);
+      window.removeEventListener('touchend', handleEnd);
+    };
+  }, [isDragging, duration]);
+
   const handleVideoClick = () => {
     if (!videoRef.current) return;
     
@@ -81,6 +148,25 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         onContextMenu={(e) => e.preventDefault()}
         onClick={handleVideoClick}
         onEnded={() => setIsPlaying(false)} />
+
+      {/* Progress Bar */}
+      <div className="absolute bottom-24 left-0 right-0 px-6">
+        <div
+          ref={progressBarRef}
+          className="h-1 bg-white/30 rounded-full cursor-pointer relative"
+          onMouseDown={handleProgressMouseDown}
+          onTouchStart={handleProgressTouchStart}
+        >
+          <div
+            className="h-full bg-white rounded-full transition-all"
+            style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+          />
+          <div
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg"
+            style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, marginLeft: '-6px' }}
+          />
+        </div>
+      </div>
 
       {/* Overlay - User Info & Caption */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
