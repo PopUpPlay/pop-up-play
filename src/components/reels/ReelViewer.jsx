@@ -153,7 +153,7 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         onEnded={() => setIsPlaying(false)} />
 
       {/* Progress Bar */}
-      <div className="absolute bottom-[126px] left-0 right-0 px-6 z-10 pointer-events-auto">
+      <div className="absolute bottom-[139px] left-0 right-0 px-6 z-10 pointer-events-auto">
         <div
           ref={progressBarRef}
           className="h-1.5 bg-white/30 rounded-full cursor-pointer relative"
