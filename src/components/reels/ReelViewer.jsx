@@ -10,6 +10,9 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
   const [isPlaying, setIsPlaying] = useState(false);
   const [viewCounted, setViewCounted] = useState(false);
   const [views, setViews] = useState(reel?.views || 0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   // Increment view count when reel becomes active
   useEffect(() => {
@@ -52,8 +55,27 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   }, [isMuted]);
 
+  // Update progress
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const updateTime = () => setCurrentTime(video.currentTime);
+    const updateDuration = () => setDuration(video.duration);
+
+    video.addEventListener('timeupdate', updateTime);
+    video.addEventListener('loadedmetadata', updateDuration);
+    video.addEventListener('durationchange', updateDuration);
+
+    return () => {
+      video.removeEventListener('timeupdate', updateTime);
+      video.removeEventListener('loadedmetadata', updateDuration);
+      video.removeEventListener('durationchange', updateDuration);
+    };
+  }, []);
+
   const handleVideoClick = () => {
-    if (!videoRef.current) return;
+    if (!videoRef.current || isDragging) return;
     
     if (isPlaying) {
       videoRef.current.pause();
@@ -63,6 +85,43 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
       setIsPlaying(true);
     }
   };
+
+  const handleSeek = (e) => {
+    if (!videoRef.current || !duration) return;
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
+    const time = pos * duration;
+    
+    videoRef.current.currentTime = time;
+    setCurrentTime(time);
+  };
+
+  const handleMouseDown = (e) => {
+    setIsDragging(true);
+    handleSeek(e);
+  };
+
+  const handleMouseMove = (e) => {
+    if (isDragging) {
+      handleSeek(e);
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging]);
 
   if (!reel) {
     return <div className="relative w-full h-full bg-black" />;
@@ -81,6 +140,21 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
         onContextMenu={(e) => e.preventDefault()}
         onClick={handleVideoClick}
         onEnded={() => setIsPlaying(false)} />
+
+      {/* Progress Bar */}
+      <div className="absolute bottom-20 left-0 right-0 px-4">
+        <div 
+          className="relative h-1 bg-white/30 rounded-full cursor-pointer group"
+          onMouseDown={handleMouseDown}
+          onClick={handleSeek}>
+          <div 
+            className="absolute top-0 left-0 h-full bg-white rounded-full transition-all"
+            style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }} />
+          <div 
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, transform: 'translate(-50%, -50%)' }} />
+        </div>
+      </div>
 
       {/* Overlay - User Info & Caption */}
       <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
