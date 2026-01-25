@@ -86,11 +86,13 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   };
 
-  const handleSeek = (e) => {
-    if (!videoRef.current || !duration) return;
+  const progressBarRef = useRef(null);
+
+  const handleSeek = (clientX) => {
+    if (!videoRef.current || !duration || !progressBarRef.current) return;
     
-    const rect = e.currentTarget.getBoundingClientRect();
-    const pos = (e.clientX - rect.left) / rect.width;
+    const rect = progressBarRef.current.getBoundingClientRect();
+    const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
     const time = pos * duration;
     
     videoRef.current.currentTime = time;
@@ -98,30 +100,31 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
   };
 
   const handleMouseDown = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
-    handleSeek(e);
-  };
-
-  const handleMouseMove = (e) => {
-    if (isDragging) {
-      handleSeek(e);
-    }
-  };
-
-  const handleMouseUp = () => {
-    setIsDragging(false);
+    handleSeek(e.clientX);
   };
 
   useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging]);
+    if (!isDragging) return;
+
+    const handleMouseMove = (e) => {
+      handleSeek(e.clientX);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+    
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isDragging, duration]);
 
   if (!reel) {
     return <div className="relative w-full h-full bg-black" />;
@@ -144,14 +147,14 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
       {/* Progress Bar */}
       <div className="absolute bottom-20 left-0 right-0 px-4">
         <div 
-          className="relative h-1 bg-white/30 rounded-full cursor-pointer group"
-          onMouseDown={handleMouseDown}
-          onClick={handleSeek}>
+          ref={progressBarRef}
+          className="relative h-3 bg-white/30 rounded-full cursor-pointer group py-1"
+          onMouseDown={handleMouseDown}>
           <div 
-            className="absolute top-0 left-0 h-full bg-white rounded-full transition-all"
+            className="absolute top-1/2 -translate-y-1/2 left-0 h-1 bg-white rounded-full"
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }} />
           <div 
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg transition-opacity"
             style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, transform: 'translate(-50%, -50%)' }} />
         </div>
       </div>
