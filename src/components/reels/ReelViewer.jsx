@@ -86,12 +86,11 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
     }
   };
 
-  const handleSeek = (e, element) => {
+  const handleSeek = (e) => {
     if (!videoRef.current || !duration) return;
     
-    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-    const rect = element.getBoundingClientRect();
-    const pos = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pos = (e.clientX - rect.left) / rect.width;
     const time = pos * duration;
     
     videoRef.current.currentTime = time;
@@ -99,17 +98,13 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
   };
 
   const handleMouseDown = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
     setIsDragging(true);
-    handleSeek(e, e.currentTarget);
+    handleSeek(e);
   };
 
   const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    const progressBar = document.querySelector('.progress-bar-container');
-    if (progressBar) {
-      handleSeek(e, progressBar);
+    if (isDragging) {
+      handleSeek(e);
     }
   };
 
@@ -119,22 +114,14 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
 
   useEffect(() => {
     if (isDragging) {
-      const handleMove = (e) => handleMouseMove(e);
-      const handleEnd = () => handleMouseUp();
-      
-      document.addEventListener('mousemove', handleMove);
-      document.addEventListener('mouseup', handleEnd);
-      document.addEventListener('touchmove', handleMove);
-      document.addEventListener('touchend', handleEnd);
-      
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
       return () => {
-        document.removeEventListener('mousemove', handleMove);
-        document.removeEventListener('mouseup', handleEnd);
-        document.removeEventListener('touchmove', handleMove);
-        document.removeEventListener('touchend', handleEnd);
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, duration]);
+  }, [isDragging]);
 
   if (!reel) {
     return <div className="relative w-full h-full bg-black" />;
@@ -146,41 +133,31 @@ export default function ReelViewer({ reel, profile, isActive, onToggleMute, isMu
       <video
         ref={videoRef}
         src={reel.video_url}
-        className="w-full h-full object-contain"
+        className="w-full h-full object-contain cursor-pointer"
         loop
         playsInline
         controlsList="nodownload"
         onContextMenu={(e) => e.preventDefault()}
+        onClick={handleVideoClick}
         onEnded={() => setIsPlaying(false)} />
-      
-      {/* Video Click Area (behind progress bar) */}
-      <div 
-        className="absolute inset-0 cursor-pointer"
-        style={{ zIndex: 1 }}
-        onClick={handleVideoClick} />
 
       {/* Progress Bar */}
-      <div className="absolute bottom-20 left-0 right-0 px-4" style={{ zIndex: 10 }}>
+      <div className="absolute bottom-20 left-0 right-0 px-4">
         <div 
-          className="progress-bar-container relative h-3 -my-1 cursor-pointer group"
+          className="relative h-1 bg-white/30 rounded-full cursor-pointer group"
           onMouseDown={handleMouseDown}
-          onTouchStart={handleMouseDown}>
-          <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 h-1 bg-white/30 rounded-full" />
+          onClick={handleSeek}>
           <div 
-            className="absolute top-1/2 -translate-y-1/2 left-0 h-1 bg-white rounded-full"
+            className="absolute top-0 left-0 h-full bg-white rounded-full transition-all"
             style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }} />
           <div 
-            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-lg transition-opacity"
-            style={{ 
-              left: `${duration ? (currentTime / duration) * 100 : 0}%`, 
-              transform: 'translate(-50%, -50%)',
-              opacity: isDragging ? 1 : 0
-            }} />
+            className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+            style={{ left: `${duration ? (currentTime / duration) * 100 : 0}%`, transform: 'translate(-50%, -50%)' }} />
         </div>
       </div>
 
       {/* Overlay - User Info & Caption */}
-      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent" style={{ zIndex: 5 }}>
+      <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
         <Link to={createPageUrl('Profile') + '?user=' + reel.user_email + '&back=Reels&reelIndex=' + reelIndex}>
           <div className="flex items-center gap-3 mb-3">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white">
