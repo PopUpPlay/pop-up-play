@@ -39,9 +39,7 @@ export default function Profile() {
     current_city: '',
     current_state: '',
     current_zip: '',
-    current_country: '',
-    latitude: null,
-    longitude: null
+    current_country: ''
   });
   const [interestInput, setInterestInput] = useState('');
   const queryClient = useQueryClient();
@@ -121,9 +119,7 @@ export default function Profile() {
         current_city: displayProfile.current_city || '',
         current_state: displayProfile.current_state || '',
         current_zip: displayProfile.current_zip || '',
-        current_country: displayProfile.current_country || '',
-        latitude: displayProfile.latitude || null,
-        longitude: displayProfile.longitude || null
+        current_country: displayProfile.current_country || ''
       });
     } else if (user && isOwnProfile) {
       setFormData((prev) => ({
@@ -187,7 +183,7 @@ export default function Profile() {
     }
   });
 
-  const handleSave = async () => {
+  const handleSave = () => {
     // Validate required fields
     if (!formData.display_name || !formData.age || !formData.gender || !formData.interested_in || !formData.avatar_url || 
         !formData.current_city || !formData.current_state || !formData.current_zip || !formData.current_country) {
@@ -199,31 +195,7 @@ export default function Profile() {
       toast.error('You must be at least 18 years old to create a profile');
       return;
     }
-
-    // Geocode ZIP to get lat/lng
-    let latitude = formData.latitude;
-    let longitude = formData.longitude;
-    
-    try {
-      const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?postalcode=${formData.current_zip}&country=${formData.current_country}&format=json&limit=1`
-      );
-      const data = await response.json();
-      
-      if (data && data.length > 0) {
-        latitude = parseFloat(data[0].lat);
-        longitude = parseFloat(data[0].lon);
-      }
-    } catch (error) {
-      console.error('Geocoding failed:', error);
-    }
-
-    saveMutation.mutate({
-      ...formData,
-      latitude,
-      longitude,
-      last_location_update: new Date().toISOString()
-    });
+    saveMutation.mutate(formData);
   };
 
   const handleDeleteAccount = () => {

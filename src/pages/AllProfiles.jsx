@@ -117,29 +117,43 @@ export default function AllProfiles() {
     enabled: !!user?.email
   });
 
-  // Calculate distances using stored lat/lng
+  // Calculate distances based on ZIP codes
   useEffect(() => {
     const calculateDistances = async () => {
-      if (!myProfile?.latitude || !myProfile?.longitude) {
+      if (!myProfile?.current_zip) {
+        setProfilesWithDistance(allProfiles);
+        return;
+      }
+      
+      // Geocode user's ZIP
+      const myCoords = await geocodeZip(myProfile.current_zip, myProfile.current_country || 'US');
+      if (!myCoords) {
         setProfilesWithDistance(allProfiles);
         return;
       }
       
       // Calculate distances for all profiles
-      const profilesWithDist = allProfiles.map((profile) => {
-        if (!profile.latitude || !profile.longitude) {
-          return { ...profile, zipDistance: null };
-        }
-        
-        const distance = calculateDistance(
-          myProfile.latitude,
-          myProfile.longitude,
-          profile.latitude,
-          profile.longitude
-        );
-        
-        return { ...profile, zipDistance: distance };
-      });
+      const profilesWithDist = await Promise.all(
+        allProfiles.map(async (profile) => {
+          if (!profile.current_zip) {
+            return { ...profile, zipDistance: null };
+          }
+          
+          const profileCoords = await geocodeZip(profile.current_zip, profile.current_country || 'US');
+          if (!profileCoords) {
+            return { ...profile, zipDistance: null };
+          }
+          
+          const distance = calculateDistance(
+            myCoords.lat,
+            myCoords.lon,
+            profileCoords.lat,
+            profileCoords.lon
+          );
+          
+          return { ...profile, zipDistance: distance };
+        })
+      );
       
       setProfilesWithDistance(profilesWithDist);
     };
