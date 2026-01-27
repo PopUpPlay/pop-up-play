@@ -20,18 +20,22 @@ export default function CityMap({ activeUsers, currentUserProfile, userLocation,
   const [mapCenter, setMapCenter] = useState([40.7128, -74.0060]); // Default NYC
   
   useEffect(() => {
-    if (userLocation) {
+    if (userLocation?.latitude && userLocation?.longitude && 
+        !isNaN(userLocation.latitude) && !isNaN(userLocation.longitude)) {
       setMapCenter([userLocation.latitude, userLocation.longitude]);
     }
   }, [userLocation]);
 
   // Use precise latitude and longitude coordinates for each user
   const getUsersWithLocation = () => {
-    return activeUsers.map(profile => ({
-      ...profile,
-      displayLatitude: profile.latitude,
-      displayLongitude: profile.longitude
-    }));
+    return activeUsers
+      .filter(profile => profile.latitude && profile.longitude && 
+                        !isNaN(profile.latitude) && !isNaN(profile.longitude))
+      .map(profile => ({
+        ...profile,
+        displayLatitude: profile.latitude,
+        displayLongitude: profile.longitude
+      }));
   };
 
   return (

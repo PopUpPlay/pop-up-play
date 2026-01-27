@@ -40,11 +40,15 @@ export default function UserMarker({ profile, isCurrentUser, onProfileClick }) {
     });
   };
 
-  if (!profile.latitude || !profile.longitude) return null;
+  if (!profile.latitude || !profile.longitude || 
+      isNaN(profile.latitude) || isNaN(profile.longitude)) return null;
 
   // Use offset coordinates for display, or fall back to actual coordinates
   const displayLat = profile.displayLatitude || profile.latitude;
   const displayLon = profile.displayLongitude || profile.longitude;
+  
+  // Final validation
+  if (isNaN(displayLat) || isNaN(displayLon)) return null;
 
   return (
     <Marker
