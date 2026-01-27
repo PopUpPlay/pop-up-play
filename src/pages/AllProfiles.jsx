@@ -117,29 +117,53 @@ export default function AllProfiles() {
     enabled: !!user?.email
   });
 
-  // Calculate distances using stored lat/lng
+  // Calculate distances using stored lat/lng or fallback to ZIP geocoding
   useEffect(() => {
     const calculateDistances = async () => {
-      if (!myProfile?.latitude || !myProfile?.longitude) {
+      // Get user's coordinates (from profile or geocode ZIP)
+      let myLat, myLon;
+      if (myProfile?.latitude && myProfile?.longitude) {
+        myLat = myProfile.latitude;
+        myLon = myProfile.longitude;
+      } else if (myProfile?.current_zip) {
+        const myCoords = await geocodeZip(myProfile.current_zip, myProfile.current_country || 'US');
+        if (myCoords) {
+          myLat = myCoords.lat;
+          myLon = myCoords.lon;
+        }
+      }
+      
+      if (!myLat || !myLon) {
         setProfilesWithDistance(allProfiles);
         return;
       }
       
       // Calculate distances for all profiles
-      const profilesWithDist = allProfiles.map((profile) => {
-        if (!profile.latitude || !profile.longitude) {
-          return { ...profile, zipDistance: null };
-        }
-        
-        const distance = calculateDistance(
-          myProfile.latitude,
-          myProfile.longitude,
-          profile.latitude,
-          profile.longitude
-        );
-        
-        return { ...profile, zipDistance: distance };
-      });
+      const profilesWithDist = await Promise.all(
+        allProfiles.map(async (profile) => {
+          let profileLat, profileLon;
+          
+          // Use stored coordinates if available
+          if (profile.latitude && profile.longitude) {
+            profileLat = profile.latitude;
+            profileLon = profile.longitude;
+          } else if (profile.current_zip) {
+            // Fallback: geocode ZIP if coordinates not stored
+            const profileCoords = await geocodeZip(profile.current_zip, profile.current_country || 'US');
+            if (profileCoords) {
+              profileLat = profileCoords.lat;
+              profileLon = profileCoords.lon;
+            }
+          }
+          
+          if (!profileLat || !profileLon) {
+            return { ...profile, zipDistance: null };
+          }
+          
+          const distance = calculateDistance(myLat, myLon, profileLat, profileLon);
+          return { ...profile, zipDistance: distance };
+        })
+      );
       
       setProfilesWithDistance(profilesWithDist);
     };
